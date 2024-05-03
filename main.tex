@@ -1,87 +1,79 @@
-%% Package and Class "uiucthesis2014" for use with LaTeX2e.
-\documentclass[edeposit,fullpage]{uiucthesis2018}
-
+%% Package and Class "uiucthesis2021" for use with LaTeX2e.
+\documentclass[edeposit,fullpage,11pt]{uiucthesis2021}
+\doublespacing
 
 \usepackage[acronym,toc]{glossaries}
+\makeglossaries
 \include{acros}
 
 \usepackage{xspace}
-\usepackage{graphics}
-\newcommand{\Cycamore}{\textsc{Cycamore}\xspace}
-\newcommand{\Cyclus}{\textsc{Cyclus}\xspace}
-
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage[title,titletoc]{appendix}
 
 \usepackage{placeins}
 \usepackage{booktabs} % nice rules (thick lines) for tables
+\usepackage{array}
 \usepackage{microtype} % improves typography for PDF
 
 \usepackage[hyphens]{url}
-\usepackage{hyperref}
-\usepackage{subfig}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{hhline}
 \usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\allowdisplaybreaks
 \usepackage{color}
 \usepackage{multirow}
 \usepackage{siunitx}
-\sisetup{
-    input-decimal-markers = .,input-ignore = {,},table-number-alignment = right,
-    group-separator={,}, group-four-digits = true
-}
-\usepackage{fourier}
-\usepackage{booktabs}
-\newcommand\tab[1][1cm]{\hspace*{#1}}
+\usepackage{xfrac}
+\usepackage{bm}
+\usepackage{stmaryrd}
 
 \usepackage{threeparttable, tablefootnote}
 
-%tikzpicture fit to page width
 \usepackage{environ}
 \makeatletter
-\newsavebox{\measure@tikzpicture}
-\NewEnviron{scaletikzpicturetowidth}[1]{%
-  \def\tikz@width{#1}%
-  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
-  \BODY
-  \end{lrbox}
-  \pgfmathparse{#1/\wd\measure@tikzpicture}%
-  \edef\tikzscale{\pgfmathresult}%
-  \BODY
-}
 
 \usepackage{tabularx}
-\newcolumntype{b}{>{\hsize=1.0\hsize}X}
-\newcolumntype{q}{>{\hsize=0.5\hsize}X}
-\newcolumntype{R}{>{\raggedleft\arraybackslash\hsize=0.5\hsize}X}
-\newcolumntype{z}{>{\hsize=0.75\hsize}X}
-\newcolumntype{s}{>{\hsize=.5\hsize}X}
-\newcolumntype{m}{>{\hsize=.75\hsize}X}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{diagbox}
+\usepackage{courier}
+\usepackage{pdflscape}
 
 \usepackage{cleveref}
 \usepackage{datatool}
 \usepackage[numbers]{natbib}
 \usepackage{notoccite}
 
-
 \usepackage{tikz}
+\usepackage{tkz-euclide}
 \usetikzlibrary{positioning, arrows, decorations, shapes}
-
 \usetikzlibrary{shapes.geometric,arrows}
-\tikzstyle{process} = [rectangle, rounded corners, minimum width=2.5cm, minimum height=1cm,text centered, draw=black, fill=blue!30]
-
-\tikzstyle{object} = [ellipse, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=green!30]
-\tikzstyle{objectr} = [ellipse, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
-
-\tikzstyle{empty} =  [rectangle, rounded corners, minimum width=2.5cm, minimum height=0.7cm,text centered, draw=black, fill=white!30]
+\definecolor{illiniblue}{HTML}{B1C6E2}
+\definecolor{illiniorange}{HTML}{f8c2a2}
+\definecolor{green}{HTML}{c2e2b1}
+\tikzstyle{process} = [rectangle, rounded corners, thick, minimum width=7cm, minimum height=1cm, text centered, draw=black, fill=illiniblue, text width=18em]
+\tikzstyle{object} = [ellipse, minimum width=2cm, thick, minimum height=2.2cm, text centered, draw=black, fill=illiniorange, text width=12em]
+\tikzstyle{decision} = [diamond, thick, aspect=2, minimum width=2cm, minimum height=2cm, text centered, draw=black, fill=green, text width=6em]
 \tikzstyle{arrow} = [thick,->,>=stealth]
 
+\usepackage[ruled,linesnumbered,lined]{algorithm2e}
+\SetArgSty{textrm}
 
-\title{Example Template}
-\author{Charles Bae}
-\department{Nuclear, Plasma, Radiological Engineering}
-\schools{B.S., University of Illinois - Urbana Champaign, 2017}
-\msthesis
-\advisor{Kathryn D. Huff}
-\degreeyear{2018}
-\committee{Assistant Professor Kathryn D. Huff, Adviser \\ Professor Segundo Lector }
+
+\title{A Hybrid Neutronics Method for Time-Dependent Control Rod Modeling in Molten Salt Reactors}
+\author{Sun Myung Park}
+\department{Nuclear, Plasma \& Radiological Engineering}
+\prelim
+\degreeyear{2024}
+\committee{Dr Madicken Munk, Chair \\
+           Professor Rizwan Uddin \\
+           Associate Professor Tomasz Kozlowski \\
+           Professor Paul Fischer}
 
 
 \begin{document}
@@ -92,13 +84,21 @@
 %% Note that ProQuest truncates their abstracts at 350 words.
 \begin{abstract}
 
-Abstract.
+%\input{abstract}
 
 \end{abstract}
+\addcontentsline{toc}{chapter}{Abstract}
 
-\chapter*{Acknowledgments}
+%\begin{dedication}
+%
+%\end{dedication}
 
-Acks.
+%\begin{acknowledgments}
+%
+%%\input{acks}
+%
+%\end{acknowledgments}
+%\addcontentsline{toc}{chapter}{Acknowledgments}
 
 %% The thesis format requires the Table of Contents to come
 %% before any other major sections, all of these sections after
@@ -111,32 +111,59 @@ Acks.
 %% List Symbols and/or Abbreviations
 %% etc.
 
-\tableofcontents
-\listoftables
-\listoffigures
+{
+  \hypersetup{linkcolor=black}
+  \tableofcontents
+}
 
 %% Create a List of Abbreviations. The left column
 %% is 1 inch wide and left-justified
-%\chapter{List of Abbreviations}
-%\printglossaries
+\printglossary[title=List of Abbreviations,type=\acronymtype,nonumberlist,
+nogroupskip=true]
 %% Create a List of Symbols. The left column
 %% is 0.7 inch wide and centered
 
 \pagebreak
 \mainmatter
+\glsresetall
 
 \chapter{Introduction}
-\input{introduction}
+\label{chap:intro}
+%\input{introduction}
+%\glsresetall
 
-\chapter*{Appendix}
-\input{appendix}
+\chapter{Molten Salt Reactor Modeling and Simulation}
+\label{chap:lit}
+\input{lit}
+\glsresetall
+%
+%\chapter{Description of Moltres and Assessment of its Current Capabilities}
+%\label{chap:moltres}
+%\input{moltres}
+%\glsresetall
+%
+%\chapter{Verification of Moltres for Multiphysics Molten Salt
+%Reactor Modeling}
+%\label{chap:benchmark}
+%\input{benchmark}
+%\glsresetall
+%
+%\chapter{Hybrid S$_\text{N}$-Diffusion Method for Improved Control Rod Modeling
+%in Neutron Diffusion Methods}
+%\label{chap:hybrid}
+%\input{hybrid}
+%\glsresetall
+%
+%\chapter{Proposed Work}
+%\label{chap:proposedwork}
+%\input{proposed-work}
+%\glsresetall
 
 \backmatter
 
-\bibliographystyle{apalike}
+\bibliographystyle{IEEEtran}
 \bibliography{bibliography}
 
 \end{document}
 \endinput
 %%
-%% End of file `thesis-ex.tex'.
