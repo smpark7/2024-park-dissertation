@@ -54,7 +54,7 @@ Conversely, proven techniques exist for improving the performance of fixed point
 schemes for many relevant computational multiphysics research fields, including reactor analysis
 \cite{ragusa_consistent_2009}. Fixed point iterative methods also allow for different temporal and
 spatial discretization schemes to meet the requisite resolution of each
-individual physics component.
+individual physics model.
 
 In contrast to tight coupling schemes, \textit{loose coupling schemes}
 solve each set of single-physics equations using state variable
@@ -595,7 +595,7 @@ dependence. The \gls{BTE} for neutron transport is given as:
   \rightarrow \hat{\Omega},t) \Psi(\vec{r},E',\hat{\Omega}',t) \nonumber \\
   =& \frac{\chi(E)}{4\pi}
   \int^\infty_0 dE' \int_{4\pi} d\hat{\Omega}' \nu\Sigma_f(\vec{r},E',t) \Psi(\vec{r},E',
-  \hat{\Omega}',t)+S(\vec{r},E,\hat{\Omega}',t) \label{eq:bte}
+  \hat{\Omega}',t)+S(\vec{r},E,\hat{\Omega},t) \label{eq:bte}
   \shortintertext{where}
   v(E) =& \mbox{ neutron velocity,} \nonumber \\
   \Psi(\vec{r},E,\hat{\Omega},t) =& \mbox{ neutron angular flux,} \nonumber \\
@@ -629,7 +629,7 @@ finite energy ranges across the entire energy spectrum to form multigroup equati
   \rightarrow \hat{\Omega},t) \Psi_{g'}(\vec{r},\hat{\Omega}',t) \nonumber \\
   =& \frac{\chi_g}{4\pi}
   \sum^G_{g'=1} \int_{4\pi} d\hat{\Omega}' \nu\Sigma_{f,g'}(\vec{r},t) \Psi_{g'}(\vec{r},
-  \hat{\Omega}',t)+S_g(\vec{r},\hat{\Omega}',t) \label{eq:mg-bte}
+  \hat{\Omega}',t)+S_g(\vec{r},\hat{\Omega},t) \label{eq:mg-bte}
   \shortintertext{where}
   G =& \mbox{ total number of energy groups,} \nonumber \\
   g =& \mbox{ neutron energy group index (in decreasing energy order)} = 1,2,...,G. \nonumber
@@ -1373,7 +1373,7 @@ On the \gls{TH}-modeling side of \gls{MSR} multiphysics, turbulent flow is a com
 phenomenon to include in our simulation models to obtain accurate predictions of \gls{MSR} behavior
 under various operating conditions. Most \gls{MSR} multiphysics studies with turbulence models rely
 on the two-equation turbulence models, which provide acceptable estimates of time-averaged flow
-characteristics. One study \cite{podila_cfd_2019} showed close agreement in the\gls{MSRE}
+characteristics. One study \cite{podila_cfd_2019} showed close agreement in the \gls{MSRE}
 temperature distribution with various one-equation, two-equation, and \gls{RSM} turbulence
 models despite relatively larger differences observed in turbulence intensities near the walls.
 This observation suggests one-equation models may be adequate for \gls{MSR} designs and simulations
