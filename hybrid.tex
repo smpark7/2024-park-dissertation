@@ -384,79 +384,94 @@ and the stabilized \gls{SAAF} formulation reduces to the unstabilized formulatio
 \subsubsection{Angular Discretization}
 
 The $S_N$ method applies a collocation method for the angular discretization by solving for the
-angular flux at $N_d$ discrete directions $\hat{\Omega}_d$ with weights $w_d$. Numerous options
-exist for the choice of the angular quadrature set \left{\hat{\Omega}_d,w_d | d=1,\dots,N_d\right}.
+angular flux along $N_d$ discrete directions $\hat{\Omega}_d$ with weights $w_d$. Numerous options
+exist for the choice of the angular quadrature set
+$\{\hat{\Omega}_d,w_d | d=1,\dots,N_d\}$.
 For this work, we chose the commonly used level-symmetric quadrature set
 \cite{wang_rattlesnake_2018} for ease of implementation, particularly when applying reflective
-boundary conditions due to rotational symmetry about each of the three Cartesian axes.
+boundary conditions due to 90-degree rotational symmetry about each of the three Cartesian axes.
 
-The discrete ordinates ($S_N$) method for solving the multigroup neutron transport equation
-(Eq.\ \ref{eq:mg-bte}) discretizes the continuous angular directional phase space into a finite
-number of discrete angular intervals (ordinates). The set of distinct direction variables
-$\hat{\Omega}_d$ representing the discrete ordinates is typically chosen in conjunction with a
-compatible quadrature set to replace integrals across continuous solid angles
-$\hat{\Omega}$ with quadrature approximations. The multigroup, discrete ordinates ($S_N$
-approximation) form of the 3-D time-dependent neutron transport equation with Legendre polynomial
-expansion of the scattering cross section and spherical harmonic expansion of the flux in the
-scattering source term is:
+We use the level-symmetric quadrature sets to approximate integrals of the angular flux over the
+angular domain
 %
 \begin{gather}
-  \frac{\partial}{\partial t} \left(\frac{\Psi_{g,d}(\vec{r},t)}{v_g}\right) +
-  \hat{\Omega}_d\cdot\nabla\Psi_{g,d}(\vec{r},t) + \Sigma_{t,g}(\vec{r},t)\Psi_{g,d}(\vec{r},t) =
-  \nonumber \\
-  \sum^G_{g'=1}\sum^L_{l=0} \frac{2l+1}{4\pi}\Sigma^{g'\rightarrow g}_{s,l}(\vec{r},t)\sum^l_{m=-l}
-  \phi_{g',l,m}(\vec{r},t)Y_{l,m}(\hat{\Omega}_d) + \frac{\chi_g(\vec{r},t)}{4\pi}\sum^G_{g'=1}
-  \nu\Sigma_{f,g'}(\vec{r},t) \phi_g(\vec{r},t) + S_{g,d}(\vec{r},t)
-  \label{eq:3d-sn}
+  \phi_g = \int_\mathcal{S} \Psi_{g,d}\hat{\Omega} \approx \sum^{N_d}_{d=1}w_d
+  \Psi_{g,d}), \label{eq:0th-mmt}
+  \shortintertext{where}
+  \Psi_{g,d} = \Psi_g(\hat{\Omega}_d). \nonumber
+\end{gather}
+%
+We calculate the scalar flux $\phi_g$ by taking the zeroth moment with respect to $\hat{\Omega}$ as
+shown in Eq.\ \ref{eq:0th-mmt}. We can also calculate higher moments
+%
+\begin{gather}
+  \phi_{g,l,m} = \int_\mathcal{S} Y_{l,m}(\hat{\Omega})\Psi_g(\hat{\Omega})d\hat{\Omega} \approx
+  \sum^{N_d}_{d=1}w_d Y_{l,m}(\hat{\Omega}_d)\Psi_{g}(\hat{\Omega}_d) \label{eq:nth-mmt}
   \shortintertext{where}
   \begin{align*}
-    \Psi_{g,d}(\vec{r},t) &= \Psi_g(\vec{r},\hat{\Omega}_d,t) \\
-%    g &= \mbox{ neutron energy group index, ranging from 1 to G,} \nonumber \\
-%    \Sigma_{t,g}(x) &= \mbox{ macroscopic total cross section of neutrons in group $g$,} \nonumber \\
-%    G &= \mbox{ total number of energy groups,} \nonumber \\
-%    n &= \mbox{ discrete ordinate index,} \nonumber \\
-    N &= \mbox{ total number of discrete ordinates,} \\
-    l &= \mbox{ Legendre expansion order,} \\
-    L &= \mbox{ highest Legendre expansion order,} \\
-    \Sigma^{g'\rightarrow g}_{s,l}(x) &= \mbox{ $l$-th Legendre moment of the macroscopic
-scattering} \nonumber \\
-    &\ \ \ \ \mbox{ cross section from group $g'$ to $g$,} \\
-    \phi_{g',l,m} &= \mbox{ spherical harmonic expansion of the angular flux of degree $l$ and
-    order $m$,} \\
-    Y_{l,m} &= \mbox{ real basis functions of spherical harmonics of degree $l$ and order $m$.}
-%    \chi_g &= \mbox{ fission neutron spectrum in group $g$,} \nonumber \\
-%    \nu &= \mbox{ neutrons produced per fission reaction,} \nonumber \\
-%    \Sigma_{f,g}(x) &= \mbox{ macroscopic fission cross section of neutrons in group $g$,}
-%    \nonumber \\
-%    k &= \mbox{ neutron multiplication factor.} \nonumber
-%    \phi_{g'}(x) &= \mbox{ scalar neutron flux in group $g$,} \nonumber \\
-%    S_g(x,\mu_n) &= \mbox{ external neutron source in group $g$.} \nonumber
+    Y_{l,m}(\mu,\omega) &=
+    \begin{cases}
+      \sqrt{2}C^{|m|}_l P^{|m|}_l \cos(|m|\omega), & \mbox{ for } 0<m\leq l \\
+      C^0_l P^0_l(\mu), & \mbox{ for } m=0, 0\leq l < \infty \\
+      \sqrt{2} C^{|m|}_l P^{|m|}_l(\mu) \sin(|m|\omega), & -l \leq m < 0
+    \end{cases}, \\
+    \mu &= \mbox{cosine of the polar angle,} \\
+    \omega &= \mbox{the azimuthal angle,} \\
+    C^{|m|}_l &= \sqrt{\frac{\left(l-|m|\right)!}{\left(l+|m|\right)!}}, \\
+    P^m_l &= \mbox{associated Legendre polynomial of degree $l$ and order $m$.}
   \end{align*}
 \end{gather}
 %
-We can retrieve the neutron scalar flux and current by calculating the 0th and 1st Legendre
-moments, respectively, as follows:
-%
-\begin{align}
-  \phi_g(x) &= \frac{1}{2} \int^1_{-1} d\mu\ \Psi_g(x,\mu) = \frac{1}{2} \sum^N_{n=1} w_n
-\Psi_g(x,\mu_n)
-  \shortintertext{and}
-  J_g(x) &= \frac{1}{2} \int^1_{-1} d\mu\ \mu\Psi_g(x,\mu) = \frac{1}{2} \sum^N_{n=1} w_n
-\mu_n \Psi_g(x,\mu_n)
-\end{align}
+for anisotropic scattering treatment.
 
-The 1-D form of the multigroup $k$-eigenvalue neutron diffusion equations (Eq.\ \ref{eq:mg-diff})
-is:
+\subsubsection{Final Forms of the \gls{SAAF} $S_N$ Equations}
+
+Finally, we present the expanded forms of each term in the \gls{SAAF} formulation of the multigroup
+$S_N$ neutron transport equations. With the angular discretization scheme laid out, we define the
+inner products
 %
-\begin{align}
-  -\frac{d}{dx} D_g(x) \frac{d}{dx} \phi_g(x) + \Sigma_{t,g}(x) \phi_g(x) &= \sum^G_{g'=1}\left[
-  \Sigma_s^{g'\rightarrow g}(x)\phi_{g'}(x) + \chi_g\frac{\nu\Sigma_{f,g'}(x)}{k}
-  \phi_{g'}(x)\right] + S_g(x)
-  \label{eq:1d-diff}
-  \shortintertext{where}
-    D_g(x) &= \frac{1}{3 \Sigma_{tr}(x)} \nonumber \\
-           &= \mbox{ isotropic neutron diffusion coefficient for group }g. \nonumber
-\end{align}
+\begin{gather}
+  \left(\bm{a},\bm{b}\right)_\mathcal{D} \equiv \sum^G_{g=1} \int_\mathcal{D}d\vec{r}
+  \sum_{i\in E_e}a_{g,i}b_i(\vec{r})\sum_{j\in E_e}b_{g,j}b_j(\vec{r}), \\
+  \left(\bm{a},\bm{b}\right)_{\partial\mathcal{D}} \equiv \sum^G_{g=1}
+  \sum_{s\in\partial\mathcal{D}}\int_s d\vec{r}\sum_{i\in E_s}a_{g,i}b_i(\vec{r})\sum_{j\in E_s}
+  b_{g,j}b_j(\vec{r}),
+\end{gather}
+%
+involving integrals over the spatial domain to explicitly show the $S_N$ angular discretization.
+
+Time derivative term:
+%
+\begin{gather}
+  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,
+  \frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)\right) =
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\Psi^*_{g,d},
+  \frac{\Psi_{g,d}}{v_g}\right)_\mathcal{D}
+\end{gather}
+%
+Streaming term:
+%
+\begin{gather}
+  \left(\mathbb{L}_1\bm{\Psi}^*,
+  \left(\bm{\tau}\mathbb{L}_1-\mathbb{I}+\bm{\tau}\mathbb{L}_2\right)\bm{\Psi}\right) =
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\hat{\Omega}_d\cdot\Psi^*_{g,d},\tau_g\hat{\Omega}\cdot
+  \nabla\Psi_{g,d}-(1-\tau_g\Sigma_{t,g})\Psi_{g,d}\right)_\mathcal{D}
+\end{gather}
+%
+Collision term:
+%
+\begin{gather}
+  \left(\mathbb{L}_2\bm{\Psi}^*,\bm{\Psi}\right) =
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},\Sigma_{t,g}\Psi_{g,d}\right)_\mathcal{D}
+\end{gather}
+%
+Scattering term:
+%
+\begin{gather}
+  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\mathbb{S}\bm{\Psi}\right) =
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\Psi^*_{g,d},
+    \sum^G_{g'=1}\sum^L_{l=0}\Sigma^{g'\rightarrow g}_{s,l}\sum^l_{m=-l}
+
 
 \subsection{Spatially Varying Diffusion Coefficients} \label{sec:svdc}
 
