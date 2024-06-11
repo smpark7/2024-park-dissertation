@@ -39,7 +39,9 @@ which I will use to model control rods. This section presents the mathematical d
 \gls{SAAF} formulation of the $S_N$ equations, the neutron diffusion equations, the drift
 transport correction term, and the computational algorithm for the hybrid method.
 
-\subsection{\gls{SAAF} Formulation of the $S_N$ Method} 
+\subsection{\gls{SAAF} Formulation of the $S_N$ Method}
+
+\subsubsection{Multigroup Neutron Transport Equations}
 
 Continuing from the introduction to neutronics methods in Section \ref{sec:summary-nts-mtds},
 the time-dependent, multigroup neutron transport equation defined on the 3-D spatial domain
@@ -167,8 +169,8 @@ Note that the operators apply element-wise multiplication as opposed to the more
 matrix multiplication. Eq.\ \ref{eq:mg-nte} can be reexpressed as:
 %
 \begin{gather}
-  \frac{\partial}{\partial t} \left(\frac{\bm{\Psi}}{\bm{v}}\right)+\mathbb{L}_1\bm{\Psi}
-  +\mathbb{L}_2\bm{\Psi} = \mathbb{S}\bm{\Psi} + \bm{Q}_f + \bm{Q}^\text{ext} \label{eq:nte-vec}
+  \frac{\partial}{\partial t} \left(\frac{\bm{\Psi}}{\bm{v}}\right)+\mathbb{L}\bm{\Psi}
+  = \mathbb{S}\bm{\Psi} + \bm{Q}_f + \bm{Q}^\text{ext} \label{eq:nte-vec}
 \end{gather}
 %
 with the boundary conditions on $\partial\mathcal{D}$
@@ -176,8 +178,68 @@ with the boundary conditions on $\partial\mathcal{D}$
 \begin{gather}
   \bm{\Psi} = \bm{\Psi}^\text{inc} + \mathbb{B}\bm{\Psi}
 \end{gather}
+
+\subsubsection{Weak Form of the Multigroup Neutron Transport Equations}
+
+Before we begin the derivation for the \gls{SAAF} formulation, we introduce inner product notations
+to express Eq.\ \ref{eq:nte-vec} and the eventual \gls{SAAF} formulation in their weak forms to be
+solved using \gls{FEM}. We define the inner product consisting of volume integrals on
+$\mathcal{D}\otimes\mathcal{S}$ as
 %
-We begin the derivation for the \gls{SAAF} formulation by rearranging Eq.\ \ref{eq:nte-vec} as
+\begin{gather}
+  (\bm{a}, \bm{b})_{\mathcal{D}\otimes\mathcal{S}} \equiv
+  \sum^G_{g=1}\int_\mathcal{S}d\hat{\Omega}\int_\mathcal{D}d\vec{r}\
+  a_g(\vec{r},\hat{\Omega}) b_g(\vec{r},\hat{\Omega}), \label{eq:weak-domain}
+\end{gather}
+%
+where $\bm{a}$ and $\bm{b}$ represent multigroup function vectors such as $\bm{\Psi}$. We also
+define boundary integrals on $\partial\mathcal{D}\otimes\mathcal{S}$ as
+%
+\begin{gather}
+  \langle\bm{a},\bm{b}\rangle^\pm_{\partial\mathcal{D}\otimes\mathcal{S}} \equiv
+  \sum^G_{g=1}\int_{\partial\mathcal{D}}d\vec{r}
+  \int_{\mathcal{S}^{\pm}}d\hat{\Omega}\ |\hat{\Omega}\cdot\hat{n}_b|
+  a_g(\vec{r},\hat{\Omega}) b_g(\vec{r},\hat{\Omega}), \label{eq:weak-boundary}
+\end{gather}
+%
+where the $\pm$ sign depends on the signedness of $\hat{\Omega}\cdot\hat{n}_b$ at the boundary.
+We henceforth drop the phase space subscripts for brevity.
+%
+In accordance with standard weak form derivation procedure, we multiply Eq.\ \ref{eq:nte-vec}
+by a test function $\bm{\Psi}^*$ and integrate throughout over the $\mathcal{D}$ and $\mathcal{S}$
+domains
+%
+\begin{gather}
+  \left(\bm{\Psi}^*,\frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)\right) +
+  \left(\bm{\Psi}^*,\mathbb{L}\bm{\Psi}\right) = \left(\bm{\Psi}^*,\mathbb{S}\bm{\Psi}\right) +
+  \left(\bm{\Psi}^*,\bm{Q}\right).
+\end{gather}
+%
+We apply integration by parts on the streaming term to obtain
+%
+\begin{gather}
+  \left(\bm{\Psi}^*,\frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)\right) +
+  \left(\mathbb{L}^*\bm{\Psi}^*,\bm{\Psi}\right) + \langle\bm{\Psi}^*,\bm{\Psi}\rangle^+ -
+  \langle\bm{\Psi}^*,\bm{\Psi}\rangle^- = \left(\bm{\Psi}^*,\mathbb{S}\bm{\Psi}\right) +
+  \left(\bm{\Psi}^*,\bm{Q}\right), \label{eq:nte-weak}
+\end{gather}
+%
+where $\mathbb{L}^*$ is the adjoint of $\mathbb{L}$.
+%\begin{multline}
+%  \left(\bm{\Psi}^*,\left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right)
+%  \frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)\right) -
+%  \left(\mathbb{L}^*_1\bm{\Psi}^*,\mathbb{L}^{-1}_2\mathbb{L}_1\bm{\Psi}\right) +
+%  \langle\bm{\Psi}^*,
+%  \left(\bm{\Psi}^*,\mathbb{L}_2\bm{\Psi}\right) = \\
+%  \left(\bm{\Psi}^*,\left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right)\mathbb{S}\bm{\Psi}
+%  \right) +
+%  \left(\bm{\Psi}^*,\left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right) \bm{Q}\right).
+%\end{multline}
+
+\subsubsection{\gls{SAAF} Formulation}
+
+We begin the derivation for the \gls{SAAF} formulation by first rearranging Eq.\ \ref{eq:nte-vec}
+as
 %
 \begin{gather}
   \bm{\Psi} = \mathbb{L}^{-1}_2\left[\mathbb{S}\bm{\Psi}+\bm{Q}
@@ -193,30 +255,140 @@ We begin the derivation for the \gls{SAAF} formulation by rearranging Eq.\ \ref{
   \end{bmatrix}. \nonumber
 \end{gather}
 %
-We substitute Eq.\ \ref{eq:afe} back into the streaming term $\left(\mathbb{L}_1\bm{\Psi}\right)$
-in Eq.\ \ref{eq:nte-vec} and rearrange the terms to obtain
+We substitute Eq.\ \ref{eq:afe} back into the streaming term in Eq.\ \ref{eq:nte-weak} and
+rearrange the terms to obtain
+%
+\begin{multline}
+  \left(\mathbb{L}^{-1}_2\mathbb{L}\bm{\Psi}^*,\frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}
+      {\bm{v}}\right)\right) + 
+  \left(\mathbb{L}_1\bm{\Psi}^*,\mathbb{L}^{-1}_2\mathbb{L}_1\bm{\Psi}\right) +
+  \langle\bm{\Psi}^*,\bm{\Psi}\rangle^+ - \langle\bm{\Psi}^*,\bm{\Psi}\rangle^- +
+  \left(\mathbb{L}_2\bm{\Psi}^*,\bm{\Psi}\right) = \\
+  \left(\mathbb{L}^{-1}_2\mathbb{L}\bm{\Psi}^*,
+  \mathbb{S}\bm{\Psi}\right) + \left(\mathbb{L}^{-1}_2\mathbb{L}\bm{\Psi}^*,\bm{Q}\right)
+  \label{eq:saaf}
+\end{multline}
+%
+using the following relations
 %
 \begin{gather}
-  \frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right) + \mathbb{L}^{-1}_2\mathbb{L}_1
-  \mathbb{S}\bm{\Psi} + \mathbb{L}^{-1}_2\mathbb{L}_1\bm{Q} - \mathbb{L}^{-1}_2\mathbb{L}_1
-  \frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right) - \mathbb{L}^{-1}\mathbb{L}^2_1
-  \bm{\Psi} + \mathbb{L}_2\bm{\Psi} = \mathbb{S}\bm{\Psi}+\bm{Q} \\
-  \left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right) \frac{\partial}{\partial t}\left(
-  \frac{\bm{\Psi}}{\bm{v}}\right) - \mathbb{L}^{-1}_2\mathbb{L}^2_1\bm{\Psi} +
-  \mathbb{L}_2\bm{\Psi} = \left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right)
-  \mathbb{S}\bm{\Psi} + \left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right) \bm{Q}
-%  \mathbb{L}^{-1}_2\mathbb{L}\frac{\partial}{\partial t}\frac{\bm{\Psi}}{\bm{v}} -
-%  \mathbb{L}^{-1}_2\mathbb{L}^2_1 \bm{\Psi} + \mathbb{L}_2\bm{\Psi} = \mathbb{L}^{-1}_2\mathbb{L}
-%  \mathbb{S}\bm{\Psi} + \mathbb{L}^{-1}_2\mathbb{L}\bm{Q}
+  \mathbb{L}_1\mathbb{L}_2 = \mathbb{L}_2\mathbb{L}_1, \hspace{1cm}
+  \mathbb{L}^*_1 = -\mathbb{L}_1,\hspace{1cm}
+  \mathbb{L}^*_2 = \mathbb{L}_2, \nonumber \\
+  \mathbb{I}-\mathbb{L}^{-1}_2\mathbb{L}^*_1 =
+  \mathbb{L}^{-1}_2\mathbb{L}_2 + \mathbb{L}^{-1}_2\mathbb{L}_1 =
+  \mathbb{L}^{-1}_2\mathbb{L}. \nonumber
+\end{gather}
+
+Notably, the \gls{SAAF} formulation contains a second-order derivative streaming term
+(prior to applying integration by parts) which lends itself better to standard
+\gls{FEM} solver routines, such as the \gls{GMRES} method, than the first-order streaming
+term of the original formulation.
+However, the $\mathbb{L}^{-1}_2$ operators render the current \gls{SAAF} formulation
+unsolveable in void and near-void regions where the total cross sections $\Sigma_{t,g}$ approach
+zero \cite{wang_diffusion_2014}.
+
+\subsubsection{Spatial Discretization and Void Treatment}
+
+To overcome the issue of voids, Wang et al.\ \cite{wang_diffusion_2014} modified the standard
+\gls{SAAF} formulation by taking inspiration from the \gls{SUPG} stabilization technique
+\cite{brooks_streamline_1982}. We start by first applying spatial discretization on the \gls{SAAF}
+formulation. For \gls{FEM}, the spatial domain is discretized into finite, non-overlapping mesh
+elements $\mathcal{D}_e$ such that $\mathcal{D} = \cup_{e\in\mathbb{T}_h}\mathcal{D}_e$, where
+$\mathbb{T}_h$ denotes the index set of elements discretizing $\mathcal{D}$ and $\mathcal{D}_e$
+is the subdomain covered by the element of index $e$. Similarly, the outermost boundary
+$\partial\mathcal{D}$ is discretized by non-overlapping mesh sides indexed by $s$. Within each mesh
+element, any spatially varying function can be approximated with basis functions
+%
+\begin{gather}
+  f(\vec{r}) = \sum^N_{i=1}f_i b_i(\vec{r}),
   \shortintertext{where}
   \begin{align*}
-    \mathbb{I} &= \mbox{identity operator,} \\
-    \mathbb{I}-\mathbb{L}^{-1}_2\mathbb{L}_1 &=
-    \mathbb{L}^{-1}_2\mathbb{L}_2-\mathbb{L}^{-1}_2\mathbb{L}_1 = 
+    N &= \mbox{degrees of freedom in the mesh element,} \\
+    b_i &= \mbox{basis function,} \\
+    f_i &= \mbox{coefficient corresponding to $b_i$ in approximating $f$}.
+  \end{align*}
+\end{gather}
+
+Thus, we can define the inner products
+%
+\begin{gather}
+  \left(\bm{a},\bm{b}\right) \equiv \sum^G_{g=1}\int_\mathcal{S}d\hat{\Omega}
+  \sum_{e\in\mathbb{T}_h}\int_{\mathcal{D}_e}d\vec{r}\sum_{i\in E_e}a_{g,i}(\hat{\Omega})
+  b_i(\vec{r})\sum_{j\in E_e}b_{g,j}(\hat{\Omega})b_j(\vec{r}), \\
+  \langle\bm{a},\bm{b}\rangle^{\pm} \equiv \sum^G_{g=1}\sum_{s\in\partial\mathcal{D}}\int_s
+  d\vec{r} \int_{mathcal{S}^\pm_{\hat{n}_b}}d\hat{\Omega} |\hat{\Omega}\cdot\hat{n}_b|
+  \sum_{i\in E_s}a_{g,i}(\hat{\Omega})b_i(\vec{r})\sum_{j\in E_s}b_{g,j}(\hat{\Omega})b_j(\vec{r}),
+  \shortintertext{where}
+  \begin{align*}
+    E_e &= \mbox{index set of the local basis functions in element $e$,} \\
+    E_s &= \mbox{index set of the local basis functions in element side $s$,}
   \end{align*}
 \end{gather}
 %
+to apply spatial discretization on Eq.\ \ref{eq:saaf} by replacing the preexisting inner product
+notations defined in Eqs.\ \ref{eq:weak-domain} and \ref{eq:weak-boundary}.
 
+We can now proceed with the void treatment for stabilization.
+We start by defining the following stabilization operator
+%
+\begin{gather}
+  \bm{\tau} \equiv
+  \begin{bmatrix}
+    \tau_1 \\
+    \tau_2 \\
+    \vdots \\
+    \tau_G
+  \end{bmatrix}
+  \shortintertext{where}
+  \begin{align*}
+    \tau_g &=
+    \begin{cases}
+      \frac{1}{\Sigma_{t,g}} \mbox{ for } h\Sigma_{t,g} \geq \varsigma \\
+      \frac{h}{\varsigma} \mbox{ for } h\Sigma_{t,g} < \varsigma
+    \end{cases}, & \\
+    h &= \mbox{mesh element size,} & \\
+    \varsigma &= \mbox{void constant.} &
+  \end{align*}
+\end{gather}
+%
+Next, we redefine Eq.\ \ref{eq:afe} as
+%
+\begin{gather}
+  \bm{\Psi} = \left(\mathbb{I}-\bm{\tau}\mathbb{L}_2\right)\bm{\Psi}+
+  \bm{\tau}\left[\mathbb{S}\bm{\Psi}+\bm{Q}
+  -\frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)-\mathbb{L}_1\bm{\Psi}\right]
+  \label{eq:afe-vt}
+\end{gather}
+%
+Substituting Eq.\ \ref{eq:afe-vt} into Eq.\ \ref{eq:nte-weak} yields the stabilized \gls{SAAF}
+formulation given as
+%
+\begin{multline}
+  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,
+  \frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)\right) + 
+  \left(\mathbb{L}_1\bm{\Psi}^*,
+  \left(\bm{\tau}\mathbb{L}_1-\mathbb{I}+\bm{\tau}\mathbb{L}_2\right)\bm{\Psi}\right) +
+  \langle\bm{\Psi}^*,\bm{\Psi}\rangle^+ - \langle\bm{\Psi}^*,\bm{\Psi}\rangle^- +
+  \left(\mathbb{L}_2\bm{\Psi}^*,\bm{\Psi}\right) \\
+  = \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\mathbb{S}\bm{\Psi}\right) +
+  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\bm{Q}\right)
+  \label{eq:saaf-vt}
+\end{multline}
+%
+In non-void regions where $\Sigma_{t,g}$ is non-zero, we can disable the stabilization scheme by
+setting $\varsigma$ to zero. Then $\bm{\tau}\mathbb{L}=\mathbb{I}$
+and the stabilized \gls{SAAF} formulation reduces to the unstabilized formulation in Eq.\
+\ref{eq:saaf}.
+
+\subsubsection{Angular Discretization}
+
+The $S_N$ method applies a collocation method for the angular discretization by solving for the
+angular flux at $N_d$ discrete directions $\hat{\Omega}_d$ with weights $w_d$. Numerous options
+exist for the choice of the angular quadrature set \left{\hat{\Omega}_d,w_d | d=1,\dots,N_d\right}.
+For this work, we chose the commonly used level-symmetric quadrature set
+\cite{wang_rattlesnake_2018} for ease of implementation, particularly when applying reflective
+boundary conditions due to rotational symmetry about each of the three Cartesian axes.
 
 The discrete ordinates ($S_N$) method for solving the multigroup neutron transport equation
 (Eq.\ \ref{eq:mg-bte}) discretizes the continuous angular directional phase space into a finite
