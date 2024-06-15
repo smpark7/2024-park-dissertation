@@ -1,4 +1,4 @@
-Section \ref{sec:summary-nts-mtds} highlighted the poor performance of neutron diffusion
+Section \ref{sec:summary-nts-mtds} highlights the poor performance of neutron diffusion
 methods for calculating neutron fluxes near control rods. Strong neutron absorption in the control
 rod region produces a highly anisotropic neutron flux extending some distance outside the control
 rod. Neutron transport methods, which retain angular dependence of the neutron flux to various
@@ -18,30 +18,30 @@ pounders_diffusion_2009, kavenoky_sph_1978}, boundary conditions \cite{davison_i
 pellaud_extrapolation_1968, fen_modelling_1992}, Eddington factors, or discontinuity factors
 \cite{koebke_new_1980}.
 
-In this chapter, I propose a hybrid neutronics method for improving control rod modeling in neutron
-diffusion solvers without spatial homogenization. In essence, the hybrid method involves applying
+In this chapter, I propose a hybrid $S_N$-diffusion neutronics method to improve control rod
+modeling in neutron diffusion solvers without spatial homogenization. In essence, the hybrid
+method is an iterative method that applies
 the $S_N$ discrete ordinates neutron transport method on subregions containing the control rod to
 obtain pointwise transport corrections for the diffusion method on the subregions.
+This chapter presents the mathematical derivation for the
+\gls{SAAF} formulation of the $S_N$ equations and the drift transport correction term for the
+neutron diffusion equations, and the computational algorithm for the hybrid method.
 
-Section \ref{sec:theory} discusses the theoretical background for the hybrid $S_N$-diffusion
-method. Section \ref{sec:implementation} provides numerical implementation details of
-the hybrid method and its components. Sections \ref{sec:test-case} and \ref{sec:sim-param} describe
-the 1-D test cases and several simulation parameters in that context. Section
-\ref{sec:prelim-results} discusses the results of the hybrid method applied to the 1-D test cases
-with comparisons to higher-fidelity Monte Carlo and $S_N$ neutron transport methods. Lastly,
-Section \ref{sec:hybrid-summary} summarizes the key findings in this chapter.
+% Section \ref{sec:theory} discusses the theoretical background for the hybrid $S_N$-diffusion
+% method. Section \ref{sec:implementation} provides numerical implementation details of
+% the hybrid method and its components. Sections \ref{sec:test-case} and \ref{sec:sim-param} describe
+% the 1-D test cases and several simulation parameters in that context. Section
+% \ref{sec:prelim-results} discusses the results of the hybrid method applied to the 1-D test cases
+% with comparisons to higher-fidelity Monte Carlo and $S_N$ neutron transport methods. Lastly,
+% Section \ref{sec:hybrid-summary} summarizes the key findings in this chapter.
 
-\section{Theory} \label{sec:theory}
+% The proposed hybrid $S_N$-diffusion method is an iterative method to improve the
+% accuracy of neutron diffusion solutions in reactor systems with highly anisotropic flux regions
+% which I will use to model control rods. 
 
-The proposed hybrid $S_N$-diffusion method is an iterative method to improve the
-accuracy of neutron diffusion solutions in reactor systems with highly anisotropic flux regions
-which I will use to model control rods. This section presents the mathematical derivation for the
-\gls{SAAF} formulation of the $S_N$ equations, the neutron diffusion equations, the drift
-transport correction term, and the computational algorithm for the hybrid method.
+\section{\gls{SAAF} Formulation of the $S_N$ Method}
 
-\subsection{\gls{SAAF} Formulation of the $S_N$ Method}
-
-\subsubsection{Multigroup Neutron Transport Equations}
+\subsection{Multigroup Neutron Transport Equations}
 
 Continuing from the introduction to neutronics methods in Section \ref{sec:summary-nts-mtds},
 the time-dependent, multigroup neutron transport equation defined on the 3-D spatial domain
@@ -83,85 +83,99 @@ In order to introduce operators and facilitate subsequent mathematical derivatio
 the following vector forms:
 %
 \begin{gather}
-  \bm{\Psi} =
+  \bm{\Psi} \equiv
   \begin{bmatrix}
     \Psi_1 \\
     \Psi_2 \\
     \vdots \\
     \Psi_G
   \end{bmatrix},
-  \bm{\phi} = \int_S \bm{\Psi}d\hat{\Omega} =
+  \bm{\phi} \equiv \int_S \bm{\Psi}d\hat{\Omega} \equiv
   \begin{bmatrix}
     \phi_1 \\
     \phi_2 \\
     \vdots \\
     \phi_G
   \end{bmatrix},
-  \bm{\frac{\Psi}{v}}
+  \bm{\frac{\Psi}{v}} \equiv
   \begin{bmatrix}
     \frac{\Psi_1}{v_1} \\
     \frac{\Psi_2}{v_2} \\
     \vdots \\
     \frac{\Psi_G}{v_G}
   \end{bmatrix},
-  \bm{Q}^{\text{ext}} =
+  \bm{C} \equiv
+  \begin{bmatrix}
+    C_1 \\
+    C_2 \\
+    \vdots \\
+    C_G
+  \end{bmatrix},
+  \bm{Q}^{\text{ext}} \equiv
   \begin{bmatrix}
     Q^\text{ext}_1 \\
     Q^\text{ext}_2 \\
     \vdots \\
     Q^\text{ext}_G
-  \end{bmatrix}, \nonumber \\
-  \bm{Q}_f = \frac{1}{4\pi}\bm{Q}_{f,0} =
-  \begin{bmatrix}
-    \frac{1}{4\pi}\chi_{p,1}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
-    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,1} \lambda_i C_i \\
-    \frac{1}{4\pi}\chi_{p,2}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
-    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,2} \lambda_i C_i \\
-    \vdots \\
-    \frac{1}{4\pi}\chi_{p,G}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
-    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,G} \lambda_i C_i
-  \end{bmatrix},
-  \bm{Q} = \bm{Q}_f + \bm{Q}^\text{ext}. \nonumber
+  \end{bmatrix}, \nonumber
+%  \bm{Q}_f = \frac{1}{4\pi}\bm{Q}_{f,0} =
+%  \begin{bmatrix}
+%    \frac{1}{4\pi}\chi_{p,1}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
+%    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,1} \lambda_i C_i \\
+%    \frac{1}{4\pi}\chi_{p,2}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
+%    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,2} \lambda_i C_i \\
+%    \vdots \\
+%    \frac{1}{4\pi}\chi_{p,G}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
+%    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,G} \lambda_i C_i
+%  \end{bmatrix},
+%  \bm{Q} = \bm{Q}_f + \bm{Q}^\text{ext}. \nonumber
 \end{gather}
 %
 We also define the following operators:
 %
 \begin{gather}
-  \mathbb{L}_1\bm{\Psi} =
+  \mathbb{L}_1\bm{\Psi} \equiv
   \begin{bmatrix}
     \hat{\Omega}\cdot\nabla\Psi_1 \\
     \hat{\Omega}\cdot\nabla\Psi_2 \\
     \vdots \\
     \hat{\Omega}\cdot\nabla\Psi_G \\
   \end{bmatrix},
-  \mathbb{L}_2\bm{\Psi} =
+  \mathbb{L}_2\bm{\Psi} \equiv
   \begin{bmatrix}
     \Sigma_{t,1}\Psi_1 \\
     \Sigma_{t,2}\Psi_2 \\
     \vdots \\
     \Sigma_{t,G}\Psi_G
   \end{bmatrix},
-  \mathbb{L}\bm{\Psi} = \mathbb{L}_1\bm{\Psi} + \mathbb{L}_2\bm{\Psi}, \nonumber \\
-  \mathbb{S}\bm{\Psi} =
+  \mathbb{L}\bm{\Psi} \equiv \mathbb{L}_1\bm{\Psi} + \mathbb{L}_2\bm{\Psi}, \nonumber \\
+  \mathbb{S}\bm{\Psi} \equiv
   \begin{bmatrix}
     \sum^G_{g'=1}\int_S \Sigma_{s,g'\rightarrow 1}\Psi_{g'}d\hat{\Omega} \\
     \sum^G_{g'=2}\int_S \Sigma_{s,g'\rightarrow 2}\Psi_{g'}d\hat{\Omega} \\
     \vdots \\
     \sum^G_{g'=G}\int_S \Sigma_{s,g'\rightarrow G}\Psi_{g'}d\hat{\Omega}
   \end{bmatrix},
-%  \mathbb{F}_p\bm{\Psi} = \frac{1}{4\pi} \mathbb{F}_{p,0}\bm{\phi} =
-%  \begin{bmatrix}
-%    \frac{1}{4\pi}\chi_{p,1}(1-\beta)\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'} \\
-%    \frac{1}{4\pi}\chi_{p,2}(1-\beta)\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'} \\
-%    \vdots \\
-%    \frac{1}{4\pi}\chi_{p,G}(1-\beta)\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'}
-%  \end{bmatrix},
-  \mathbb{B}\bm{\Psi} =
+  \mathbb{B}\bm{\Psi} \equiv
   \begin{bmatrix}
     \alpha^s_1\Psi_1(\hat{\Omega}_r) \\
     \alpha^s_2\Psi_2(\hat{\Omega}_r) \\
     \vdots \\
     \alpha^s_G\Psi_G(\hat{\Omega}_r)
+  \end{bmatrix}, \nonumber \\
+  \mathbb{F}\bm{\Psi} \equiv \frac{1}{4\pi}\mathbb{F}_0\bm{\Psi} \equiv
+  \begin{bmatrix}
+    \frac{1}{4\pi}\chi_{p,1}(1-\beta)\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'} \\
+    \frac{1}{4\pi}\chi_{p,2}(1-\beta)\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'} \\
+    \vdots \\
+    \frac{1}{4\pi}\chi_{p,G}(1-\beta)\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'}
+  \end{bmatrix},
+  \mathbb{C}\bm{C} \equiv \frac{1}{4\pi}\mathbb{C}_0\bm{C} \equiv
+  \begin{bmatrix}
+    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,1} \lambda_i C_i \\
+    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,2} \lambda_i C_i \\
+    \vdots \\
+    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,G} \lambda_i C_i
   \end{bmatrix}. \nonumber
 \end{gather}
 %
@@ -170,16 +184,21 @@ matrix multiplication. Eq.\ \ref{eq:mg-nte} can be reexpressed as:
 %
 \begin{gather}
   \frac{\partial}{\partial t} \left(\frac{\bm{\Psi}}{\bm{v}}\right)+\mathbb{L}\bm{\Psi}
-  = \mathbb{S}\bm{\Psi} + \bm{Q}_f + \bm{Q}^\text{ext} \label{eq:nte-vec}
+  = \mathbb{S}\bm{\Psi} + \bm{Q}, \label{eq:nte-vec}
 \end{gather}
 %
 with the boundary conditions on $\partial\mathcal{D}$
 %
 \begin{gather}
-  \bm{\Psi} = \bm{\Psi}^\text{inc} + \mathbb{B}\bm{\Psi}
+  \bm{\Psi} = \bm{\Psi}^\text{inc} + \mathbb{B}\bm{\Psi},
+  \shortintertext{where}
+  \begin{align*}
+    \bm{Q} &= \bm{Q}_f + \bm{Q}^\text{ext}, & \\
+    \bm{Q}_f &= \mathbb{F}\bm{\Psi} + \mathbb{C}\bm{C}. &
+  \end{align*}
 \end{gather}
 
-\subsubsection{Weak Form of the Multigroup Neutron Transport Equations}
+\subsection{Weak Form of the Multigroup Neutron Transport Equations}
 
 Before we begin the derivation for the \gls{SAAF} formulation, we introduce inner product notations
 to express Eq.\ \ref{eq:nte-vec} and the eventual \gls{SAAF} formulation in their weak forms to be
@@ -236,7 +255,7 @@ where $\mathbb{L}^*$ is the adjoint of $\mathbb{L}$.
 %  \left(\bm{\Psi}^*,\left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right) \bm{Q}\right).
 %\end{multline}
 
-\subsubsection{\gls{SAAF} Formulation}
+\subsection{\gls{SAAF} Formulation}
 
 We begin the derivation for the \gls{SAAF} formulation by first rearranging Eq.\ \ref{eq:nte-vec}
 as
@@ -288,7 +307,7 @@ However, the $\mathbb{L}^{-1}_2$ operators render the current \gls{SAAF} formula
 unsolveable in void and near-void regions where the total cross sections $\Sigma_{t,g}$ approach
 zero \cite{wang_diffusion_2014}.
 
-\subsubsection{Spatial Discretization and Void Treatment}
+\subsection{Spatial Discretization and Void Treatment}
 
 To overcome the issue of voids, Wang et al.\ \cite{wang_diffusion_2014} modified the standard
 \gls{SAAF} formulation by taking inspiration from the \gls{SUPG} stabilization technique
@@ -381,12 +400,12 @@ setting $\varsigma$ to zero. Then $\bm{\tau}\mathbb{L}=\mathbb{I}$
 and the stabilized \gls{SAAF} formulation reduces to the unstabilized formulation in Eq.\
 \ref{eq:saaf}.
 
-\subsubsection{Angular Discretization}
+\subsection{Angular Discretization}
 
 The $S_N$ method applies a collocation method for the angular discretization by solving for the
 angular flux along $N_d$ discrete directions $\hat{\Omega}_d$ with weights $w_d$. Numerous options
 exist for the choice of the angular quadrature set
-$\{\hat{\Omega}_d,w_d | d=1,\dots,N_d\}$.
+$\{\hat{\Omega}_d,w_d\ |\ d=1,\dots,N_d\}$.
 For this work, we chose the commonly used level-symmetric quadrature set
 \cite{wang_rattlesnake_2018} for ease of implementation, particularly when applying reflective
 boundary conditions due to 90-degree rotational symmetry about each of the three Cartesian axes.
@@ -396,9 +415,10 @@ angular domain
 %
 \begin{gather}
   \phi_g = \int_\mathcal{S} \Psi_{g,d}\hat{\Omega} \approx \sum^{N_d}_{d=1}w_d
-  \Psi_{g,d}), \label{eq:0th-mmt}
+  \Psi_{g,d}, \label{eq:0th-mmt}
   \shortintertext{where}
-  \Psi_{g,d} = \Psi_g(\hat{\Omega}_d). \nonumber
+  \Psi_{g,d} = \Psi_g(\hat{\Omega}_d), \nonumber \\
+  w = \sum^{N_d}_{d=1} w_d\ (= 8 \mbox{ for 3-D level-symmetric set}). \nonumber
 \end{gather}
 %
 We calculate the scalar flux $\phi_g$ by taking the zeroth moment with respect to $\hat{\Omega}$ as
@@ -415,16 +435,16 @@ shown in Eq.\ \ref{eq:0th-mmt}. We can also calculate higher moments
       C^0_l P^0_l(\mu), & \mbox{ for } m=0, 0\leq l < \infty \\
       \sqrt{2} C^{|m|}_l P^{|m|}_l(\mu) \sin(|m|\omega), & -l \leq m < 0
     \end{cases}, \\
-    \mu &= \mbox{cosine of the polar angle,} \\
-    \omega &= \mbox{the azimuthal angle,} \\
+    \mu &= \mbox{cosine of polar angle,} \\
+    \omega &= \mbox{azimuthal angle,} \\
     C^{|m|}_l &= \sqrt{\frac{\left(l-|m|\right)!}{\left(l+|m|\right)!}}, \\
     P^m_l &= \mbox{associated Legendre polynomial of degree $l$ and order $m$.}
   \end{align*}
 \end{gather}
 %
-for anisotropic scattering treatment.
+for anisotropic scattering treatment. 
 
-\subsubsection{Final Forms of the \gls{SAAF} $S_N$ Equations}
+\subsection{Final Forms of the \gls{SAAF} $S_N$ Equations}
 
 Finally, we present the expanded forms of each term in the \gls{SAAF} formulation of the multigroup
 $S_N$ neutron transport equations. With the angular discretization scheme laid out, we define the
@@ -440,7 +460,7 @@ inner products
 %
 involving integrals over the spatial domain to explicitly show the $S_N$ angular discretization.
 
-Time derivative term:
+\noindent Time derivative term:
 %
 \begin{gather}
   \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,
@@ -454,8 +474,8 @@ Streaming term:
 \begin{gather}
   \left(\mathbb{L}_1\bm{\Psi}^*,
   \left(\bm{\tau}\mathbb{L}_1-\mathbb{I}+\bm{\tau}\mathbb{L}_2\right)\bm{\Psi}\right) =
-  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\hat{\Omega}_d\cdot\Psi^*_{g,d},\tau_g\hat{\Omega}\cdot
-  \nabla\Psi_{g,d}-(1-\tau_g\Sigma_{t,g})\Psi_{g,d}\right)_\mathcal{D}
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},\tau_g\hat{\Omega}
+  \cdot\nabla\Psi_{g,d}-(1-\tau_g\Sigma_{t,g})\Psi_{g,d}\right)_\mathcal{D}
 \end{gather}
 %
 Collision term:
@@ -469,9 +489,157 @@ Scattering term:
 %
 \begin{gather}
   \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\mathbb{S}\bm{\Psi}\right) =
-  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\Psi^*_{g,d},
-    \sum^G_{g'=1}\sum^L_{l=0}\Sigma^{g'\rightarrow g}_{s,l}\sum^l_{m=-l}
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},
+  \sum^G_{g'=1}\sum^L_{l=0}\Sigma^{g'\rightarrow g}_{s,l}\sum^l_{m=-l}
+  \frac{2l+1}{w}Y_{l,m}(\hat{\Omega}_d)\phi_{g',l,m}\right)_\mathcal{D}
+\end{gather}
+%
+Prompt fission source term:
+%
+\begin{gather}
+  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\mathbb{F}\bm{\Psi}\right) =
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},
+  \frac{1}{w}\bar{\chi}_g\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'}\right)_\mathcal{D}
+\end{gather}
+%
+where $\bar{\chi}_g=\chi_{p,g}\left(1-\beta\right)$ for time-dependent problems with \glspl{DNP}
+and $\bar{\chi}_g=\chi_{g}$ for steady-state problems without \glspl{DNP}.
 
+\noindent Delayed neutron source term:
+%
+\begin{gather}
+  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\mathbb{C}\bm{C}\right) =
+  \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},
+  \frac{1}{w}\sum ^I_{i=1}\chi_{d,g}\lambda_i C_i\right)_\mathcal{D}
+\end{gather}
+%
+We scale both prompt fission and delayed neutron source terms by the inverse of the
+multiplication factor $\frac{1}{k}$ for $k$-eigenvalue problems.
+
+\noindent Vacuum boundary term:
+%
+\begin{gather}
+  \langle\bm{\Psi}^*,\bm{\Psi}\rangle^+ - \langle\bm{\Psi}^*,\bm{\Psi}^\text{inc}\rangle^- =
+  \begin{cases}
+    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
+    \hat{\Omega}_d\cdot\hat{n}_b\Psi_{g,d}\right),
+    & \hat{\Omega}\cdot\hat{n}_b>0,\vec{r}\in\partial\mathcal{D}_s \\
+    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
+    \hat{\Omega}_d\cdot\hat{n}_b\Psi^\text{inc}_{g,d}\right),
+    & \hat{\Omega}\cdot\hat{n}_b<0,\vec{r}\in\partial\mathcal{D}_s
+  \end{cases},
+\end{gather}
+%
+where $\Psi^\text{inc}_{g,d}=0$ for a vacuum boundary and positive for a boundary source.
+
+\noindent Reflecting boundary term:
+%
+\begin{gather}
+  \langle\bm{\Psi}^*,\bm{\Psi}\rangle^+ - \langle\bm{\Psi}^*,\mathbb{B}\bm{\Psi}\rangle^- =
+  \begin{cases}
+    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
+    \hat{\Omega}_d\cdot\hat{n}_b\Psi_{g,d}\right),
+    & \hat{\Omega}\cdot\hat{n}_b>0,\vec{r}\in\partial\mathcal{D}_s \\
+    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
+    \hat{\Omega}_d\cdot\hat{n}_b\Psi_{g,d_r}\right),
+    & \hat{\Omega}\cdot\hat{n}_b<0,\vec{r}\in\partial\mathcal{D}_s
+  \end{cases},
+  \shortintertext{where}
+  \hat{\Omega}_{d_r} = \hat{\Omega}_d - 2(\hat{\Omega}_d\cdot\hat{n}_b)\hat{n}_b. \nonumber
+\end{gather}
+
+This concludes the derivation of the \gls{SAAF} formulation of the $S_N$ neutron transport method
+for generating transport corrections in the hybrid $S_N$-diffusion method.
+
+\section{Transport Correction Formulation}
+
+The conventional approach for determining diffusion coefficients for each subregion involves
+running a high-fidelity neutron transport simulation to tally region-wide estimates of the neutron
+transport cross section. The transport cross section formulation is derived from the $P_1$
+approximation of the neutron transport equation with isotropic sources \cite{bell_nuclear_1970} as
+shown in Eq.\ \ref{eq:p1-diffcoef}.
+Essentially, each defined subregion has a constant diffusion coefficient value. However, as
+discussed in Section \ref{sec:summary-nts-mtds}, the neutron diffusion
+equation is only valid in regions of high scattering-to-removal ratios with, at most, linearly
+anisotropic scattering and small flux gradients. These conditions do not hold near or within
+control rods, near interfaces of neighboring materials with highly dissimilar neutronic properties,
+and in materials with significant scattering contributions from light nuclei.
+
+Three main options exist in the literature for applying
+transport corrections to the neutron diffusion equations: applying
+diffusion coefficient corrections, adding a drift term, or adding a
+correction term.
+
+\subsection{Diffusion Coefficient Correction}
+
+Diffusion coefficient corrections involve replacing the diffusion coefficient $D_g$ in the
+diffusion term with ``optimal'' diffusion coefficients based on
+pointwise transport corrections. The literature review in Chapter \ref{chap:lit} covers two such
+examples in the Ronen method by Ronen \cite{ronen_accurate_2004} and the space-dependent diffusion
+coefficients by Pounders \& Rahnema \cite{pounders_diffusion_2009}.
+
+For the hybrid $S_N$-diffusion method, I used a formulation that incorporates pointwise
+corrections to the neutron diffusion flux solution from the $S_N$-derived flux solution as follows:
+%
+\begin{align}
+  D^s_g(x) &= -J^{tr}_g(x)\bigg/\frac{d\phi^{tr}_g(x)}{dx}. \label{eq:svdc}
+\end{align}
+%
+where $D^s_g$ is the \gls{SVDC}, and the $tr$ superscript denotes the transport-derived neutron
+current and scalar flux solutions from the $S_N$ method.
+The basic form of this equation is Fick's first law of diffusion. The result is a diffusion
+coefficient variable that varies in space from point to point. We assume that it is continuous and
+at least once differentiable except at dissimilar material interfaces. \glspl{SVDC} provide
+pointwise corrections to closely match the diffusion flux
+solution to the $S_N$ flux solution.
+
+Eq.\ \ref{eq:svdc} is identical to Ronen's \cite{ronen_accurate_2004} and Pounders \& Rahnema's
+\cite{pounders_diffusion_2009} formulations for space-dependent diffusion coefficients in Eq.\
+\ref{eq:ronen} and Eq.\ \ref{eq:emp}, respectively. In comparison with
+the Ronen method, our approaches differ in how $\phi_{tr}$ and $J_{tr}$ are obtained. Starting with
+a standard neutron diffusion calculation, the Ronen method applies an analytically derived
+transport operator on every iteration to calculate a new estimate of $J_{tr}$ using the $\phi$
+solution from the previous iteration. The main difficulty for the Ronen method lies in deriving the
+transport operators which has been demonstrated for only 1-D geometries thus far.
+
+For the empirical method developed by Pounders \& Rahnema, they assumed a priori knowledge of the
+reference flux solution and used it to generate piecewise-constant, space-dependent diffusion
+coefficients.
+Pounders \& Rahnema \cite{pounders_diffusion_2009} demonstrated the effectiveness of applying
+pointwise corrections derived from analytical or Monte Carlo reference flux solutions. Compared
+with conventional $P_1$-based out-scatter and flux-limited approximations of the diffusion
+coefficient, their diffusion coefficients showed superior agreement
+with the reference flux solutions. They recognized that volume averaging within each mesh element
+for piecewise-constant diffusion coefficients introduces some truncation error if the flux is
+non-linear within the mesh element. This design choice may be due to an intention to retain the
+diffusion coefficient as a constant in the $\frac{d}{dx}D\frac{d\phi}{dx}$ term of the neutron
+diffusion equation (Eq.\ \ref{eq:1d-diff}).
+
+Unlike their approach, the \gls{SVDC} formulation in Eq.\ \ref{eq:svdc} allows for continuously
+varying diffusion coefficients to reduce truncation error. In practice, the discretization order of
+\gls{SVDC} variables in a numerical calculation would be the same as the discretization order of
+the reference flux solution. This formulation introduces a minor change to the finite difference
+implementation of the 2nd-order diffusion term to handle spatial derivatives of the
+diffusion coefficient as $D^s_g$ is not uniform in space.
+
+Regardless of the differences in implementations amongst the methods discussed here,
+diffusion coefficient corrections applied through Eq.\ \ref{eq:saaf} were
+found to be effective in enabling the neutron diffusion method to accurately reproduce reference
+flux solutions \cite{tomatis_application_2011, gross_high-accuracy_2020, tomatis_ronen_2021,
+gross_comprehensive_2023, cufe_study_2024, pounders_diffusion_2009}.
+However, a significant challenge for space-dependent diffusion coefficients
+involves their resolution near neutron flux peaks. The neutron current and flux gradient values in
+Eq.\ \ref{eq:svdc} generally do not reach zero at the same points in space,
+resulting in diffusion coefficient values tending to positive or negative infinity when the
+flux gradient is close to zero. Pounders \& Rahnema avoided this issue by using
+larger mesh sizes to calculate their empirical diffusion coefficients. However, their
+remedy contradicts mesh convergence requirements and would worsen flux accuracy in regions with
+steep, non-linear fluxes, such as near control rods. For the Ronen method, Gross et al.\
+\cite{gross_comprehensive_2023} applied a numerical fix by avoiding correction
+calculations wherever the flux gradient values fall below a certain threshold. 
+Tomatis \& Dall'Osso
+\cite{tomatis_application_2011} developed an alternative formulation in the form of drift terms
+while 
 
 \subsection{Spatially Varying Diffusion Coefficients} \label{sec:svdc}
 
