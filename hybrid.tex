@@ -479,7 +479,7 @@ involving integrals over the spatial domain to explicitly show the $S_N$ angular
   \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,
   \frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)\right) =
   \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\Psi^*_{g,d},
-  \frac{\Psi_{g,d}}{v_g}\right)_\mathcal{D}
+  \frac{\Psi_{g,d}}{v_g}\right)_\mathcal{D} \label{eq:time-derivative}
 \end{gather}
 %
 Streaming term:
@@ -567,7 +567,7 @@ Reflecting boundary term:
     \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
     \hat{\Omega}_d\cdot\hat{n}_b\Psi_{g,d_r}\right),
     & \hat{\Omega}\cdot\hat{n}_b<0,\vec{r}\in\partial\mathcal{D}_s
-  \end{cases},
+  \end{cases}, \label{eq:reflecting-bc}
   \shortintertext{where}
   \hat{\Omega}_{d_r} = \hat{\Omega}_d - 2(\hat{\Omega}_d\cdot\hat{n}_b)\hat{n}_b. \nonumber
 \end{gather}
@@ -592,9 +592,13 @@ and in materials with significant scattering contributions from light nuclei.
 
 Transport corrections to allow neutron diffusion methods to reproduce high-fidelity flux solutions
 can be introduced by modifying the neutron diffusion equations.
-In this work, we explored two options for applying
+In this work, I explored two options for applying
 transport corrections to the neutron diffusion equations: applying
 diffusion corrections or adding a drift correction term.
+I performed preliminary investigations on 1-D test cases with both types of transport correction. I
+eventually elected to use the drift correction term for the remaining test cases and reactor model
+demonstrations due to superior numerical properties. I will make clear the reasons for this
+selection through 1-D test case results in Chapter 5.
 
 \subsection{Diffusion Correction}
 
@@ -947,6 +951,105 @@ We will discard inaccurate transport correction values in $V_1'$. Therefore, the
 diffusion calculation on $V_0$ will only apply transport corrections in $V_1$ excluding $V_1'$.
 
 \section{Numerical Implementation}
+
+In this section, I detail the numerical implementation of the hybrid $S_N$-diffusion method with
+drift correction terms. As mentioned in Section \ref{sec:transport-correction}, I opted for the
+drift correction terms over diffusion correction for investigations beyond 1-D test cases.
+Therefore, for brevity, I moved numerical implementation details for the hybrid method with
+diffusion correction to Appendix A.
+
+In Section \ref{sec:moltres-description}, I detailed the code structure of Moltres
+\cite{lindsay_moltres_2017} in relation to the underlying \gls{MOOSE} finite-element framework
+\cite{giudicelli_30_2024} and the pre-existing multigroup neutron diffusion and thermal-hydraulics
+models. I implemented the hybrid $S_N$-diffusion model in Moltres to
+leverage existing capabilities and functions that are also relevant to the new $S_N$ neutron
+transport model and the $S_N$-to-diffusion coupling features. I also leveraged several basic
+functions from \gls{MOOSE} that are useful for setting up physics models.
+
+All source code for the hybrid $S_N$-diffusion model can be found in my Moltres GitHub fork
+repository\footnote{\url{https://github.com/smpark7/moltres/tree/sn-method}} as of the time of
+writing. This branch may be merged into the original upstream Moltres GitHub repository in future.
+
+Moltres presently comes with a Python script for parsing and extracting neutron group constant data
+from OpenMC \cite{boyd_multigroup_2019} or Serpent 2 \cite{leppanen_serpent_2014} simulation
+output files. The script reorganizes the group constant data into a
+JSON format file. I expanded the Python script to extract
+the macroscopic total cross sections $\Sigma_{t,g}$ and the higher-order macroscopic Legendre
+scattering moments $\Sigma^{g'\rightarrow g}_{s,l}$ for the $S_N$ neutron transport model. A new
+\texttt{Material} class called \texttt{MoltresSNMaterial} creates material
+property variables for each group constant for the $S_N$ model to read during a neutronics
+simulation. If the user provides group constant data at multiple reactor temperature states,
+\texttt{MoltresSNMaterial} can interpolate the data to simulate temperature-dependent reactivity
+changes.
+
+The new \texttt{MoltresUtils} class contains ``utility'' functions required by the $S_N$ model.
+These functions include: a function to retrieve directions and weights defined by a
+level-symmetric quadrature set of order $N$, a function to retrieve reflecting directions at
+reflecting boundaries, and a function to compute spherical harmonic flux moments for anisotropic
+scattering. I pre-computed the direction and weight values for the level-symmetric quadrature sets
+using a Python script and hard-coded them in Moltres to reduce computational burden during
+simulations.
+
+The \gls{SAAF} $S_N$ method defines $G$ energy groups and $N_d$ discrete directions for a total
+of $G\times N_d$ angular flux variables $\Psi_{g,d}$. The Moltres $S_N$ model groups the
+$\Psi_{g,d}$ variables by energy group into $G$ \textit{array variables}. An array variable is a
+set of standard field variables to help with dealing with setting up simulations with high
+dimensionality. Each standard variable of an array variable is referred to as a component in the
+array variable. In this work, I opted for
+2nd-order Lagrange shape functions to approximate the $\Psi_{g,d}$ variables in the finite-element
+analysis. The 2nd-order approximation showed better convergence rates in mesh refinement studies.
+
+The terms in the \gls{SAAF} $S_N$ equations (Eqs.\ \ref{eq:time-derivative}-\ref{eq:reflecting-bc})
+are represented by kernel and BC classes inheriting from \texttt{ArrayKernel} and
+\texttt{ArrayIntegratedBC} template classes. Table \ref{tab:saaf-sn} lists the class names
+corresponding to each term in Eq.\ \ref{eq:saaf-vt}.
+%
+\begin{table}[htb]
+  \centering
+  \caption{Names of the Kernels and BCs representing the \gls{SAAF} $S_N$ equations.}
+  \begin{tabular}{l l l}
+    \toprule
+    Term name & Class name \\
+    \midrule
+    Time derivative & \texttt{SNTimeDerivative} \\
+    Streaming & \texttt{SNStreaming} \\
+    Collision & \texttt{SNCollision} \\
+    Scattering & \texttt{SNScattering} \\
+    Prompt fission source & \texttt{SNFission} \\
+    Delayed neutron source & \texttt{SNDelayed} \\
+    Vacuum boundary & \texttt{SNVacuumBC} \\
+    Reflecting boundary & \texttt{SNReflectingBC} \\
+    Hybrid method boundary source & \texttt{SNDiffusionBC} \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:saaf-sn}
+\end{table}
+
+The \gls{MOOSE} framework leverages the Eigen \cite{guennebaud_eigen_2010} C++ template library for
+linear algebra operations defined in ArrayKernels and ArrayBCs for array variables. The \gls{SAAF}
+$S_N$ kernels and BCs contain functions for computing the residual and Jacobian contributions of
+each term. The \gls{FEM} numerical solver deems to have reached a converged solution if the sum of
+residual contributions falls below a defined tolerance value. All $S_N$ simulations in this work
+employ the \gls{PJFNK} method with the HYPRE-BoomerAMG method for preconditioning. BoomerAMG is an
+algebraic multigrid method from the HYPRE \cite{hypre_hypre_2022} linear solver library.
+
+The drift correction terms $\vec{D}_g$ are initialized as auxiliary array variables
+with three components corresponding to their $x$, $y$, and $z$ components. Auxiliary variables
+encompass all field variables which are not directly determined during the \gls{PJFNK}
+calculation stage. The drift and boundary correction variables are computed during the
+post-calculation stage from $\Psi_{g,d}$.
+
+I employed the \texttt{MultiApp} system \cite{gaston_physics-based_2015} to implement the fixed point
+iterative coupling between the $S_N$ and neutron diffusion solvers for the hybrid $S_N$-diffusion method.
+The \texttt{MultiApp} and \texttt{Transfers} systems from \gls{MOOSE} provide flexible interfaces
+for setting up iterative solvers and transferring data between the solvers. A typical hybrid
+method simulation on Moltres starts with the neutron diffusion solver for the first estimate of the
+neutron flux distribution. Moltres transfers the neutron flux distribution to the $S_N$ solver to
+compute the boundary source distribution. The $S_N$ solver then generates its own flux estimate and
+computes drift and boundary correction variables for the neutron diffusion solver. Moltres
+transfers the correction variables to the neutron diffusion solver to compute its next flux
+estimate. This process continues until the neutron flux distribution converges to within tolerance
+values provided in the input file.
 
 \section{Summary} \label{sec:hybrid-summary}
 

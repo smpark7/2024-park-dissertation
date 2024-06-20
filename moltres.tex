@@ -1,4 +1,4 @@
-\section{Description of Moltres}
+\section{Description of Moltres} \label{sec:moltres-description}
 
 This chapter provides an overview of Moltres as a multiphysics
 simulation software for molten salt reactors. 
@@ -19,7 +19,7 @@ multiphysics analysis and the complexity of advanced reactor designs
 necessitate robust, scalable, and flexible computational tools.
 
 Moltres draws many advantages from being developed on MOOSE
-\cite{permann_moose_2020}. MOOSE is an open-source, finite-element,
+\cite{giudicelli_30_2024}. MOOSE is an open-source, finite-element,
 multiphysics framework developed at \gls{INL}. The framework provides a
 user-friendly interface for developing multiphysics software through
 \gls{OOP} in \texttt{C++} to modularize various
@@ -135,29 +135,29 @@ groups are given by:
     \sum^G_{g' \neq g} \Sigma^s_{g' \rightarrow g} \phi_{g'} \nonumber \\
     &+ \chi^p_g \sum^G_{g'=1} \left( 1-\beta \right) \nu \Sigma^f_{g'}
     \phi_{g'} + \chi^d_g \sum^I_i \lambda_i C_i \label{eq:neutron} %\\
-%    %
-%    \shortintertext{where}
-%    v_g =& \text{ average speed of neutrons in group $g$,} 
-%    \nonumber \\
-%    \phi_g =& \text{ neutron flux in group $g$,}
-%    \nonumber \\
-%    t =& \text{ time,} \nonumber \\
-%    D_g =& \text{ diffusion coefficient of neutrons in group $g$,} \nonumber \\
-%    \Sigma^r_g =& \text{ macroscopic removal cross section for} \nonumber \\
-%    &\text{ neutrons from group $g$,} \nonumber \\
-%    \Sigma^s_{g' \rightarrow g} =& \text{ macroscopic scattering cross section
-%    for neutrons from} \nonumber \\
-%    &\text{ groups $g'$ to $g$,} \nonumber \\
-%    \chi^p_g =& \text{ prompt fission spectrum for neutrons in group $g$,} \nonumber \\
-%    G =& \text{ total number of discrete neutron groups,} \nonumber \\
-%    \nu_g =& \text{ average number of neutrons produced per fission,} \nonumber
-%    \\
-%    \Sigma^f_{g} =& \text{ macroscopic fission cross section for neutron}
-%    \nonumber \\
-%    &\text{ in group $g$,} \nonumber \\
-%    \chi^d_g =& \text{ delayed fission spectrum for neutrons in group $g$,} \nonumber \\
-%    I =& \text{ total number of \gls{DNP} groups,} \nonumber \\
-%    \beta =& \text{ total delayed neutron fraction.} \nonumber
+    %
+    \shortintertext{where}
+    v_g =& \text{ average speed of neutrons in group $g$,} 
+    \nonumber \\
+    \phi_g =& \text{ neutron flux in group $g$,}
+    \nonumber \\
+    t =& \text{ time,} \nonumber \\
+    D_g =& \text{ diffusion coefficient of neutrons in group $g$,} \nonumber \\
+    \Sigma^r_g =& \text{ macroscopic removal cross section for} \nonumber \\
+    &\text{ neutrons from group $g$,} \nonumber \\
+    \Sigma^s_{g' \rightarrow g} =& \text{ macroscopic scattering cross section
+    for neutrons from} \nonumber \\
+    &\text{ groups $g'$ to $g$,} \nonumber \\
+    \chi^p_g =& \text{ prompt fission spectrum for neutrons in group $g$,} \nonumber \\
+    G =& \text{ total number of discrete neutron groups,} \nonumber \\
+    \nu_g =& \text{ average number of neutrons produced per fission,} \nonumber
+    \\
+    \Sigma^f_{g} =& \text{ macroscopic fission cross section for neutron}
+    \nonumber \\
+    &\text{ in group $g$,} \nonumber \\
+    \chi^d_g =& \text{ delayed fission spectrum for neutrons in group $g$,} \nonumber \\
+    I =& \text{ total number of \gls{DNP} groups,} \nonumber \\
+    \beta =& \text{ total delayed neutron fraction.} \nonumber
 \end{align}
 
 Despite forming only around 0.7\% of all neutrons emitted, delayed neutrons
@@ -172,19 +172,19 @@ groups are given by:
     \phi_{g'} - \lambda_i C_i - \vec{u} \cdot \nabla C_i + \nabla \cdot
     D_{\text{P}} \nabla C_i \label{eq:precursor} %\\
     %
-%    \shortintertext{where}
-%    \beta_i =& \text{ delayed neutron fraction of precursor group $i$,}
-%    \nonumber \\
-%    \lambda_i =& \text{ average decay constant of delayed neutron} \nonumber \\
-%    &\text{ precursors in precursor group $i$,} \nonumber \\
-%    C_i =& \text{ concentration of \gls{DNP}s in}
-%    \nonumber \\
-%    &\text{ precursor group $i$,} \nonumber \\
-%    \vec{u} =& \text{ molten salt flow velocity vector,}
-%    \nonumber \\
-%    D_{\text{P}} =& \text{ effective diffusion coefficient of the delayed}
-%    \nonumber \\
-%    &\text{ neutron precursors.} \nonumber
+    \shortintertext{where}
+    \beta_i =& \text{ delayed neutron fraction of precursor group $i$,}
+    \nonumber \\
+    \lambda_i =& \text{ average decay constant of delayed neutron} \nonumber \\
+    &\text{ precursors in precursor group $i$,} \nonumber \\
+    C_i =& \text{ concentration of \gls{DNP}s in}
+    \nonumber \\
+    &\text{ precursor group $i$,} \nonumber \\
+    \vec{u} =& \text{ molten salt flow velocity vector,}
+    \nonumber \\
+    D_{\text{P}} =& \text{ effective diffusion coefficient of the delayed}
+    \nonumber \\
+    &\text{ neutron precursors.} \nonumber
 \end{align}
 
 These two equations are largely similar to conventional formulations of the
@@ -262,18 +262,18 @@ with the Boussinesq approximation for buoyancy-driven flow are given as:
     \shortintertext{and}
     \text{Mass equation: } \nabla \cdot \vec{u} =& 0
     \label{eq:divergence}
-%    \shortintertext{where}
-%    \rho =& \text{ fluid density,} \nonumber \\
-%    p =& \text{ pressure,} \nonumber \\
-%    \mu =& \text{ dynamic viscosity,} \nonumber \\
-%    \alpha =& \text{ coefficient of thermal expansion,} \nonumber \\
-%    \vec{g} =& \text{ gravitational force vector,} \nonumber
-%    \\
-%    T =& \text{ fluid temperature,} \nonumber \\
-%    T_{\text{ref}} =& \text{ reference temperature at which the nominal}
-%    \nonumber \\
-%    &\text{ density is provided.} \nonumber
-%    \nonumber
+    \shortintertext{where}
+    \rho =& \text{ fluid density,} \nonumber \\
+    p =& \text{ pressure,} \nonumber \\
+    \mu =& \text{ dynamic viscosity,} \nonumber \\
+    \alpha =& \text{ coefficient of thermal expansion,} \nonumber \\
+    \vec{g} =& \text{ gravitational force vector,} \nonumber
+    \\
+    T =& \text{ fluid temperature,} \nonumber \\
+    T_{\text{ref}} =& \text{ reference temperature at which the nominal}
+    \nonumber \\
+    &\text{ density is provided.} \nonumber
+    \nonumber
 \end{align}
 
 Velocity variables and advected quantities such as temperature are susceptible
@@ -300,11 +300,11 @@ advection-diffusion equation given by:
     \shortintertext{and}
     Q_f =& \sum^G_{g=1} \epsilon_g \Sigma_g^f \phi_g \label{eq:heat-source}
     \shortintertext{where}
-%    c_p =& \text{ specific heat capacity of molten salt,} \nonumber \\
-%    k =& \text{ effective thermal conductivity of molten salt,} \nonumber \\
-%    Q_f =& \text{ fission heat source,} \nonumber \\
-%    \epsilon_g =& \text{ average fission energy released by neutrons in group
-%    $g$,} \nonumber \\
+    c_p =& \text{ specific heat capacity of molten salt,} \nonumber \\
+    k =& \text{ effective thermal conductivity of molten salt,} \nonumber \\
+    Q_f =& \text{ fission heat source,} \nonumber \\
+    \epsilon_g =& \text{ average fission energy released by neutrons in group
+    $g$,} \nonumber \\
     Q_s =& \text{ heat sink/removal.} \nonumber
 \end{align}
 
@@ -343,7 +343,7 @@ Moltres also accounts for the decay of
 \glspl{DNP} outside the active core region by simulating its flow in a
 separate 1-D pipe geometry. This external loop pipe calculation is tightly
 coupled to the active core simulation through Picard iterations in MOOSE's
-MultiApp functionality and inlet/outlet boundary values.
+MultiApp \cite{gaston_physics-based_2015} functionality and inlet/outlet boundary values.
 The external loop region is assumed to be subcritical to minimize neutron
 irradiation upon heat exchangers, pumps, and other equipment. Therefore, the
 only significant neutronic-related phenomena are the drift and decay of
