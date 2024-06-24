@@ -598,7 +598,7 @@ diffusion corrections or adding a drift correction term.
 I performed preliminary investigations on 1-D test cases with both types of transport correction. I
 eventually elected to use the drift correction term for the remaining test cases and reactor model
 demonstrations due to superior numerical properties. I will make clear the reasons for this
-selection through 1-D test case results in Chapter 5.
+selection through 1-D test case results in Chapter \ref{chap:hybrid-verification}.
 
 \subsection{Diffusion Correction}
 
@@ -934,21 +934,80 @@ $\Psi^\text{inc}_{g,d}$ in Eq.\ \ref{eq:boundary-source} to
 
 \section{Buffer Region} \label{sec:buffer-region}
 
-This boundary condition for the $S_N$ subsolver will generally cause deviations
+The $S_N$ subsolver boundary conditions will generally cause deviations
 in the flux and transport correction values since the $P_1$ approximation is accurate for up to
-linear anisotropies in the flux. However, as I will show in the next chapter, the influence of
-boundary conditions on the accuracy of
+linear anisotropies in the flux. However, as I will show in Chapter \ref{chap:hybrid-verification},
+the influence of boundary conditions on the accuracy of
 the transport correction terms does not extend far from the boundary $\partial V_1$ in optically
 thick media due to competing influences from the bulk scattering and absorption effects in $V_1$.
-Results in the next chapter will show that transport corrections generated with the $S_N$
-subsolver within $V_1$ are accurate everywhere up to a few centimeters near $\partial V_1$.
+Results in Chapter \ref{chap:hybrid-verification} will show that transport correction values
+($D^s_g$ or $\vec{D}_g$) generated with the $S_N$ subsolver within $V_1$ are accurate everywhere up
+to a few centimeters away from $\partial V_1$.
 
-When applying the hybrid method, $V_1$ must be large enough to provide accurate transport
-corrections near the highly-absorbing control rod while simultaneously accommodating for inaccurate
-transport corrections near $\partial V_1$. I will henceforth refer to the region in $V_1$
-near $\partial V_1$ with inaccurate transport corrections as the \textit{buffer region} ($V_1'$).
-We will discard inaccurate transport correction values in $V_1'$. Therefore, the subsequent neutron
+For accurate flux estimates with the hybrid method, I propose that $V_1$ must be large enough to
+provide accurate transport corrections near the highly-absorbing control rod while simultaneously
+accommodating for inaccurate transport correction values near $\partial V_1$. Right before each
+neutron diffusion calculation, the solver must determine where the inaccurate transport correction
+values occur and discard them. I will refer to the region near $\partial V_1$ in which the
+transport correction values are discarded as the \textit{buffer region} ($V_1'$).
+$V_1'$ shares the same outer boundary $\partial V_1$ as $V_1$. Consequently, the neutron
 diffusion calculation on $V_0$ will only apply transport corrections in $V_1$ excluding $V_1'$.
+
+In this discussion thus far, I have yet to establish the cutoff boundary for $V_1'$ within $V_1$
+opposite to $\partial V_1$. A natural/intuitive criterion for the location of the cutoff boundary
+would be wherever the components of the drift correction variable $\vec{D}_g$ is zero, i.e.,
+wherever the components change signs. The reasons for this criterion are twofold. Firstly, at
+points where the $\vec{D}_g$ components are zero, the flux is approximately isotropic along the
+axes corresponding to the components because value of $\vec{D}_g$ represents how much correction a
+standard neutron diffusion model requires. Secondly, this choice preserves the smoothness of the
+neutron flux and flux gradient.
+%
+\begin{figure}[htb!]
+	\centering
+	\includegraphics[width=.75\columnwidth]{case-3b-geometry}
+	\caption{1-D geometry for Case 3b.}
+	\label{fig:3b-geometry}
+\end{figure}
+
+Here, I use Case 3b of the 1-D test cases to be covered in Chapter \ref{chap:hybrid-verification}
+to illustrate the buffer region and the behavior of $\vec{D}_g$. Case 3b is a 1-D slab problem
+consisting of control rod, air, fuel-graphite repeating lattice, and core vessel regions as shown
+in Figure \ref{fig:3b-geometry}. The fuel regions are neutron-multiplying media containing
+$^\text{235}$U fissile material. I took material compositions of each region from the \gls{MSRE}
+reference design and the start-up fuel composition \cite{fratoni_molten_2020}.
+Case 3b has reflecting boundary conditions on the left boundary and vacuum boundary conditions on
+the right boundary.
+%
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{case-3b-group-1-drift}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{case-3b-group-8-drift}
+    \end{subfigure}
+    \caption{The reference and hybrid drift ($\vec{D}_g$) distributions for group 1 and 8 calculated
+      from $S_8$ and $S_8$-diffusion simulations. The correction region $V_1$ spans $x=0$ cm to
+      $x=10$ cm.}
+    \label{fig:3b-drift}
+\end{figure}
+
+I ran an eight energy group $S_8$ $k$-eigenvalue simulation with the newly implemented $S_N$ solver
+on Moltres to generate reference $\vec{D}_g$ distributions. I also ran an eight-group hybrid
+$S_8$-diffusion simulation with the $S_8$ method for generating $\vec{D}_g$ in $V_1$. I set $V_1$
+to encompass the control rod region and its vicinity from $x=0$ to $10$ cm based on the geometry in
+Figure \ref{fig:3b-geometry}. Figure \ref{fig:3b-drift} shows the $\vec{D}_1$ and $\vec{D}_8$
+distributions from $x=0$ to $15$ from the reference $S_8$ and hybrid simulations. The hybrid
+$\vec{D}_g$ distribution is zero beyond $x=10$ cm because no corrections are generated outside of
+$V_1$. Comparing the hybrid distributions to the reference distributions in both energy groups, the
+hybrid distributions are accurate up to around $x=8$ cm. Working backward towards the control rod
+at $x=0$-$0.5$ cm, the $\vec{D}_g$ values go to zero at $x=7.5$ cm. Therefore, the buffer
+region $V_1'$ lies between $x=7.5$ cm and $x=10$ cm. While $V_1$ is pre-determined at the start of
+the simulation and fixed for all energy groups, $V_1'$ does not necessarily coincide for all
+energy groups and coordinate axes.
 
 \section{Numerical Implementation}
 
@@ -966,9 +1025,10 @@ leverage existing capabilities and functions that are also relevant to the new $
 transport model and the $S_N$-to-diffusion coupling features. I also leveraged several basic
 functions from \gls{MOOSE} that are useful for setting up physics models.
 
-All source code for the hybrid $S_N$-diffusion model can be found in my Moltres GitHub fork
+All source code for the hybrid $S_N$-diffusion model is hosted on my Moltres GitHub fork
 repository\footnote{\url{https://github.com/smpark7/moltres/tree/sn-method}} as of the time of
-writing. This branch may be merged into the original upstream Moltres GitHub repository in future.
+writing. This branch may be merged into the original upstream Moltres GitHub repository in the near
+future.
 
 Moltres presently comes with a Python script for parsing and extracting neutron group constant data
 from OpenMC \cite{boyd_multigroup_2019} or Serpent 2 \cite{leppanen_serpent_2014} simulation
@@ -992,7 +1052,7 @@ simulations.
 
 The \gls{SAAF} $S_N$ method defines $G$ energy groups and $N_d$ discrete directions for a total
 of $G\times N_d$ angular flux variables $\Psi_{g,d}$. The Moltres $S_N$ model groups the
-$\Psi_{g,d}$ variables by energy group into $G$ \textit{array variables}. An array variable is a
+$\Psi_{g,d}$ variables by energy group into $G$ array variables. An array variable is a
 set of standard field variables to help with dealing with setting up simulations with high
 dimensionality. Each standard variable of an array variable is referred to as a component in the
 array variable. In this work, I opted for
@@ -1030,14 +1090,17 @@ linear algebra operations defined in ArrayKernels and ArrayBCs for array variabl
 $S_N$ kernels and BCs contain functions for computing the residual and Jacobian contributions of
 each term. The \gls{FEM} numerical solver deems to have reached a converged solution if the sum of
 residual contributions falls below a defined tolerance value. All $S_N$ simulations in this work
-employ the \gls{PJFNK} method with the HYPRE-BoomerAMG method for preconditioning. BoomerAMG is an
-algebraic multigrid method from the HYPRE \cite{hypre_hypre_2022} linear solver library.
+employ the \gls{PJFNK} method \cite{knoll_jacobian-free_2004} with HYPRE-BoomerAMG
+\cite{hypre_hypre_2022} for preconditioning. BoomerAMG is a parallel implementation of the
+algebraic multigrid method from the HYPRE linear solver library.
 
-The drift correction terms $\vec{D}_g$ are initialized as auxiliary array variables
+Moltres initializes the drift correction variables $\vec{D}_g$ as auxiliary array variables
 with three components corresponding to their $x$, $y$, and $z$ components. Auxiliary variables
 encompass all field variables which are not directly determined during the \gls{PJFNK}
 calculation stage. The drift and boundary correction variables are computed during the
-post-calculation stage from $\Psi_{g,d}$.
+post-calculation stages using $\Psi_{g,d}$.
+I created new kernel classes, \texttt{GroupDrift} and \texttt{VacuumCorrectionBC}, to add the
+drift and boundary correction terms to the transport-corrected neutron diffusion solver.
 
 I employed the \texttt{MultiApp} system \cite{gaston_physics-based_2015} to implement the fixed point
 iterative coupling between the $S_N$ and neutron diffusion solvers for the hybrid $S_N$-diffusion method.
@@ -1048,39 +1111,38 @@ neutron flux distribution. Moltres transfers the neutron flux distribution to th
 compute the boundary source distribution. The $S_N$ solver then generates its own flux estimate and
 computes drift and boundary correction variables for the neutron diffusion solver. Moltres
 transfers the correction variables to the neutron diffusion solver to compute its next flux
-estimate. This process continues until the neutron flux distribution converges to within tolerance
+estimate. This process iterates until the neutron flux distribution converges to within tolerance
 values provided in the input file.
 
 \section{Summary} \label{sec:hybrid-summary}
 
-In this chapter, I presented the mathematical derivations for the \gls{SAAF} formulation of the
-$S_N$ method, transport correction formulations, and boundary conditions relevant to the hybrid
-$S_N$-diffusion method. I also presented details on the iteration algorithm and the handling of
-transport corrections in the hybrid $S_N$-diffusion method to improve on the standard neutron
-diffusion method for neutronics simulations of reactor systems containing highly neutron-absorbing
-regions (control rods). The hybrid method relies on transport corrections derived from the flux
-solutions from the $S_N$ subsolver to fix inaccurate flux estimates from using the neutron
-diffusion method alone. The hybrid method saves on computational expense at the cost of some
-accuracy in reactor regions not treated with transport corrections. In the next chapter, I will
-also show that I can further reduce computational expense by leaving the flux in the $S_N$
-subsolver because the transport correction parameters converge faster than the flux in the $S_N$
-subsolver.
+The hybrid $S_N$-diffusion method improves on the standard neutron
+diffusion method by iteratively applying transport corrections generated from solving the $S_N$
+neutron transport
+method in subdomains containing highly neutron-absorbing regions (e.g., control rods). By limiting
+the size of the subdomain in which $S_N$ subsolver is active, the hybrid method saves on
+computational expense at the cost of some accuracy in the regions not treated with transport
+corrections. In turn, the neutron diffusion subsolver provides approximate boundary source terms
+for the $S_N$ subsolver boundary conditions. 
 
-%I established a framework for the hybrid method for coupling an $S_N$ subsolver and a neutron
-%diffusion solver through outer iterations by taking advantage of the weak dependence of the $S_N$
-%flux solution on the approximate boundary conditions determined from the neutron diffusion flux
-%solution. This framework could be extended to improve multischeme methods, which
-%divide a problem domain into subdomains where different neutronics methods are applied. For
-%instance, in an $S_N$-diffusion multischeme method, the $S_N$ method is applied in subdomains with
-%significant transport effects while other subdomains are treated with the neutron diffusion method
-%to reduce the overall computational effort required \cite{wang_rattlesnake_2021}. 
-%
-%I also developed an algorithm for identifying and discarding inaccurate \gls{SVDC} values, which
-%are expected to occur near the correction region boundary. I demonstrated the hybrid
-%method on 1-D graphite-moderated test cases modeled after the \gls{MSRE}. The hybrid method showed
-%good agreement with the reference Monte Carlo and $S_8$ methods after eliminating neutron energy
-%group discretization errors in test cases that included highly neutron-absorbing regions. The
-%hybrid method had better accuracy in more homogeneous systems largely due to the larger effective
-%transport correction regions through \glspl{SVDC}. Further work
-%is needed to extend and verify the hybrid method to 2-D and 3-D neutronics simulations and to
-%create a robust solution for determining \glspl{SVDC} around neutron flux peaks and troughs. 
+I presented two different formulations of transport correction that I investigated in this work for
+implementation in the hybrid method: diffusion correction and drift correction. Diffusion
+correction involves replacing the diffusion coefficient in the neutron diffusion equations with
+corrected coefficients derived from neutron transport methods. Drift correction involves
+introducing additional drift terms to the neutron diffusion equations to provide transport
+corrections. I found drift correction to be more promising due to issues with division by zero when
+obtaining diffusion corrections.
+
+In my investigations with the hybrid method, I found that the $S_N$ subsolver produces
+accurate transport correction values in most of the subdomain. However, the transport correction
+values near the $S_N$ subsolver boundary are inaccurate due to the approximate boundary conditions
+provided by the diffusion subsolver. Thus, I developed and presented a numerical fix for discarding
+inaccurate transport correction values and preserving the smoothness of the neutron flux and flux
+gradient solution.
+
+By implementing the hybrid method in Moltres, I leveraged existing neutronics modelling
+capabilities and parallel numerical solver libraries available through Moltres and \gls{MOOSE} to
+enable full-core, time-dependent reactor simulations on \gls{HPC} clusters.
+In the next chapter, I verify the hybrid method against Monte Carlo and $S_N$ neutron transport
+methods through various neutronics test cases and discuss some significant observations made in my
+investigations.

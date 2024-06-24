@@ -1,5 +1,5 @@
 %% Package and Class "uiucthesis2021" for use with LaTeX2e.
-\documentclass[edeposit,fullpage,11pt]{uiucthesis2021}
+\documentclass[11pt]{uiucthesis2021}
 \doublespacing
 
 \usepackage[acronym,toc]{glossaries}
@@ -138,12 +138,16 @@ nogroupskip=true]
 
 \chapter{Verification of Multiphysics Features in Moltres}
 \label{chap:verification}
-%\input{verification}
-%\glsresetall
+\input{verification}
+\glsresetall
 
 \chapter{Hybrid $S_N$-Diffusion Method}
 \label{chap:hybrid}
 \input{hybrid}
+\glsresetall
+
+\chapter{Verification of the Hybrid $S_N$-Diffusion Method}
+\label{chap:hybrid-verification}
 \glsresetall
 
 %\chapter{Proposed Work}
