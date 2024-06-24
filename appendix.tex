@@ -1,0 +1,353 @@
+\section{Numerical Implementation} \label{sec:implementation}
+
+In Section \ref{sec:theory}, I presented the theoretical basis for the hybrid
+$S_N$-diffusion method and demonstrated the method on a simple problem. Now I will discuss
+numerical implementation details of group
+constant data processing and the neutron diffusion, $S_N$ neutron transport, and hybrid
+$S_N$-diffusion solvers. I implemented all numerical solvers and analysis scripts in the Python
+programming language. First, I will discuss the material group constant data generation and
+postprocessing steps. Next, I present the implementation details of the neutron
+diffusion and $S_N$ numerical methods. Lastly, I present how they are coupled to form the hybrid
+$S_N$-diffusion method.
+
+\subsection{Group Constant Data Generation}
+
+The group constants required by either or both neutron diffusion and $S_N$ neutron transport
+methods are:
+%
+\begin{itemize}
+  \item $\Sigma_{t,g}$: Macroscopic total cross section in group $g$,
+  \item $\Sigma_{r,g}$: Macroscopic removal cross section in group $g$,
+  \item $\Sigma_s^{g'\rightarrow g}$: Macroscopic group-to-group scattering cross section matrix,
+  \item $\Sigma_{s,l}^{g'\rightarrow g}$: $l$-th Legendre moment of the macroscopic
+    group-to-group scattering cross section matrix,
+  \item $\Sigma_{sp,l}^{g'\rightarrow g}$: $l$-th Legendre moment of the macroscopic
+    group-to-group scattering production cross section matrix,
+  \item $D_g$: $P_1$-based diffusion coefficient in group $g$,
+  \item $\nu\Sigma_{f,g}$: Product of the average number of neutrons produced per fission and the
+    macroscopic fission cross section in group $g$,
+  \item $\chi_g$: Neutron fission spectrum in group $g$.
+\end{itemize}
+%
+These group constants are generated using OpenMC's multigroup cross section generation capability
+\cite{boyd_multigroup_2019} and postprocessed using a Python script into JSON format files.
+$\Sigma_{r,g}$ is the only quantity that OpenMC does not directly provide. It is calculated as
+%
+\begin{align}
+  \Sigma_{r,g} =& \sum^G_{g'\neq g}\Sigma_s^{g\rightarrow g'}+\Sigma_{a,g}-\left(\Sigma_{sp}^{g
+    \rightarrow g} - \Sigma_s^{g\rightarrow g}\right)
+  \shortintertext{where}
+      \Sigma_{a,g} =& \mbox{ macroscopic absorption cross section in group $g$,} \nonumber \\
+      \Sigma_{sp}^{g\rightarrow g} =& \mbox{ macroscopic scattering production cross section from
+      group $g$ to $g$.} \nonumber
+\end{align}
+%
+$\Sigma_{r,g}$ primarily represents the loss of neutrons from group $g$ through outscattering and
+absorption. $\Sigma_{sp}^{g\rightarrow g}$ incorporates neutron multiplication effects from neutron
+knockout reactions into the scattering cross section. Neutron knockout reactions are commonly
+tallied as scattering reactions, and $\Sigma_{r,g}$ is a convenient term to
+incorporate neutron knockout effects into the neutron diffusion equations. I ran all test cases for
+$S_N$ and hybrid method calculations with up to the 2nd Legendre moments of the scattering
+cross sections ($L=2$).
+
+OpenMC uses the $P_1$ flux-limited formulation \cite{pomraning_flux-limited_1984} for calculating
+$D_g$ as follows
+%
+\begin{align}
+  D_g =& \frac{1}{3\Sigma_{tr,g}},
+  \shortintertext{where}
+  \Sigma_{tr,g} =& \frac{\langle\Sigma_{t,g}\phi_g\rangle-\langle\Sigma_{s1,g}\phi_g\rangle}
+  {\langle\phi_g\rangle}, \nonumber \\
+  \langle\Sigma_{t,g}\phi_g\rangle =& \int_{r\in V}dr \int_{4\pi}d\Omega\int^{E_{g-1}}_{E_g}dE\
+  \Sigma_{t,g}(r,E)\Psi(r,E,\Omega), \nonumber \\
+  \langle\Sigma_{s1,g}\phi_g\rangle =& \int_{r\in V}dr \int_{4\pi}d\Omega\int^{E_{g-1}}_{E_g}dE
+  \int_{4\pi}d\Omega'\int^{\infty}_0dE'\int^1_{-1}d\mu\ \mu\Sigma_s(r,E'\rightarrow E,\Omega'\cdot
+  \Omega)\phi(r,E',\Omega'), \nonumber \\
+  \langle \phi \rangle =& \int_{r\in V}dr\int_{4\pi}d\Omega\int^{E_{g-1}}_{E_g}dE\ \Psi(r,E,\Omega)
+  .\nonumber
+\end{align}
+
+\subsection{Neutron Diffusion Method}
+
+On a 1-D uniform spatial grid with $I+1$ mesh points, the neutron scalar flux variables
+$\phi_{g,i}$ are defined on the mesh points $x_i$. Theoretically, group constants are volumetric
+material properties that should be defined on the cell-centered half-integer mesh points
+$x_{i+\sfrac{1}{2}}$. In practice, all material properties except diffusion coefficients are
+uniform in each subregion and sampled at $x_i$. To avoid ambiguity concerning diffusion
+coefficient sampling, I formulated all test cases such that all material interfaces fall on $x_i$.
+
+Discretizing the multigroup $k$-eigenvalue neutron diffusion equations in Eq.\ \ref{eq:1d-diff}
+and reformulating the scattering term using neutron balance in the control volume bounded by
+$x_{i-\sfrac{1}{2}}$ and $x_{i+\sfrac{1}{2}}$ yields
+%
+\begin{align}
+  J_{g,i+\sfrac{1}{2}} - J_{g,i-\sfrac{1}{2}} + \Sigma_{t,g,i} \phi_{g,i} \Delta x = \sum^G_{g'=1}\left[
+  \Sigma_{s,i}^{g'\rightarrow g}\phi_{g',i} + \chi_{g,i}\frac{\nu\Sigma_{f,g',i}}{k} \phi_{g',i}
+\right]\Delta x. \label{eq:diff-j}
+\end{align}
+%
+Using the diamond difference scheme to replace the $J$ terms with the discretized form of
+Fick's first law of diffusion,
+%
+\begin{align}
+  J_{g,i+\sfrac{1}{2}} = -D_{g,i+\sfrac{1}{2}}\frac{d\phi_{g,i+\sfrac{1}{2}}}{dx} =
+  -D_{g,i+\sfrac{1}{2}} \frac{\phi_{g,i+1}-\phi_{g,i}}{\Delta x},
+\end{align}
+%
+and rearranging the terms in Eq.\ \ref{eq:diff-j} yields
+%
+\begin{align}
+  -\frac{D_{g,i-\sfrac{1}{2}}}{\Delta x} \phi_{g,i-1} + &\left[\frac{D_{g,i-\sfrac{1}{2}}+
+  D_{g,i+\sfrac{1}{2}}}{\Delta x} + \Delta x\ \Sigma_{r,g,i} \right]\phi_{g,i} -
+  \frac{D_{g,i+\sfrac{1}{2}}}{\Delta x}\phi_{g,i+1} -\Delta x\sum^G_{g'\neq g}
+  \Sigma_{s,i}^{g'\rightarrow g}\phi_{g',i} \nonumber \\
+  =& \Delta x\sum^G_{g'=1}
+  \chi_{g,i} \frac{\nu\Sigma_{f,g',i}}{k} \phi_{g',i}, \label{eq:diff-fd}
+  \shortintertext{where}
+  \Sigma_{r,g} =& \Sigma_{t,g} - \Sigma_s^{g\rightarrow g} \nonumber \\
+  =& \mbox{ macroscopic removal cross section for neutron group }g. \nonumber
+\end{align}
+%
+The diamond difference scheme is 2nd-order accurate, and this form is
+equivalent to applying 2nd-order finite differencing to the original neutron diffusion equation in
+Eq.\ \ref{eq:1d-diff} with diamond differencing for the cell-centered group constants.
+The fixed neutron source $S_g$ is ignored here since the test cases are all neutron-multiplying
+systems with no fixed source.
+
+I implemented two types of boundary conditions: vacuum and reflective boundary conditions. The
+\textbf{vacuum boundary conditions} are imposed by setting the incoming flux in the $P_1$
+approximation to zero and applying 2nd-order finite differencing as follows:
+%
+\begin{align}
+  \mbox{Left boundary: } \frac{\phi_{g,0}}{4}-\frac{D_{g,\sfrac{1}{2}}}{2}
+  \frac{\left(-\phi_{g,2}+4\phi_{g,1}-3\phi_{g,0}\right)}{2\Delta x} =& 0 \\
+  \mbox{Right boundary: } \frac{\phi_{g,I}}{4}+\frac{D_{g,I-\sfrac{1}{2}}}{2}
+  \frac{\left(\phi_{g,I-2}-4\phi_{g,I-1}+3\phi_{g,I}\right)}{2\Delta x} =& 0.
+\end{align}
+%
+The \textbf{reflective boundary conditions} are imposed by setting the flux gradient to zero and
+applying 2nd-order finite differencing as follows:
+%
+\begin{align}
+  \mbox{Left boundary: } \frac{-3\phi_{g,0}+4\phi_{g,1}-\phi_{g,2}}{2\Delta x} =& 0 \\
+  \mbox{Right boundary: } \frac{3\phi_{g,I}-4\phi_{g,I-1}+\phi_{g,I-2}}{2\Delta x} =& 0
+\end{align}
+%
+At material interfaces, the continuity condition requires that the net neutron current on either
+side of the interface be equal as follows:
+%
+\begin{align}
+  -\frac{3D_{g,i-\sfrac{1}{2}} - D_{g,i-\sfrac{3}{2}} }{2}
+  \frac{\phi_{g,i-2}-4\phi_{g,i-1}+3\phi_{g,i}}{2\Delta x} =&
+  -\frac{3D_{g,i+\sfrac{1}{2}} - D_{g,i+\sfrac{3}{2}} }{2}
+  \frac{-3\phi_{g,i}+4\phi_{g,i+1}-\phi_{g,i}}{2\Delta x} \label{eq:itf-bc}
+\end{align}
+%
+for a material interface at $x_i$.
+
+Altogether, they form a system of equations of the form $\bm{A\overline{\phi}}=\bm{\frac{1}{k}
+B\overline{\phi}}$, where $\bm{\overline{\phi}}$ is a flattened vector representation of
+$\phi_{g,i}$, and $\bm{A}$ and $\bm{B}$ are matrices of the coefficients of $\phi_{g,i}$ as given
+by Eqs. \ref{eq:diff-fd} to \ref{eq:itf-bc}. I implemented the inverse power method to find $k$ and
+$\overline{\phi}$. The inverse power method algorithm is as follows
+%
+\begin{align}
+  \shortintertext{1. Initialize $k^0$ and $\bm{\overline{\phi}}^0$}
+  \shortintertext{2. Update $\bm{\overline{\phi}}$ and $k$}
+  \bm{\overline{\phi}}^m =& \frac{1}{k^{m-1}}\bm{A}^{-1}\bm{B\overline{\phi}}^{m-1} \\
+  k^m =& k^{m-1}\frac{|\bm{B\overline{\phi}}^m|}{|\bm{B\overline{\phi}}^{m-1}|}
+  \shortintertext{3. Check whether convergence is reached}
+  \epsilon_\phi =
+  \frac{|\bm{\overline{\phi}}^m-\bm{\overline{\phi}}^{m-1}|}{|\bm{\overline{\phi}}^m|} <& \
+  tol_{\bm{\overline{\phi}}} \\
+  \epsilon_k =
+  \frac{|k^m-k^{m-1}|}{|k^m|} <& \ tol_k
+  \shortintertext{4. Return to Step 2 if either expression is false, otherwise exit.} \nonumber
+\end{align}
+%
+$k^m$ and $\overline{\phi}^m$ denote estimates of $k$ and $\overline{\phi}$ after the $m$-th
+iteration. Matrix $\bm{A}$ is a primarily tridiagonal matrix with at most $G-1$ off-diagonal terms
+from the fourth term in Eq.\ \ref{eq:diff-fd}. Thus, $\bm{A}$ is initialized as a sparse matrix to
+take advantage of the computationally efficient sparse matrix solver functions from the
+\texttt{sparse} class of the \texttt{SciPy} \cite{virtanen_scipy_2020} Python library for
+scientific and technical computing. Matrix $\bm{B}$
+is never initialized explicitly as a matrix. Instead, the vector $\bm{b}=\bm{B\overline{\phi}}$ is
+updated directly in every iteration. In this system of equations, $|\bm{b}|$ corresponds to the
+total number of fission neutrons produced in the system for a given $\bm{\overline{\phi}}$. This
+quantity is calculated using the \texttt{trapezoid} numerical integration function from
+\texttt{SciPy} to estimate the integral value of the source term, $\nu\Sigma_{g,f}\phi_{g}$, in $x$
+from the discrete flux values in $\bm{x}$. Finally, the final $\phi_{g,i}$ is normalized by a
+factor of $|\bm{b}|/k$ (no. of source neutrons) to obtain the neutron scalar flux per source
+neutron.
+
+\subsection{$S_N$ Neutron Transport Method}
+
+For the 1-D $S_N$ neutron transport method on the same uniform spatial grid with $I+1$ mesh points,
+the neutron angular flux variables $\Psi_{g,i,n}=\Psi_g(x_i,\mu_n)$ are defined on the mesh points
+$x_i$ while neutron scalar flux variables $\phi_{g,i\pm\sfrac{1}{2}}=\phi_g(x_{i\pm\sfrac{1}{2}})$
+are defined on the half-integer mesh points $x_{i\pm\sfrac{1}{2}}$. All group constants are sampled
+at $x_{i\pm\sfrac{1}{2}}$.
+
+The $S_N$ equations are solved using the transport sweep method in which the algorithm ``sweeps''
+through the spatial grid and sequentially updates $\Psi_{g,i,n}$. The algorithm sweep
+direction follows the direction of neutron travel, i.e. it sweeps in the positive direction for
+$\Psi_{g,i,n}$ with $\mu_n>0$ and vice versa. Doing otherwise is unphysical and causes numerical
+instabilities.
+
+Discretizing the multigroup $S_N$ neutron transport equations in Eq.\ \ref{eq:1d-sn} about
+$x_{i+\sfrac{1}{2}}$ yields
+%
+\begin{align}
+  \mu_n\frac{\Psi_{g,i+1,n}-\Psi_{g,i,n}}{x_{i+1}-x_i} + \Sigma_{t,g,i+\sfrac{1}{2}}
+  \Psi_{g,i+\sfrac{1}{2},n} = q_{g,i+\sfrac{1}{2},n}
+\end{align}
+%
+where $q_{g,i+\sfrac{1}{2},n}$ represents the combined scattering and fission neutron source term.
+After expressing $\Psi_{g,i+\sfrac{1}{2}}$ as the average of $\Psi_{g,i+1,n}$ and $\Psi_{g,i,n}$
+in the diamond difference scheme and rearranging the terms, we obtain
+%
+\begin{align}
+  \Psi_{g,i+1,n} =& \frac{1-\Sigma_{t,g}\Delta x/2\mu_n}{1+
+    \Sigma_{t,g}\Delta x/2\mu_n}\Psi_{g,i,n} +
+    q\frac{\Delta x}{\mu_n\left(1+\Sigma_{t,g}\Delta x/2\mu_n\right)} \label{eq:sweep-right} &&
+    (\mbox{for } \mu_n > 0)
+\shortintertext{and}
+  \Psi_{g,i,n} =& \frac{1+\Sigma_{t,g}\Delta x/2\mu_n}{1-
+    \Sigma_{t,g}\Delta x/2\mu_n}\Psi_{g,i+1,n} -
+    q\frac{\Delta x}{\mu_n\left(1-\Sigma_{t,g}\Delta x/2\mu_n\right)}. \label{eq:sweep-left} &&
+    (\mbox{for } \mu_n < 0)
+\end{align}
+%
+The remaining $i+\sfrac{1}{2}$ indexes on the group constants are dropped to reduce visual clutter.
+These expressions are used to update $\Psi_{g,i,n}$ in the forward and backward transport sweeps.
+
+The discretized scattering and fission terms in $q_{g,i+\sfrac{1}{2},n}$ are given as
+%
+\begin{align}
+  q_{g,i+\sfrac{1}{2},n} =& \sum^G_{g'=1}\sum^L_{l=0}\frac{\left(2l+1\right)}
+  {2}\Sigma_{s,l}^{g'\rightarrow g}P_l(\mu_n)\phi_{l,g',i+\sfrac{1}{2}} \nonumber \\
+  &+\frac{\chi_g}{2}\sum^G_{g'=1}\frac{\nu\Sigma_{f,g'}}{k}\phi_{0,g',i+\sfrac{1}{2}}
+  \label{eq:sn-q}
+  \shortintertext{where}
+  \phi_{l,g',i+\sfrac{1}{2}} =& \sum^N_{n'=1}w_{n'}P_l(\mu_{n'})\frac{\Psi_{g',i,n'}+
+  \Psi_{g',i+1,n'}}{2}. \label{eq:phi-l}
+\end{align}
+%
+$\phi_{l,g,i}$ are $l$-th Legendre expansions of the neutron flux evaluated using Gauss-Legendre
+quadrature over $\mu_{n'}=[-1,1]$. $\phi_{0,g,i}$ and $\phi_{1,g,i}$ also correspond to the neutron
+scalar flux $\phi_{g,i}$ and net current $J_{g,i}$, respectively.
+
+For vacuum boundary conditions, $\Psi_{g,0,n}$ is zero for all positive $\mu_n$ while
+$\Psi_{g,I,n}$ is zero for all negative $\mu_n$ as follows
+%
+\begin{align}
+  \mbox{Left boundary: } \Psi_{g,0,n} =& 0 && (\mbox{for } \mu_n > 0) \\
+  \mbox{Right boundary: } \Psi_{g,I,n} =& 0 && (\mbox{for } \mu_n < 0)
+\end{align}
+%
+Reflective boundary conditions are imposed by equating the incoming angular flux to the
+outgoing angular flux in the opposite direction as follows
+%
+\begin{align}
+  \mbox{Left boundary: } \Psi_{g,0,n} =& \Psi_{g,0,n'} && (\mbox{for } \mu_n > 0, \mu_n =
+  -\mu_{n'}) \\
+  \mbox{Right boundary: } \Psi_{g,I,n} =& \Psi_{g,I,n'} && (\mbox{for } \mu_n < 0, \mu_n =
+  -\mu_{n'})
+\end{align}
+
+The power iteration algorithm for the $S_N$ method is similar to the inverse power method algorithm
+applied in the neutron diffusion method. The transport sweep step replaces the matrix-solving step
+for updating $\overline{\phi}$.
+%
+\begin{align}
+  \shortintertext{1. Initialize $k^0$, $\phi_{l,g,i+\sfrac{1}{2}}^0$, and $q^0$}
+  \shortintertext{2. Apply transport sweeps to solve for $\Psi^m$ using Eqs. \ref{eq:sweep-right},
+  \ref{eq:sweep-left}, and \ref{eq:sn-q}}
+  \shortintertext{3. Update $\phi^m$ and $k^m$ using Eqs. \ref{eq:phi-l} and \ref{eq:sn-k}}
+  k^m =& k^{m-1}\frac{\sum^I_{i=0}\sum^G_{g=1}\nu\Sigma_{f,g}\phi^m_{g,i+\sfrac{1}{2}}}
+  {\sum^I_{i=0}\sum^G_{g=1}\nu\Sigma_{f,g}\phi^{m-1}_{g,i+\sfrac{1}{2}}} \label{eq:sn-k}
+  \shortintertext{4. Check whether convergence is reached}
+  \epsilon_\phi =
+  \frac{|\bm{\overline{\phi}}^m-\bm{\overline{\phi}}^{m-1}|}{|\bm{\overline{\phi}}^m|} <& \
+  tol_{\bm{\overline{\phi}}} \\
+  \epsilon_k =
+  \frac{|k^m-k^{m-1}|}{|k^m|} <& \ tol_k
+  \shortintertext{5. Return to Step 2 if either expression is false, otherwise exit.} \nonumber
+\end{align}
+
+The transport sweep and $\phi^m$-update algorithms are parallelized using the \texttt{joblib}
+parallel computing Python library \cite{noauthor_joblib_nodate} across all available CPU threads.
+The total computational work is subdivided into several smaller tasks classified by unique pairs
+of $g$ and $n$ values; each thread computes all $\Psi^m$ or $\phi^m$ values on the mesh for a given
+pair of indexes $g$ and $n$.
+
+\subsection{Hybrid $S_N$-Diffusion Method}
+
+Without loss of generality, consider a 1-D system symmetric about the left boundary at $x_0=0$ cm.
+In this case, as with Case 0, the control rod region is the left-most region, followed by other
+regions. The $S_N$ subproblem domain $V_1$, containing the control rod and some region beyond it,
+is bounded by $x_0$ and $x_j$ for some $x_j$
+located several mean free paths to the right of the control rod region as governed by the relevant
+discussion in Section \ref{sec:hybrid-method}.
+
+Excluding the initial neutron diffusion calculation to initialize $k^0$ and $\phi^0$, each outer
+iteration in the hybrid method consists of one $S_N$ neutron transport calculation and one neutron
+diffusion calculation. The $\phi$ estimates from these $S_N$ transport and neutron diffusion
+calculations are labeled as $\phi^{m+\sfrac{1}{2}}$ and $\phi^{m+1}$ during the
+$(m+1)$-th outer iteration. $\phi^{m+\sfrac{1}{2}}$ spans $V_1$ while $\phi^{m+1}$ spans
+the entire domain $V_0$.
+
+For the $S_N$ subproblem boundary conditions, we discretize Eqs. \ref{eq:p1-j} and
+\ref{eq:sn-psi-j} as follows
+%
+\begin{align}
+  \Psi_{g,j,n} =& \frac{J_{g,-}(x_j)}{\sum^{N/2}_{n'=1}w_{n'}\mu_{n'}} \nonumber \\
+  =& \frac{\frac{\phi_g(x_j)}{4}+
+  \frac{D_g(x_{j-\sfrac{1}{2}})}{2}\frac{d\phi_g(x_j)}{dx}}{\sum^{N/2}_{n'=1}w_{n'}\mu_{n'}}
+  \nonumber \\
+  =& \frac{\frac{\phi_{g,j}}{4}+
+  \frac{D_{g,j-\sfrac{1}{2}}}{2}\frac{\phi_{g,j}-\phi_{g,j-1}}{\Delta x}}
+    {\sum^{N/2}_{n'=1}w_{n'}\mu_{n'}} && (\mu_n < 0) \label{eq:sn-bc}
+\end{align}
+%
+where $D_g$ is the $P_1$-based diffusion coefficient value.
+
+The \gls{SVDC} formulation in Eq.\ \ref{eq:svdc} is discretized using the diamond difference scheme
+as follows
+%
+\begin{align}
+  D^s_{g,i+\sfrac{1}{2}} =& -\frac{J^{tr}_{g,i+1}+J^{tr}_{g,i}}{2} \left(
+  \frac{\phi^{tr}_{g,i+1}-\phi^{tr}_{g,i}}{\Delta x} \right)^{-1} = -\frac{\Delta x}{2}
+  \frac{J^{tr}_{g,i+1}+J^{tr}_{g,i}}{\phi^{tr}_{g,i+1}-\phi^{tr}_{g,i}}. \label{eq:svdc-num}
+\end{align}
+
+The hybrid $S_N$-diffusion algorithm is as follows
+%
+\begin{align}
+  \shortintertext{1. Initialize $k^0$ and $\phi^0$ with an initial neutron diffusion calculation on
+  $V_0$}
+  \shortintertext{2. Generate estimates for $\Psi_{g,j,n}$ at $x_j$ for the $S_N$ transport
+  calculation boundary conditions using Eq.\ \ref{eq:sn-bc}}
+  \shortintertext{3. Calculate $\phi^{m+\sfrac{1}{2}}$ with the $S_N$ transport sub-solver on
+  $V_1$}
+  \shortintertext{4. Generate \glspl{SVDC} with $\phi^{m+\sfrac{1}{2}}$ and $J^{m+\sfrac{1}{2}}$
+  using Eq.\ \ref{eq:svdc-num}}
+  \shortintertext{5. Calculate $\phi^{m+1}$ with the newly generated \glspl{SVDC} and the neutron
+  diffusion solver on $V_0$}
+  \shortintertext{6. Check whether convergence is reached}
+  \frac{|\bm{\overline{\phi}}^m-\bm{\overline{\phi}}^{m-1}|}{|\bm{\overline{\phi}}^m|} <& \
+  tol_{\bm{\overline{\phi}}} \\
+  \frac{|k^m-k^{m-1}|}{|k^m|} <& \ tol_k
+  \shortintertext{7. Return to Step 2 if either expression is false, otherwise exit.} \nonumber
+\end{align}
+%
+Generally, the convergence tolerance values for the outer hybrid method iteration must be smaller
+than the tolerance values for the neutron diffusion and $S_N$ transport inner iterations. Using
+$\phi^m$ from the neutron diffusion calculation as initial conditions for the $S_N$ transport
+calculation in the $(m+1)$-th iteration helps to reduce the number of transport
+sweeps required significantly.
+
+The $S_N$ sub-solver only covers $V_1$, so it does not calculate an independent $k$
+estimate. Instead, the $k^m$ from the neutron diffusion calculation scales the fission neutron
+source term in the $S_N$ sub-solver.
+

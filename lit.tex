@@ -45,7 +45,7 @@ variables until convergence. Fixed point iterative methods can be less
 stable, less accurate, and have poorer
 convergence rates since these methods make iterative corrections
 without regard to potentially destabilizing modes introduced by the
-multiphysics coupling \cite{keyes_multiphysics_2013}. In particular, Lindsay et al.
+multiphysics coupling \cite{keyes_multiphysics_2013}. In particular, Lindsay et al.\
 \cite{lindsay_introduction_2018} demonstrated the non-convergence of a multiphysics \gls{MSR}
 model without delayed neutron precursors when using fixed point iterations. While fully coupled
 schemes result in large systems of equations to solve, they can still outperform fixed point
@@ -54,14 +54,14 @@ Conversely, proven techniques exist for improving the performance of fixed point
 schemes for many relevant computational multiphysics research fields, including reactor analysis
 \cite{ragusa_consistent_2009}. Fixed point iterative methods also allow for different temporal and
 spatial discretization schemes to meet the requisite resolution of each
-individual physics component.
+individual physics model.
 
 In contrast to tight coupling schemes, \textit{loose coupling schemes}
 solve each set of single-physics equations using state variable
 data from the previous timestep without iterative corrections within every
 timestep. Loosely coupled schemes are inappropriate for modeling \glspl{MSR},
 given the strong coupling between neutronics and thermal-hydraulics.
-Aufiero et al. \cite{aufiero_development_2014} demonstrated a loose coupling
+Aufiero et al.\ \cite{aufiero_development_2014} demonstrated a loose coupling
 approach that failed to reproduce the expected increase in reactor power
 in an \gls{MSR} in response to a 150 pcm reactivity insertion. One rare use case for loose
 coupling is pseudo-transient problems for converging a multiphysics system to steady state.
@@ -87,7 +87,7 @@ highly optimized for solving specific \glspl{PDE} relevant to the investigated s
 Many \gls{MSR} simulation tools employ tight coupling to couple separate neutronics and
 thermal-hydraulics solvers.
 
-In 2007, Krepel et al. \cite{krepel_dyn3d-msr_2007} extended the
+In 2007, Krepel et al.\ \cite{krepel_dyn3d-msr_2007} extended the
 \gls{LWR} nodal diffusion code DYN3D to account for \gls{DNP} drift and fission energy deposition
 in the coolant for \gls{MSR} modeling. The extended DYN3D-MSR code also contains the FLOCAL
 thermal-hydraulics model for coolant flow and conjugate heat transfer modeling. Their \gls{MSRE}
@@ -98,16 +98,16 @@ steady-state operation; start-up, coast-down, natural circulation transients; an
 transient in their \gls{MSRE} model. They also modeled steady-state operation and a single-channel
 blockage transient in their \gls{MSBR} model.
 
-At the \gls{TUD}, Kophazi et al.
+At the \gls{TUD}, Kophazi et al.\
 \cite{kophazi_development_2009} coupled their in-house 3-D neutron diffusion software DALTON
 \cite{boer_validation_2010} and thermal-hydraulics
 software THERM to develop a 3-D \gls{MSR} simulation tool. They homogenized the heterogeneous fuel
 and graphite region of the \gls{MSRE} for the neutronics calculation. They discretized the
 homogeneous region into a Cartesian mesh and modeled a more accurate representation of the oblong
-fuel channels in the graphite core matrix instead of the circular shape by Krepel et al.
+fuel channels in the graphite core matrix instead of the circular shape by Krepel et al.\
 \cite{krepel_dyn3d-msr_2007}.
 
-Both efforts by Krepel et al. and Kophazi et al. showed good
+Both efforts by Krepel et al.\ and Kophazi et al.\ showed good
 agreement with \gls{MSRE} experimental data in their respective validation tests.
 The researchers from \gls{TUD} continued in their approach of coupling separate single-physics
 software to create \gls{MSR} simulation tools, as noted by the DALTON-HEAT
@@ -116,11 +116,11 @@ fast-spectrum \gls{MSFR} features a large pool of fuel salt in its single-channe
 the \gls{MSRE}'s multi-channel design. As a result, the authors had to incorporate
 multidimensional turbulent flow modeling to accurately model the complex flow profiles and
 turbulence effects in the \gls{MSFR} during steady-state operation and transient scenarios. In a
-later effort from the same institute, Tiberga et al. \cite{tiberga_discontinuous_2019} coupled
+later effort from the same institute, Tiberga et al.\ \cite{tiberga_discontinuous_2019} coupled
 PHANTOM-$S_N$ and DGFlows for their participation in the CNRS benchmark study
 \cite{tiberga_results_2020}. Developed at the \gls{CNRS}, the CNRS benchmark facilitates
 code-to-code verification of \gls{MSR} multiphysics software \cite{aufiero_testing_2018}. Tiberga
-et al. showed that their coupled PHANTOM-$S_N$/DGFlows software was consistent with
+et al.\ showed that their coupled PHANTOM-$S_N$/DGFlows software was consistent with
 OpenFOAM-based \gls{MSR} simulation tools. Further details on their study and the CNRS benchmark
 is available in Section \ref{sec:msr-vv}.
 
@@ -133,9 +133,9 @@ Reynolds-averaged, inviscid coolant flow. While modeling inviscid flow reduces c
 by eliminating the need for expensive turbulence modeling, this approach neglects turbulent flow
 and turbulent mixing effects.
 
-More recently, Jaradat et al. \cite{jaradat_development_2021}
+More recently, Jaradat et al.\ \cite{jaradat_development_2021}
 extended the 3-D $P_1$ and $SP_3$ nodal transport code PROTEUS-NODAL to support \gls{DNP} drift.
-Yang et al. \cite{yang_development_2022} then developed a coupled simulation tool of PROTEUS-NODAL
+Yang et al.\ \cite{yang_development_2022} then developed a coupled simulation tool of PROTEUS-NODAL
 and \gls{SAM}. They modeled the \gls{MSFR} on a 2-D axisymmetric geometry
 and the \gls{MSRE} on a 3-D R-$\theta$-Z geometry with twelve 1-D flow channels. The \gls{SAM} flow
 model relied on the algebraic mixing length model for turbulence modeling. Both results
@@ -151,7 +151,7 @@ high-fidelity neutronics calculations in transient reactor analyses \cite{laurea
 blanco_neutronic_2020}. To that end, Serpent has a multiphysics interface supporting coupling
 with other physics software \cite{leppanen_development_2013}.
 
-Laureau et al.
+Laureau et al.\
 \cite{laureau_transient_2017} developed a different technique called the
 \gls{TFM} method by introducing additional time-dependence
 operators to conventional fission matrices typically used to accelerate source
@@ -159,7 +159,7 @@ convergence in Monte Carlo neutronics calculations. The \gls{TFM} method
 pre-calculates three \glspl{TFM} of the reactor system in Serpent. It
 interpolates the matrix values during the actual transient calculations to
 incorporate temperature-induced salt expansion and Doppler effects on the neutron cross sections
-and, ultimately, the neutron flux. Laureau et al. opted to subcycle the neutronics calculations by
+and, ultimately, the neutron flux. Laureau et al.\ opted to subcycle the neutronics calculations by
 setting smaller timesteps than the thermal-hydraulics calculations
 to take advantage of the differing physics timescales. They demonstrated load-following capability
 and parametric studies of overcooling and reactivity insertion transients in the \gls{MSFR}.
@@ -171,24 +171,24 @@ transfers between Serpent and OpenFOAM as both software have access to shared
 memory during runtime. Their integrated tool employs the Quasi-Static
 method for transient neutronics calculations and runs Serpent Monte Carlo
 calculations several times per timestep until convergence is reached.
-Blanco demonstrated the Serpent-OpenFOAM tool on the CNRS benchmark specified by Tiberga et al.
+Blanco demonstrated the Serpent-OpenFOAM tool on the CNRS benchmark specified by Tiberga et al.\
 \cite{tiberga_results_2020}.
 
 \subsubsection{Integrated Multiphysics Modeling Frameworks for MSR Modeling}
 
 Another \gls{MSR} simulation approach involves developing inherently multiphysics software that
 handle all multiphysics calculations and data transfer internally. Among earlier efforts, Nicolino
-et al. \cite{nicolino_coupled_2008} and Zhang et al. \cite{zhang_development_2009} recognized the
+et al.\ \cite{nicolino_coupled_2008} and Zhang et al.\ \cite{zhang_development_2009} recognized the
 need for more robust multiphysics coupling, acceleration techniques and internal data transfers
 to reduce execution times. They each independently developed unnamed multiphysics simulation tools
-and demonstrated their tools with non-moderated \gls{MSR} designs. Nicolino et al. presented one of
-the first \gls{MSR} models with multi-dimensional flow, governed by the Navier-Stokes equation with
-the Boussinesq approximation. They performed steady-state and transient calculations on a 2-D
-axisymmetric model of the \gls{MOSART} reactor \cite{ignatiev_molten_2014}. Zhang et al. also
+and demonstrated their tools with non-moderated \gls{MSR} designs. Nicolino et al.\ presented one
+of the first \gls{MSR} models with multi-dimensional flow, governed by the Navier-Stokes equation
+with the Boussinesq approximation. They performed steady-state and transient calculations on a 2-D
+axisymmetric model of the \gls{MOSART} reactor \cite{ignatiev_molten_2014}. Zhang et al.\ also
 developed a similar 2-D axisymmetric solver, but they incorporated a $k$-$\epsilon$ turbulence
 model and performed calculations on an unnamed pool-type \gls{MSR} design with graphite reflectors.
 Both studies implemented the neutron diffusion model for neutronics modeling.
-Later, Li et al. \cite{li_transient_2015} demonstrated the
+Later, Li et al.\ \cite{li_transient_2015} demonstrated the
 steady-state and transient analysis capabilities of COUPLE, a neutronics and
 thermal-hydraulics software, on a 2-D axisymmetric model of the \gls{MSFR}. COUPLE also solves the
 neutron diffusion equations and the Navier-Stokes equations with the $k$-$\epsilon$ turbulence
@@ -200,7 +200,7 @@ frameworks include the commercial COMSOL
 Multiphysics\textsuperscript{\textregistered} software
 \cite{comsol_ab_comsol_nodate}, the aforementioned open-source CFD toolbox
 OpenFOAM, and the open-source finite-element
-framework \gls{MOOSE} \cite{gaston_physics-based_2015}. Researchers at
+framework \gls{MOOSE} \cite{giudicelli_30_2024}. Researchers at
 \gls{PoliMi} developed an \gls{MSR} simulation tool in COMSOL and
 modeled the \gls{MSBR} as a single axisymmetric fuel channel with a uniform
 flow profile \cite{cammi_multi-physics_2011}, followed by the \gls{MSRE} core
@@ -215,7 +215,7 @@ resembled the actual fuel channels in the \gls{MSRE}
 DALTON-HEAT coupled multiphysics tool.
 
 Other institutes have dedicated significant development work towards
-OpenFOAM-based \gls{MSR} simulation tools. Aufiero et al.
+OpenFOAM-based \gls{MSR} simulation tools. Aufiero et al.\
 \cite{aufiero_development_2014} first introduced an OpenFOAM model developed
 at \gls{PoliMi}. Their model implemented a neutron diffusion model and a
 \gls{RANS}-based turbulence model under the incompressible flow assumption to demonstrate 2-D
@@ -225,12 +225,12 @@ tracking to study fuel compressibility effects
 \cite{cervi_development_2019} and an $SP_3$ neutron transport
 model for improved neutronics calculations \cite{cervi_development_2019-1} in
 the \gls{MSFR}. GeN-Foam is another OpenFOAM-based tool developed by Fiorina
-et al. \cite{fiorina_gen-foam_2015} as a general reactor multiphysics solver
+et al.\ \cite{fiorina_gen-foam_2015} as a general reactor multiphysics solver
 applicable to \glspl{MSR} and other reactor types. GeN-Foam features neutron
 diffusion, $SP_3$, and $S_N$ neutronics models
 \cite{fiorina_development_2016,fiorina_gen-foam_2015,fiorina_detailed_2019},
 and thermo-mechanical modeling for reactor expansion effects. Using GeN-Foam,
-Altahhan et al. \cite{altahhan_preliminary_2020} developed and optimized a
+Altahhan et al.\ \cite{altahhan_preliminary_2020} developed and optimized a
 liquid-fuel \gls{MSR} design, while Shi \& Fratoni \cite{shi_gen-foam_2021}
 simulated precursor drift effects in a homogenized \gls{MSRE} model. However, none of the
 OpenFOAM-based tools have demonstrated the capability for time-dependent \gls{MSR} simulations
@@ -248,11 +248,11 @@ simultaneously. The mutual compatibility among different physics applications wi
 \gls{MOOSE} framework simplifies the work required to couple
 different physics solvers together to solve novel multiphysics problems. Similarly,
 Moltres benefits from the highly-integrated cross-compatibility
-within the ecosystem of \gls{MOOSE}-based applications. Abou-Jaoude et al.
+within the ecosystem of \gls{MOOSE}-based applications. Abou-Jaoude et al.\
 \cite{abou-jaoude_coupled_2020} coupled Griffin with Pronghorn, another
 \gls{MOOSE}-based application for advanced reactor thermal-hydraulics modeling, to
 demonstrate several steady-state \gls{MSR} simulation capabilities defined in
-the CNRS benchmark. Lindsay et al.
+the CNRS benchmark. Lindsay et al.\
 \cite{lindsay_introduction_2018} first demonstrated Moltres' \gls{MSR} modeling
 capabilities on 2-D axisymmetric and 3-D Cartesian models of the \gls{MSRE} with
 fixed velocity flow in a fully coupled neutronics and thermal-hydraulics simulations.
@@ -277,7 +277,7 @@ depends on the outcome of both model verification and validation.
 
 The important multiphysics phenomena in \glspl{MSR} for model \gls{VV} are salt flow-induced
 \gls{DNP} drift and the strong coupling between neutron flux and temperature advection-diffusion.
-Delpech et al. \cite{delpech_benchmark_2003} published one of the first collaborative \gls{VV} work
+Delpech et al.\ \cite{delpech_benchmark_2003} published one of the first collaborative \gls{VV} work
 for \gls{MSR} multiphysics modeling. Collaborators
 from six institutions modeled \gls{MSRE} pump start-up, pump coast-down, and natural
 circulation transients to assess and validate their models and codes for studying the effects of
@@ -286,7 +286,7 @@ multidimensional Monte Carlo methods to zero-dimensional point reactor kinetics,
 were observed between different codes. Nevertheless, all results generally agreed
 with \gls{MSRE} experimental data from \gls{ORNL}.
 
-As mentioned in Subsection \ref{sec:msr-tools}, Tiberga et al. \cite{tiberga_results_2020}
+As mentioned in Subsection \ref{sec:msr-tools}, Tiberga et al.\ \cite{tiberga_results_2020}
 published the CNRS benchmark to verify \gls{MSR} simulation tools designed for
 fast-spectrum \gls{MSR} modeling. In contrast with the multi-channel \gls{MSRE} and its derivative
 designs, the CNRS benchmark has a 2 m$\times$2 m problem domain of homogeneous fuel salt mimicking
@@ -297,30 +297,30 @@ introduce multiphysics coupling in Phase 1, and time-dependent perturbation prob
 identify sources of discrepancies that may otherwise be masked by error cancellation or other
 dominant sources of discrepancies. The final steady-state and time-dependent problems involve
 studying the effects of natural circulation and lid-driven flow on the reactivity and power output.
-Aside from the problem specifications, Tiberga et al. also published the associated group
+Aside from the problem specifications, Tiberga et al.\ also published the associated group
 constant cross section data required by deterministic neutronics solvers to perform neutronics
 calculations. Four institutions participated in the benchmarking exercise with neutron diffusion,
 $SP_N$, and $S_N$-based solvers for the neutronics calculations. Their measured neutronics and
 \gls{TH} parameters showed excellent agreement within up to 2.5\% discrepancy from their combined
 average.
 
-Neutronic benchmark studies of the \gls{MSRE} and the \gls{MSFR} by Fratoni et al.
-\cite{fratoni_molten_2020} and Brovchenko et al. \cite{brovchenko_neutronic_2019} measured the
+Neutronic benchmark studies of the \gls{MSRE} and the \gls{MSFR} by Fratoni et al.\
+\cite{fratoni_molten_2020} and Brovchenko et al.\ \cite{brovchenko_neutronic_2019} measured the
 delayed neutron losses due to the decay of \glspl{DNP} flowing out of the active core region.
-Fratoni et al. sought to establish a standard validation platform for \gls{MSR} neutronics
+Fratoni et al.\ sought to establish a standard validation platform for \gls{MSR} neutronics
 simulation tools with \gls{MSRE} experimental data for inclusion in the \gls{IRPhEP} handbook.
 They characterized and validated a model of the \gls{MSRE} in the Monte Carlo particle transport
-code Serpent. The \gls{MSFR} neutronics benchmark by Brovchenko et al. featured results
+code Serpent. The \gls{MSFR} neutronics benchmark by Brovchenko et al.\ featured results
 from multiple \gls{MSR} simulation tools by several collaborators. Their assessment found that
 the choice of nuclear database for the cross sections and decay data has the most significant
 impact on the neutronics results.
 
 While these publications have addressed significant technical gaps, there is room to develop
-further \gls{VV} benchmarks for multiphysics \gls{MSR} modeling. For instance, the
-CNRS benchmark does not assess the loss of delayed neutrons due to the decay of \glspl{DNP} flowing
-out of the active core region. This phenomenon is important as the delayed neutron fraction in the
-core directly impacts the transient power response in unprotected accident scenarios. Meanwhile,
-the neutronic benchmark studies by Fratoni et al. \cite{fratoni_molten_2020} and Brovchenko et al.
+further \gls{VV} benchmarks for multiphysics \gls{MSR} modeling. For instance, the CNRS benchmark
+does not assess the loss of delayed neutrons due to the decay of \glspl{DNP} flowing out of the
+active core region. This phenomenon is important as the delayed neutron fraction in the core
+directly impacts the transient power response in unprotected accident scenarios. Meanwhile, the
+neutronic benchmark studies by Fratoni et al.\ \cite{fratoni_molten_2020} and Brovchenko et al.\
 \cite{brovchenko_neutronic_2019} did not provide the standardized group constant data required by
 most deterministic multiphysics \gls{MSR} simulation tools. Therefore, it is challenging to isolate
 discrepancies arising from code implementations instead of discrepancies from using different
@@ -465,7 +465,7 @@ low Reynolds numbers and validating the lower-fidelity turbulence models
 
 \subsection{Turbulence Modeling in MSR Simulation Tools}
 
-Podila et al. \cite{podila_cfd_2019} performed \gls{CFD} simulations of the
+Podila et al.\ \cite{podila_cfd_2019} performed \gls{CFD} simulations of the
 \gls{MSRE} core with six different turbulence models, namely a Spalart-Allmaras
 model, two variants of the $k$-$\epsilon$ model, a $k$-$\omega$ model, and two
 variants of \glspl{RSM}. While the turbulence models predicted widely differing near-wall
@@ -479,7 +479,7 @@ Amongst other \gls{MSR} simulation tools, the $k$-$\epsilon$ and $k$-$\omega$
 turbulence models are the most commonly used models, as shown in published work
 with COMSOL \cite{fiorina_modelling_2014}, OpenFOAM
 \cite{aufiero_development_2014}, and \gls{TUD}'s in-house codes
-\cite{fiorina_modelling_2014,tiberga_results_2020}. Fiorina et al.
+\cite{fiorina_modelling_2014,tiberga_results_2020}. Fiorina et al.\
 \cite{fiorina_modelling_2014} compared the flow distribution from both models
 in a 2-D axisymmetric \gls{MSFR} geometry. They observed that the $k$-$\omega$
 model produced a more expansive recirculation zone near the outer wall, an additional
@@ -487,7 +487,7 @@ recirculation zone near the top wall, and significantly higher maximum
 temperatures within the former recirculation zone.
 
 In a recent study by
-Laureau et al. \cite{laureau_unmoderated_2022}, the authors applied a \gls{DES} model to model
+Laureau et al.\ \cite{laureau_unmoderated_2022}, the authors applied a \gls{DES} model to model
 eddies in the \gls{MSFR}. Given the high computational costs required to obtain reasonably small
 stochastic uncertainties from Monte Carlo calculations on arbitrarily varying temperature fields,
 they developed a reduced-order model relating local reactivity feedback estimates to the nominal
@@ -531,7 +531,7 @@ need for control rods \cite{dolan_1_2017}. This characteristic arises from the s
 temperature reactivity feedback and the strong coupling to flow and heat removal rates. \gls{MSR}
 reactor designers rely on these passive mechanisms for reactor safety. In addition, they propose
 load-following operation by adjusting pump speeds and the temperature of the intermediate coolant
-loop. Laureau et al. \cite{laureau_transient_2017} demonstrated simple power ramp-up and ramp-down
+loop. Laureau et al.\ \cite{laureau_transient_2017} demonstrated simple power ramp-up and ramp-down
 with the \gls{MSFR} by varying the temperature of the secondary coolant. \gls{MSR}
 designs with no control rods include the fast-spectrum \gls{MSFR} and TerraPower's \gls{MCFR}
 \cite{terrapower_terrapower_2021}. However, \gls{MSR} power control schemes which rely heavily on
@@ -551,19 +551,19 @@ criticality \cite{delpech_benchmark_2003, krepel_dyn3d-msr_2007}. Some studies i
 models in their steady-state calculations. However, they resort to neutron source term scaling for
 the transient calculations due to the inaccuracy of neutron diffusion, $P_1$, and $SP_N$ methods in
 highly neutron absorbing regions \cite{kophazi_development_2009, jaradat_development_2021,
-yang_development_2022}. Kophazi et al. \cite{kophazi_development_2009} modeled annular control rods
+yang_development_2022}. Kophazi et al.\ \cite{kophazi_development_2009} modeled annular control rods
 as homogenized hexahedrons in their 3-D Cartesian geometry of the \gls{MSRE}. They
 homogenized fuel and graphite regions in the rest of the reactor model, as mentioned in Subsection
 \ref{sec:msr-tools}. To reduce errors introduced by the neutron diffusion method, they imposed
-simple albedo boundary conditions for the thermal neutron group. Jaradat et al.
-\cite{jaradat_development_2021} and Yang et al. \cite{yang_development_2022} modeled the \gls{MSRE}
-control rods as homogenized wedges in their R-$\theta$-Z mesh due to the constraints of the nodal
-neutronics solver. Cui et al. \cite{cui_development_2021} also homogenized the control rods as
-regular hexahedral nodes in accordance with their nodal solver in Cartesian geometry. A disadvantage
-of homogenization-based methods is that it removes some of the heterogeneity in the flux and
-temperature. The heterogeneous temperature distribution is especially important in \glspl{MSR} due
-to the combined fuel-coolant and the positive temperature reactivity feedback observed
-in graphite under certain conditions \cite{mathieu_thorium_2006}.
+simple albedo boundary conditions for the thermal neutron group. Jaradat et al.\
+\cite{jaradat_development_2021} and Yang et al.\ \cite{yang_development_2022} modeled the
+\gls{MSRE} control rods as homogenized wedges in their R-$\theta$-Z mesh due to the constraints of
+the nodal neutronics solver. Cui et al.\ \cite{cui_development_2021} also homogenized the control
+rods as regular hexahedral nodes in accordance with their nodal solver in Cartesian geometry. A
+disadvantage of homogenization-based methods is that it removes some of the heterogeneity in the
+flux and temperature. The heterogeneous temperature distribution is especially important in
+\glspl{MSR} due to the combined fuel-coolant and the positive temperature reactivity feedback
+observed in graphite under certain conditions \cite{mathieu_thorium_2006}.
 
 In theory, multiphysics simulation tools with Monte Carlo neutron transport, such as the
 Serpent-OpenFOAM tool developed by Blanco \cite{blanco_neutronic_2020} could boast excellent
@@ -595,7 +595,7 @@ dependence. The \gls{BTE} for neutron transport is given as:
   \rightarrow \hat{\Omega},t) \Psi(\vec{r},E',\hat{\Omega}',t) \nonumber \\
   =& \frac{\chi(E)}{4\pi}
   \int^\infty_0 dE' \int_{4\pi} d\hat{\Omega}' \nu\Sigma_f(\vec{r},E',t) \Psi(\vec{r},E',
-  \hat{\Omega}',t)+S(\vec{r},E,\hat{\Omega}',t) \label{eq:bte}
+  \hat{\Omega}',t)+S(\vec{r},E,\hat{\Omega},t) \label{eq:bte}
   \shortintertext{where}
   v(E) =& \mbox{ neutron velocity,} \nonumber \\
   \Psi(\vec{r},E,\hat{\Omega},t) =& \mbox{ neutron angular flux,} \nonumber \\
@@ -629,7 +629,7 @@ finite energy ranges across the entire energy spectrum to form multigroup equati
   \rightarrow \hat{\Omega},t) \Psi_{g'}(\vec{r},\hat{\Omega}',t) \nonumber \\
   =& \frac{\chi_g}{4\pi}
   \sum^G_{g'=1} \int_{4\pi} d\hat{\Omega}' \nu\Sigma_{f,g'}(\vec{r},t) \Psi_{g'}(\vec{r},
-  \hat{\Omega}',t)+S_g(\vec{r},\hat{\Omega}',t) \label{eq:mg-bte}
+  \hat{\Omega}',t)+S_g(\vec{r},\hat{\Omega},t) \label{eq:mg-bte}
   \shortintertext{where}
   G =& \mbox{ total number of energy groups,} \nonumber \\
   g =& \mbox{ neutron energy group index (in decreasing energy order)} = 1,2,...,G. \nonumber
@@ -697,7 +697,7 @@ heterogeneous flux distribution within each subregion, and the calculation of ho
 macroscopic neutron cross section values for various neutron interactions such as
 scattering, absorption, and fission. Macroscopic cross sections represent the probability that a
 neutron, in a given energy range, will undergo the associated interaction per unit distance
-traveled in the material. Group constants also broadly include neutron diffusion
+traveled in the material.\ Group constants also broadly include neutron diffusion
 coefficients/constants and \gls{DNP} data. While advanced coarse-mesh and nodal
 methods provide reasonable flux solutions for calculating global and intermediate-scale quantities,
 they do not capture detailed heterogeneous flux distribution within each coarse-mesh subregion.
@@ -785,7 +785,7 @@ formula \cite{fen_modelling_1992}. Other macroscopic cross sections for the abso
 calculated using conventional group constant generation techniques from the transport solution
 using the supercell average flux and reaction rates. To facilitate further discussion of the
 \gls{MECS}, here is an example of applying the \gls{MECS} on a control rod in x-y geometry (Figure
-\ref{fig:mecs-geometry}) in the CITATION code as provided by Fen et al. \cite{fen_modelling_1992}.
+\ref{fig:mecs-geometry}) in the CITATION code as provided by Fen et al.\ \cite{fen_modelling_1992}.
 %
 \begin{figure}[htb]
     \centering
@@ -794,14 +794,14 @@ using the supercell average flux and reaction rates. To facilitate further discu
       (top) and the diffusion solver mesh (bottom).
         The shaded and unshaded regions represent the homogenized absorber
         region and the adjacent non-absorber region, respectively.
-        Retrieved from Fen et al. \cite{fen_modelling_1992}.}
+        Retrieved from Fen et al.\ \cite{fen_modelling_1992}.}
     \label{fig:mecs-geometry}
 \end{figure}
 
 Figure \ref{fig:mecs-geometry} shows the 1-D cylindrical super cell for the
 transport solver on the top and the corresponding 2-D Cartesian geometry for the
 diffusion solver on the bottom. The four adjacent nodes in the Cartesian
-geometry and their corresponding flux values are pairwise identical.
+geometry and their corresponding flux values are pairwise identical.\
 
 According to the mesh-centered geometry in CITATION, the leakage $L$ is
 calculated as:
@@ -849,7 +849,7 @@ transport calculation to the reaction rate as governed by diffusion theory as fo
   \end{align}
 \end{gather}
 
-Fen et al. \cite{fen_modelling_1992} later provided an updated formulation by assuming that the
+Fen et al.\ \cite{fen_modelling_1992} later provided an updated formulation by assuming that the
 cross sections are accurate and instead determined the equivalent diffusion coefficient from Eq.
 \ref{eq:mecs} and the transport leakage and flux values as follows:
 %
@@ -889,7 +889,7 @@ used to generate sets of response functions characterizing individual coarse mes
 absorber regions. These response functions can be used directly or indirectly as modified boundary
 conditions to accurately capture the effects of control rods on the global flux solution.
 
-Fen et al. \cite{fen_modelling_1992} developed the \gls{RMM} which generates modified boundary
+Fen et al.\ \cite{fen_modelling_1992} developed the \gls{RMM} which generates modified boundary
 conditions from response functions to treat absorber nodes in whole-core diffusion calculations.
 The response functions relate the incident partial current on one face of the node to the resultant
 outgoing partial currents on all four faces of the same node. To be more precise, each incident
@@ -919,7 +919,7 @@ meticulous tuning of adjacent node thicknesses to obtain equivalent fluxes to ap
 However, both \gls{RMM} and \gls{MECS} involve precalculation procedures that must be rerun if the
 absorber region is subjected to significant changes such as control rod withdrawal.
 
-Rahnema et al. \cite{rahnema_advanced_2011} later developed an \gls{IDT} method that embeds the
+Rahnema et al.\ \cite{rahnema_advanced_2011} later developed an \gls{IDT} method that embeds the
 transport correction for absorber regions in the full-core nodal diffusion calculation. Instead of
 modified boundary conditions, the \gls{IDT} method generates coupling coefficients that are
 morphologically identical to those used in nodal diffusion methods. The response region, which
@@ -971,9 +971,9 @@ currents as follows:
 
 They derived expressions for the transport operators for $J_{tr}$ in terms of exponential integral
 functions and Legendre expansions of the angular flux.
-Gross et al. \cite{gross_high-accuracy_2020} extended the derivation of the transport operators to
+Gross et al.\ \cite{gross_high-accuracy_2020} extended the derivation of the transport operators to
 handle 1-D heterogeneous problems in the form of fuel assemblies with fuel, water, and fuel+absorber
-regions. Tomatis et al. \cite{tomatis_ronen_2021} developed new numerical implementations for 1-D
+regions. Tomatis et al.\ \cite{tomatis_ronen_2021} developed new numerical implementations for 1-D
 slab, cylindrical, and spherical geometries by employing probabilistic treatments from the
 \gls{CPM} \cite{lewis_computational_1984} for the transport operators. The authors also implemented
 a solver acceleration scheme which helped with the poor convergence rate observed in the earlier
@@ -1319,7 +1319,7 @@ and the weak formulation of the upwinding method is:
 %
 The terms with asterisks denote test functions used in the \gls{FEM} framework.
 
-Two recent works by Anistratov \& Stehle \cite{anistratov_computational_2012} and Stehle et al.
+Two recent works by Anistratov \& Stehle \cite{anistratov_computational_2012} and Stehle et al.\
 \cite{stehle_hybrid_2014} describe another approach that is distinct from the prior approach in
 two ways. Firstly, they developed an on-the-fly scheme for estimating a transport metric which can
 indicate whether a subregion is diffusive. The solver uses this information to apply adaptive
@@ -1335,19 +1335,20 @@ two-level neutronics method is based on the \textit{Second-Moment} method develo
 Miller \cite{lewis_comparison_1976}. The low-order second-moment equations are:
 %
 \begin{gather}
-  \nabla\cdot J^{(s+1)}+\Sigma_a\phi^{(s+1)} = q, \\
+  \nabla\cdot J^{(s+1)}+\Sigma_a\phi^{(s+1)} = q, \label{eq:2nd-moment-1} \\
   \frac{1}{3}\nabla\cdot\phi^{(s+1)}+\Sigma_t J^{(s+1)} = \nabla\cdot F^{(s+1/2)}
+  \label{eq:2nd-moment-2}
   \shortintertext{where}
   F^{(s+1/2)}_{\alpha\beta} = \int_{4\pi}
   \left(\frac{1}{3}\delta_{\alpha\beta}-\Omega_\alpha\Omega_\beta\right)
-  \Psi^{(s+1/2)} d\Omega
+  \Psi^{(s+1/2)} d\Omega \label{eq:2nd-moment-3}
 \end{gather}
 %
 $(s)$ denotes the iteration index. $F$ is a transport correction tensor calculated from the
 high-order neutron transport equations in \textit{transport} subregions. $F$ is simply set to zero
 in \textit{diffusive} subregions. The scalar flux from the low-order equations is also used to
 evaluate the 0th-order scattering source term and accelerate the high-order calculations for
-$\Psi^{(s+1/2)}$. Stehle et al. \cite{stehle_hybrid_2014} demonstrated their hybrid method on two
+$\Psi^{(s+1/2)}$. Stehle et al.\ \cite{stehle_hybrid_2014} demonstrated their hybrid method on two
 2-D, single-group test problems. Both problems consisted of two regions with idealized macroscopic
 cross sections representing \textit{transport} and \textit{diffusive} regions with high absorption
 and scattering ratios, respectively.
@@ -1373,7 +1374,7 @@ On the \gls{TH}-modeling side of \gls{MSR} multiphysics, turbulent flow is a com
 phenomenon to include in our simulation models to obtain accurate predictions of \gls{MSR} behavior
 under various operating conditions. Most \gls{MSR} multiphysics studies with turbulence models rely
 on the two-equation turbulence models, which provide acceptable estimates of time-averaged flow
-characteristics. One study \cite{podila_cfd_2019} showed close agreement in the\gls{MSRE}
+characteristics. One study \cite{podila_cfd_2019} showed close agreement in the \gls{MSRE}
 temperature distribution with various one-equation, two-equation, and \gls{RSM} turbulence
 models despite relatively larger differences observed in turbulence intensities near the walls.
 This observation suggests one-equation models may be adequate for \gls{MSR} designs and simulations

@@ -1,5 +1,5 @@
 %% Package and Class "uiucthesis2021" for use with LaTeX2e.
-\documentclass[edeposit,fullpage,11pt]{uiucthesis2021}
+\documentclass[11pt]{uiucthesis2021}
 \doublespacing
 
 \usepackage[acronym,toc]{glossaries}
@@ -68,7 +68,6 @@
 \title{A Hybrid Neutronics Method for Time-Dependent Control Rod Modeling in Molten Salt Reactors}
 \author{Sun Myung Park}
 \department{Nuclear, Plasma \& Radiological Engineering}
-\prelim
 \degreeyear{2024}
 \committee{Dr Madicken Munk, Chair \\
            Professor Rizwan Uddin \\
@@ -136,24 +135,21 @@ nogroupskip=true]
 \label{chap:lit}
 \input{lit}
 \glsresetall
-%
-%\chapter{Description of Moltres and Assessment of its Current Capabilities}
-%\label{chap:moltres}
-%\input{moltres}
-%\glsresetall
-%
-%\chapter{Verification of Moltres for Multiphysics Molten Salt
-%Reactor Modeling}
-%\label{chap:benchmark}
-%\input{benchmark}
-%\glsresetall
-%
-%\chapter{Hybrid S$_\text{N}$-Diffusion Method for Improved Control Rod Modeling
-%in Neutron Diffusion Methods}
-%\label{chap:hybrid}
-%\input{hybrid}
-%\glsresetall
-%
+
+\chapter{Verification of Multiphysics Features in Moltres}
+\label{chap:verification}
+\input{verification}
+\glsresetall
+
+\chapter{Hybrid $S_N$-Diffusion Method}
+\label{chap:hybrid}
+\input{hybrid}
+\glsresetall
+
+\chapter{Verification of the Hybrid $S_N$-Diffusion Method}
+\label{chap:hybrid-verification}
+\glsresetall
+
 %\chapter{Proposed Work}
 %\label{chap:proposedwork}
 %\input{proposed-work}
