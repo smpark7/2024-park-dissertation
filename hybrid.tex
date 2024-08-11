@@ -598,9 +598,9 @@ diffusion corrections or adding a drift correction term.
 I performed preliminary investigations on 1-D test cases with both types of transport correction. I
 eventually elected to use the drift correction term for the remaining test cases and reactor model
 demonstrations due to superior numerical properties. I will make clear the reasons for this
-selection through 1-D test case results in Chapter \ref{chap:hybrid-verification}.
+selection through 1-D test case results in Chapter \ref{chap:msre}.
 
-\subsection{Diffusion Correction}
+\subsection{Diffusion Correction} \label{sec:diffusion-correction}
 
 Diffusion corrections involve replacing the diffusion coefficient $D_g$ in the
 diffusion term with ``optimal'' diffusion coefficients based on
@@ -616,10 +616,11 @@ corrections to the neutron diffusion flux solution from the $S_N$-derived flux s
   D^s_g(x) &= -J^{tr}_g(x)\bigg/\frac{d\phi^{tr}_g(x)}{dx}. \label{eq:svdc}
 \end{align}
 %
-where $D^s_g$ is the \gls{SVDC}, and the $tr$ superscript denotes the transport-derived neutron
+where $D^s_g$ is the diffusion correction parameter, and the $tr$ superscript denotes the
+transport-derived neutron
 current and scalar flux solutions from the $S_N$ method. Transport corrections introduced through
 $J_{tr}$ are scaled by the flux gradient. We assumed that it varies continuously and is
-at least once differentiable except at dissimilar material interfaces. \glspl{SVDC} provide
+at least once differentiable except at dissimilar material interfaces. $D^s_g$ provides
 pointwise corrections to closely match the diffusion flux solution to the $S_N$ flux solution.
 By replacing $D_g$ with $D^s_g$, we are effectively adding the following transport correction term
 %
@@ -652,9 +653,9 @@ non-linear within the mesh element. This design choice may be due to an intentio
 diffusion coefficient as a constant in the $\frac{d}{dx}D\frac{d\phi}{dx}$ term of the neutron
 diffusion equation (Eq.\ \ref{eq:mg-diff}).
 
-Unlike their approach, the \gls{SVDC} formulation in Eq.\ \ref{eq:svdc} allows for continuously
+Unlike their approach, my diffusion correction scheme (Eq. \ref{eq:svdc} allows for continuously
 varying diffusion coefficients to reduce truncation error. In practice, the discretization order of
-\gls{SVDC} variables in a numerical calculation would be the same as the discretization order of
+$D^s_g$ in a numerical calculation would be the same as the discretization order of
 the reference flux solution. This formulation introduces a minor change to the finite difference
 implementation of the 2nd-order diffusion term to handle spatial derivatives of the
 diffusion coefficient as $D^s_g$ is not uniform in space.
@@ -674,7 +675,7 @@ steep, non-linear fluxes, such as near control rods. For the Ronen method, Gross
 \cite{gross_comprehensive_2023} applied a numerical fix by avoiding correction
 calculations wherever the flux gradient values fall below a certain threshold. 
 
-\subsection{Drift Correction Term}
+\subsection{Drift Correction Term} \label{sec:drift-correction}
 
 Drift correction terms feature prominently in existing literature as transport correction
 terms for \gls{NDA} schemes or nodal diffusion methods
@@ -846,14 +847,14 @@ calculations with low-order neutron diffusion calculations. However, the high-or
 full reactor core models remain computationally intensive and limited in their applicability to
 time-independent neutronics simulations on \gls{HPC} clusters.
 In order to reduce the computational cost of the high-level $S_N$ calculation in a reactor
-simulation, I propose reducing
-the problem domain of the $S_N$ method to a \textit{correction region} containing the control rod
+simulation, I propose reducing the problem domain of the $S_N$ method to a
+\textit{correction subregion} containing the control rod
 and its vicinity. Consequently, the hybrid $S_N$-diffusion method may retain accurate neutron flux
 and current estimates around the control rod region from the $S_N$ method while making significant
 computational cost savings by treating most of the reactor geometry with the neutron diffusion
 method alone. Henceforth, I will refer to the $S_N$ calculation on the correction
 region as the $S_N$ \textit{subproblem} or \textit{subsolver}. I define the full problem
-domain and the correction region as $V_0$ and $V_1$, respectively, where
+domain and the correction subregion as $V_0$ and $V_1$, respectively, where
 $V_1\subseteq V_0$. The iterative algorithm for the hybrid $S_N$-diffusion method is as follows:
 %
 \begin{enumerate}
@@ -936,11 +937,11 @@ $\Psi^\text{inc}_{g,d}$ in Eq.\ \ref{eq:boundary-source} to
 
 The $S_N$ subsolver boundary conditions will generally cause deviations
 in the flux and transport correction values since the $P_1$ approximation is accurate for up to
-linear anisotropies in the flux. However, as I will show in Chapter \ref{chap:hybrid-verification},
+linear anisotropies in the flux. However, as I will show in Chapter \ref{chap:msre},
 the influence of boundary conditions on the accuracy of
 the transport correction terms does not extend far from the boundary $\partial V_1$ in optically
 thick media due to competing influences from the bulk scattering and absorption effects in $V_1$.
-Results in Chapter \ref{chap:hybrid-verification} will show that transport correction values
+Results in Chapter \ref{chap:msre} will show that transport correction values
 ($D^s_g$ or $\vec{D}_g$) generated with the $S_N$ subsolver within $V_1$ are accurate everywhere up
 to a few centimeters away from $\partial V_1$.
 
@@ -969,7 +970,7 @@ neutron flux and flux gradient.
 	\label{fig:3b-geometry}
 \end{figure}
 
-Here, I use Case 3b of the 1-D test cases to be covered in Chapter \ref{chap:hybrid-verification}
+Here, I use Case 3b of the 1-D test cases to be covered in Chapter \ref{chap:msre}
 to illustrate the buffer region and the behavior of $\vec{D}_g$. Case 3b is a 1-D slab problem
 consisting of control rod, air, fuel-graphite repeating lattice, and core vessel regions as shown
 in Figure \ref{fig:3b-geometry}. The fuel regions are neutron-multiplying media containing
@@ -990,7 +991,7 @@ the right boundary.
         \includegraphics[width=\textwidth]{case-3b-group-8-drift}
     \end{subfigure}
     \caption{The reference and hybrid drift ($\vec{D}_g$) distributions for group 1 and 8 calculated
-      from $S_8$ and $S_8$-diffusion simulations. The correction region $V_1$ spans $x=0$ cm to
+      from $S_8$ and $S_8$-diffusion simulations. The correction subregion $V_1$ spans $x=0$ cm to
       $x=10$ cm.}
     \label{fig:3b-drift}
 \end{figure}
