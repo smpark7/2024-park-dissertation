@@ -75,6 +75,7 @@
            Associate Professor Tomasz Kozlowski \\
            Professor Paul Fischer}
 
+\newcounter{counterforappendices}
 
 \begin{document}
 \maketitle
@@ -139,7 +140,7 @@ nogroupskip=true]
 
 \chapter{Verification of Multiphysics Features in Moltres}
 \label{chap:verification}
-%\input{verification}
+\input{verification}
 \glsresetall
 
 \chapter{Hybrid $S_N$-Diffusion Method}
@@ -147,7 +148,7 @@ nogroupskip=true]
 \input{hybrid}
 \glsresetall
 
-\chapter{MSRE Model \& Results}
+\chapter{Demonstration of the Hybrid Method with the MSRE}
 \label{chap:msre}
 \input{msre}
 \glsresetall
@@ -161,6 +162,13 @@ nogroupskip=true]
 
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
+
+\clearpage
+\setcounter{counterforappendices}{\value{page}}
+\mainmatter
+\setcounter{page}{\value{counterforappendices}}
+\appendix
+\input{appendix}
 
 \end{document}
 \endinput

@@ -50,7 +50,7 @@ This chapter starts with the $S_N$ method implementation required for the hybrid
 method. I implemented both $S_N$ and hybrid methods using \gls{FEM} numerical solver capabilities
 available through Moltres \cite{lindsay_moltres_2017} and the \gls{MOOSE} framework. In this
 section, the derivation for the \gls{SAAF} formulation of the $S_N$ method and its
-implementation in Moltres follows closely the derivation developed by Wang et al.
+implementation in Moltres follows closely the derivation developed by Wang et al.\
 \cite{wang_diffusion_2014, wang_rattlesnake_2018}.
 
 \subsection{Multigroup Neutron Transport Equations}
@@ -592,13 +592,19 @@ and in materials with significant scattering contributions from light nuclei.
 
 Transport corrections to allow neutron diffusion methods to reproduce high-fidelity flux solutions
 can be introduced by modifying the neutron diffusion equations.
-In this work, I explored two options for applying
-transport corrections to the neutron diffusion equations: applying
-diffusion corrections or adding a drift correction term.
-I performed preliminary investigations on 1-D test cases with both types of transport correction. I
-eventually elected to use the drift correction term for the remaining test cases and reactor model
+In this work, I explored two options for applying transport corrections to the neutron diffusion
+equations: a diffusion correction scheme and a drift correction scheme.
+I performed preliminary investigations on 1-D \gls{MSRE} models with both transport correction
+schemes. I eventually elected to use the drift correction scheme for the 2-D and 3-D reactor model
 demonstrations due to superior numerical properties. I will make clear the reasons for this
 selection through 1-D test case results in Chapter \ref{chap:msre}.
+
+Consequently, most of this chapter focuses on the $S_N$ and the drift correction-based hybrid
+method implementations on Moltres. On the other hand, I implemented the diffusion correction-based
+hybrid method using the Python programming language for quick
+prototyping. Implementation details of the $S_N$, neutron diffusion, and hybrid methods on Python
+are available in Appendix \ref{chap:implementation}. Both correction schemes share the iteration
+algorithm described in Section \ref{sec:hybrid-algorithm}.
 
 \subsection{Diffusion Correction} \label{sec:diffusion-correction}
 
@@ -972,8 +978,8 @@ neutron flux and flux gradient.
 
 Here, I use Case 3b of the 1-D test cases to be covered in Chapter \ref{chap:msre}
 to illustrate the buffer region and the behavior of $\vec{D}_g$. Case 3b is a 1-D slab problem
-consisting of control rod, air, fuel-graphite repeating lattice, and core vessel regions as shown
-in Figure \ref{fig:3b-geometry}. The fuel regions are neutron-multiplying media containing
+consisting of control rod, air, fuel-graphite repeating lattice, and reactor vessel regions as
+shown in Figure \ref{fig:3b-geometry}. The fuel regions are neutron-multiplying media containing
 $^\text{235}$U fissile material. I took material compositions of each region from the \gls{MSRE}
 reference design and the start-up fuel composition \cite{fratoni_molten_2020}.
 Case 3b has reflecting boundary conditions on the left boundary and vacuum boundary conditions on
