@@ -40,6 +40,7 @@
 \usepackage{tabularx}
 \usepackage{float}
 \usepackage{enumitem}
+\setlist[itemize]{noitemsep}
 \usepackage{diagbox}
 \usepackage{courier}
 \usepackage{pdflscape}
@@ -74,6 +75,7 @@
            Associate Professor Tomasz Kozlowski \\
            Professor Paul Fischer}
 
+\newcounter{counterforappendices}
 
 \begin{document}
 \maketitle
@@ -146,8 +148,9 @@ nogroupskip=true]
 \input{hybrid}
 \glsresetall
 
-\chapter{Verification of the Hybrid $S_N$-Diffusion Method}
-\label{chap:hybrid-verification}
+\chapter{Demonstration of the Hybrid Method with the MSRE}
+\label{chap:msre}
+\input{msre}
 \glsresetall
 
 %\chapter{Proposed Work}
@@ -159,6 +162,13 @@ nogroupskip=true]
 
 \bibliographystyle{IEEEtran}
 \bibliography{bibliography}
+
+\clearpage
+\setcounter{counterforappendices}{\value{page}}
+\mainmatter
+\setcounter{page}{\value{counterforappendices}}
+\appendix
+\input{appendix}
 
 \end{document}
 \endinput
