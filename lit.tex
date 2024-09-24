@@ -341,7 +341,8 @@ Kedl \cite{kedl_fluid_1970} reports expected Reynolds numbers in the \gls{MSRE}
 ranging from 1000 in the regular fuel coolant channels to over 10000 in the
 flow distributor volute and core wall cooling annulus regions. For the
 \gls{MSFR}, salt flow in the central core region is highly turbulent and
-reaches Reynolds numbers on the order of $10^5$.
+reaches Reynolds numbers on the order of $10^5$ based on core dimensions and salt flow rate
+\cite{rouch_preliminary_2014}.
 
 \subsection{Turbulence Models}
 
@@ -421,7 +422,7 @@ underperform for more complex flows involving flow separation and significant st
 One- and two-equation turbulence models introduce differential equations to
 describe turbulence quantities such as the turbulence kinetic energy and the
 turbulence rate of dissipation to obtain the eddy viscosity distribution. The
-most common and best-performing one-equation model is the Spalart-Allmaras
+most common one-equation model is the Spalart-Allmaras
 model, which directly provides an equation for the eddy viscosity with several
 closure coefficients and functions \cite{wilcox_turbulence_2006}. The
 Spalart-Allmaras model is considered ``complete'' as it does not involve
@@ -432,7 +433,7 @@ significantly from experimental data
 for separated flows \cite{wilcox_turbulence_2006}.
 
 Investigations with
-one-equation models reveal the need for an extra equation to account for
+one-equation models revealed the need for an extra equation to account for
 turbulent length scales separately from turbulent velocity. Thus, two-equation
 models became the most widely adopted turbulence model since the late 20th century
 \cite{pope_turbulent_2000}. Two-equation models include the $k$-$\epsilon$,
