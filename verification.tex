@@ -1,10 +1,30 @@
+Section \ref{sec:msr-vv} identifies salt flow-induced \gls{DNP} drift and the strong coupling
+between neutronics and thermal-hydraulics as two critical multiphysics interactions that must be
+accurately modeled in \gls{MSR} simulation software. This chapter describes Moltres and
+subsequently covers several \gls{VV} studies for verifying and validating specific modeling
+capabilities in Moltres which relate to the aforementioned multiphysics interactions.
+
+Section \ref{sec:moltres-description} details the neutronics, thermal-hydraulics, and multiphysics
+coupling schemes in Moltres for \gls{MSR} multiphysics simulations. Following the model
+descriptions, the section also summarizes and assesses previous \gls{MSR} analyses
+performed with Moltres. Section \ref{sec:cnrs-benchmark} presents verification results from Moltres
+for the CNRS benchmark study. Section \ref{sec:msre-pump} presents key findings from a
+collaborative \gls{VV} study based on the \gls{MSRE} pump transient tests conducted in the 1960s.
+Section \ref{sec:turbulence} describes the Spalart-Allmaras turbulence model implementation in
+Moltres and presents the model \gls{VV} results against common wall-bounded turbulent flow case
+studies from literature.
+
 \input{moltres}
 \input{benchmark}
 
-\section{MSRE Zero-Power Pump Experiments}
+\section{MSRE Zero-Power Pump Experiments} \label{sec:msre-pump}
 
 \input{msre-pump}
 
-\section{Spalart-Allmaras Turbulence Model Verification}
+\section{Moltres Spalart-Allmaras Turbulence Model Verification} \label{sec:turbulence}
 
 \input{turbulence}
+
+\section{Summary}
+
+
