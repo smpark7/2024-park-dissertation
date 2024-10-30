@@ -6,20 +6,20 @@ all: all-via-pdf
 
 all-via-pdf: $(manuscript).tex $(references)
 	pdflatex $(latexopt) $<
-	bibtex $(manuscript).aux
+	bibtex8 $(manuscript).aux
 	pdflatex $(latexopt) $<
 	pdflatex $(latexopt) $<
 
 all-via-dvi: 
 	latex $(latexopt) $(manuscript)
-	bibtex $(manuscript).aux
+	bibtex8 $(manuscript).aux
 	latex $(latexopt) $(manuscript)
 	latex $(latexopt) $(manuscript)
 	dvipdf $(manuscript)
 
 epub: 
 	latex $(latexopt) $(manuscript)
-	bibtex $(manuscript).aux
+	bibtex8 $(manuscript).aux
 	mk4ht htlatex $(manuscript).tex 'xhtml,charset=utf-8,pmathml' ' -cunihtf -utf8 -cvalidate'
 	ebook-convert $(manuscript).html $(manuscript).epub
 

@@ -47,8 +47,14 @@
 
 \usepackage{cleveref}
 \usepackage{datatool}
-\usepackage[numbers]{natbib}
+% \usepackage[numbers]{natbib}
 \usepackage{notoccite}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[bibstyle=ieee,backend=bibtex8,sorting=none]{biblatex}
+\usepackage{textalpha}
+\addbibresource{./bibliography.bib}
 
 \usepackage{tikz}
 \usepackage{tkz-euclide}
@@ -160,8 +166,8 @@ nogroupskip=true]
 
 \backmatter
 
-\bibliographystyle{IEEEtran}
-\bibliography{bibliography}
+% \bibliographystyle{IEEEtran}
+\printbibliography[heading=bibintoc,title={References}]
 
 \clearpage
 \setcounter{counterforappendices}{\value{page}}

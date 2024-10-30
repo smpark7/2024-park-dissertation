@@ -1,7 +1,7 @@
 \section{Description of Moltres} \label{sec:moltres-description}
 
-This chapter provides an overview of Moltres as a multiphysics
-simulation software for molten salt reactors. 
+This section provides an overview of Moltres as a multiphysics
+simulation software for \glspl{MSR}. 
 Section \ref{sec:moltres-features}
 describes the general software features of Moltres, Section
 \ref{sec:moltres-physics} expands on the physics models in Moltres, and Section
@@ -112,11 +112,7 @@ interface for software development and general ease of use.
 \subsection{Physics Models} \label{sec:moltres-physics}
 
 This section describes the various physics models available in Moltres to model
-coupled neutronics and thermal-hydraulics in \glspl{MSR}. Section \ref{sec:nts}
-discusses the neutronics model in Moltres, Section \ref{sec:th} discusses
-the thermal-hydraulics model, and Section \ref{sec:moltres-loop} discusses the
-external loop model for \gls{DNP} looping and heat removal via external heat
-exchangers.
+coupled neutronics and thermal-hydraulics in \glspl{MSR}.
 
 \subsubsection{Multigroup Neutron Diffusion Model} \label{sec:nts}
 
@@ -245,7 +241,7 @@ flow as they circulate the fuel salt loop.
 
 \subsubsection{Incompressible Flow Model} \label{sec:th}
 
-Moltres relies on MOOSE's \texttt{Heat} \texttt{Conduction} and
+Moltres relies on MOOSE's \texttt{Heat} \texttt{Transfer} and
 \texttt{Navier-Stokes} physics modules for its thermal-hydraulics modeling
 capabilities. While the \texttt{Navier-Stokes} module supports
 compressible and incompressible flow modeling, this work focuses on
@@ -568,7 +564,7 @@ absence of axial heat conduction and the use of 32 neutron groups in the
 \gls{ORNL} calculations, and the exclusion of control rod thimbles in the
 Moltres calculations.
 
-\paragraph{Critical Assessment} \label{sec:msre-critique}
+%\paragraph{Critical Assessment} \label{sec:msre-critique}
 
 Lindsay et al.'s work illustrated early development efforts for neutronics and thermal-hydraulics
 models in Moltres. It demonstrated, along with advanced capabilities from the \gls{MOOSE}
@@ -877,7 +873,7 @@ scenario, buoyancy effects become significant as the model loses forced flow.
     \label{fig:lof}
 \end{figure}
 
-\paragraph{Critical Assessment} \label{sec:msfr-critique}
+%\paragraph{Critical Assessment} \label{sec:msfr-critique}
 
 Given the inherent and unique characteristics of \glspl{MSR}, the new
 capabilities introduced in this work---coupling to incompressible Navier-Stokes
