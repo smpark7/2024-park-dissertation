@@ -1,3 +1,5 @@
+\section{Moltres Spalart-Allmaras Turbulence Model Verification} \label{sec:turbulence}
+
 As detailed in Section \ref{sec:th}, Moltres compiles with the MOOSE Navier-Stokes
 \cite{peterson_overview_2018} and Heat Transfer modules for incompressible flow
 modeling capabilities by default. Moltres couples with these modules natively because they are all
@@ -281,6 +283,27 @@ starting from a timestep size of 0.1 s up to a maximum timestep size of 10 s wit
 growth factor of 1.1. The upstream and \gls{BFS} simulations automatically terminated at $t=212$ s
 and $t=223$ s when Moltres detected that the flow profiles reached steady-state.
 
+\begin{table}[htb]
+  \centering
+  \small
+  \caption{Relevant turbulent \gls{BFS} flow problem parameters. The $\tilde{\mu}_\text{inlet}$ value
+  at the inlet is set to fives times the $\mu$ value as recommended for the \gls{SA} model
+  \cite{spalart_one-equation_1994}.}
+  \begin{tabular}{l S}
+    \toprule
+    Property & {Value} \\
+    \midrule
+    Density, $\rho$ [kg m$^{-3}$] & 1.0 \\
+    Inlet velocity, $v_z$ [m s$^{-1}$] & 1.0 \\
+    Dynamic viscosity, $\mu$ [kg m$^{-1}$ s$^{-1}$] & 2.778e-5 \\
+    Reynolds number based on step height $H=1$ m, Re$_H$ [-] & 3.6e4 \\
+    Modified viscosity along inlet, $\tilde{\mu}_\text{inlet}$ [kg m$^{-1}$ s$^{-1}$] & 1.389e-4 \\
+    Modified viscosity along wall, $\tilde{\mu}_\text{wall}$ [kg m$^{-1}$ s$^{-1}$] & 0.0 \\
+    \bottomrule
+  \end{tabular}
+  \label{table:bfs}
+\end{table}
+
 Figure \ref{fig:bfs} shows the velocity magnitude and streamlines around the step at $x=110$ m. The
 streamlines illustrate the recirculation zones created by flow separation past the step.
 Figure \ref{fig:bfs-plots} shows the normalized velocity distributions at various distances from
@@ -304,27 +327,6 @@ turbulence modeling resource website \cite{rumsey_turbulence_nodate} fail to acc
 the turbulent shear stress distribution (Figure \ref{fig:bfs-stress}) from the reference
 experimental data. Therefore, the discrepancies observed in the turbulent shear stresses from the
 \gls{SA} model are within expectations of a \gls{RANS}-based model.
-
-\begin{table}[htb]
-  \centering
-  \small
-  \caption{Relevant turbulent \gls{BFS} flow problem parameters. The $\tilde{\mu}_\text{inlet}$ value
-  at the inlet is set to fives times the $\mu$ value as recommended for the \gls{SA} model
-  \cite{spalart_one-equation_1994}.}
-  \begin{tabular}{l S}
-    \toprule
-    Property & {Value} \\
-    \midrule
-    Density, $\rho$ [kg m$^{-3}$] & 1.0 \\
-    Inlet velocity, $v_z$ [m s$^{-1}$] & 1.0 \\
-    Dynamic viscosity, $\mu$ [kg m$^{-1}$ s$^{-1}$] & 2.778e-5 \\
-    Reynolds number based on step height $H=1$ m, Re$_H$ [-] & 3.6e4 \\
-    Modified viscosity along inlet, $\tilde{\mu}_\text{inlet}$ [kg m$^{-1}$ s$^{-1}$] & 1.389e-4 \\
-    Modified viscosity along wall, $\tilde{\mu}_\text{wall}$ [kg m$^{-1}$ s$^{-1}$] & 0.0 \\
-    \bottomrule
-  \end{tabular}
-  \label{table:bfs}
-\end{table}
 
 \begin{table}[htb]
   \centering
