@@ -986,7 +986,9 @@ addition to modifications in the 2-D model listed in Section \ref{sec:2d-model-s
 \begin{figure}[p]
   \centering
   \includegraphics[width=\columnwidth]{msre-geom-vert}
-  \caption{Vertical cross section of the 3-D numerical \gls{MSRE} model.}
+  \caption{Vertical cross section of the 3-D numerical \gls{MSRE} model offset by 5.08 cm to show
+  the control rod thimble and homogenized sample basket. The control rod is in its fully inserted
+  position. The homogenized lower plenum consists of 90.8\% salt and 9.2\% INOR-8 alloy by volume.}
   \label{fig:msre-geom-vert}
 \end{figure}
 
@@ -996,11 +998,14 @@ the same as the 2-D models and the \gls{MSRE} benchmark specifications \cite{fra
 All 3-D neutronics simulations in this section used the molten salt composition with 65.25 kg
 $^{235}$U loaded (Table \ref{table:2d-salt-composition}), except the simulations for temperature
 reactivity coefficient calculations which had a higher $^{235}$U loading of 67.00 kg (Table
-\ref{table:67-salt-composition}.
+\ref{table:67-salt-composition}).
 
 \begin{table}[htb]
   \centering
   \caption{List of reactor dimensions.}
+  \begin{tabular}{l l}
+    Height [cm] & 215 \\
+    TODO: Populate table & \\
   \label{table:reactor-dimensions}
 \end{table}
 
@@ -1068,7 +1073,7 @@ ENDF/B-VII.1 nuclear data library as the \gls{MSRE} numerical benchmark report.
   \begin{tabular}{l S[table-format=1.5(2)]}
     \toprule
      & {$k_\text{eff}$} \\
-     \cmidrule(l){1-1}
+     \cmidrule(l){2-2}
     \gls{MSRE} experimental data & 1.00000(420) \\
     Serpent 2 (Numerical benchmark) & 1.02132(3) \\
     OpenMC (This work) & 1.01308(20) \\
@@ -1100,13 +1105,35 @@ rods.
 
 \subsubsection{Control Rod Worth}
 
-After achieving initial criticality, \gls{ORNL} researchers ran control rod calibration experiments
-with the \gls{MSRE} at zero-power (typically at about 10 W power output).
+After achieving initial criticality, \gls{MSRE} researchers ran control rod calibration experiments
+with the \gls{MSRE} at zero-power (typically at about 10 W power output)
+\cite{prince_zero-power_1968}. They measured differential rod worths by measuring the time taken
+for the reactor power to increase by 20 W following a prescribed withdrawal of Rod 1 and applying
+the inhour equation to obtain the reactivity inserted. They repeated this process at different rod
+heights after successive additions of highly enriched uranium capsules. The final integral rod
+worth curve was normalized to the critical $^{235}$U loading of 65.25 kg
+\cite{prince_zero-power_1968}.
 
-For control rod worth calculations, the OpenMC and Moltres simulations ran  with Rod 1 at fourteen
+For control rod worth calculations, the OpenMC and Moltres simulations ran with Rod 1 at fourteen
 different rod positions from full insertion (0 inch) to full withdrawal (51 inches). The rod
 positional limits of 0 inch and 51 inches represents the full range of deliberate rod motion
 allowable by the control rod drive motor \cite{robertson_msre_1965}.
+
+Figure \ref{fig:rod-worth} shows the integral rod worth curves from the \gls{MSRE} experimental
+data and the OpenMC and Moltres numerical models. By taking the $k_\text{eff}$ when Rod 1 is fully
+inserted as reference, all rod worth curves start at 0 pcm. The change in integral rod worth,
+represented by the gradient in the plot, is steepest as the tip of the rod passes through the
+center of the core. The hybrid method performs well in reproducing the rod worth curve from OpenMC;
+all hybrid method rod worth values fall within one or two sigma range of OpenMC.
+
+Due to the experimental procedure of computing integral rod worth from cumulative differential rod
+worth measurements, the uncertainty range of the \gls{MSRE} data scales with rod position.
+Both OpenMC and the hybrid method report consistently larger integral rod worths than the
+\gls{MSRE} data across all rod positions. Nevertheless, they are in good agreement with the
+\gls{MSRE} data as compared to the neutron diffusion method, which significantly overestimates the
+integral rod worth.
+
+Table \ref{table:rod-worth} shows the total rod worth of Rod 1. 
 
 \begin{figure}[p]
   \centering
@@ -1114,6 +1141,22 @@ allowable by the control rod drive motor \cite{robertson_msre_1965}.
   \caption{Reactivity inserted by Rod 1 at various rod positions relative to the full insertion.}
   \label{fig:rod-worth}
 \end{figure}
+
+\begin{table}[htb]
+  \centering
+  \caption{Total rod worth of Rod 1 when fully inserted.}
+  \begin{tabular}{l S[table-format=4(2)] S}
+    \toprule
+     & {$\rho_\text{worth}$ [pcm]} & {Percentage discrepancy [\%]}\\
+     \cmidrule(l){2-2}
+    \gls{MSRE} experimental data & 2250(67) & {-}\\
+    OpenMC (This work) & 2364(44) & 5.1 \\
+    Hybrid (This work) & 2345 & 4.2 \\
+    Diffusion (This work) & 2725 & 21.1 \\
+    \bottomrule
+  \end{tabular}
+  \label{table:rod-worth}
+\end{table}
 
 \subsubsection{Temperature Reactivity Coefficient}
 
