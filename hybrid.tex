@@ -319,7 +319,7 @@ However, the $\mathbb{L}^{-1}_2$ operators render the current \gls{SAAF} formula
 unsolveable in void and near-void regions where the total cross sections $\Sigma_{t,g}$ approach
 zero \cite{wang_diffusion_2014}.
 
-\subsection{Spatial Discretization and Void Treatment}
+\subsection{Spatial Discretization and Void Treatment} \ref{sec:void-treatment}
 
 To overcome the issue of voids, Wang et al.\ \cite{wang_diffusion_2014} modified the standard
 \gls{SAAF} formulation by taking inspiration from the \gls{SUPG} stabilization technique
@@ -375,10 +375,11 @@ We start by defining the following stabilization operator
   \begin{align*}
     \tau_g &=
     \begin{cases}
-      \frac{1}{\Sigma_{t,g}} \mbox{ for } h\Sigma_{t,g} \geq \varsigma \\
-      \frac{h}{\varsigma} \mbox{ for } h\Sigma_{t,g} < \varsigma
+      \frac{1}{c\Sigma_{t,g}} \mbox{ for } ch\Sigma_{t,g} \geq \varsigma \\
+      \frac{h}{\varsigma} \mbox{ for } ch\Sigma_{t,g} < \varsigma
     \end{cases}, & \\
     h &= \mbox{mesh element size,} & \\
+    c &= \mbox{maximum stabilization factor,} & \\
     \varsigma &= \mbox{void constant.} &
   \end{align*}
 \end{gather}
@@ -844,6 +845,17 @@ can be evaluated as
   \frac{\sum_{\hat{\Omega}_d\cdot\hat{n}_b > 0}w_d |\hat{\Omega}_d\cdot\hat{n}_b |
   \Psi_{g,d}}{\sum^{N_d}_{d=1}w_d\Psi_{g,d}}. \label{eq:bound-coef}
 \end{gather}
+
+\subsection{Setting Caps on the Diffusion Coefficient Values} \ref{sec:diffcoef-cap}
+
+From experience, the $S_N$-diffusion outer iterations under both hybrid schemes or the standard
+$S_N$ method with nonlinear diffusion acceleration converged at a faster rate when the uncorrected
+diffusion coefficient values are capped at around $D_g=2.5$ cm. Excessively large $D_g$ values,
+which occur in near-void regions, cause significant computational performance degradation. The caps
+have no impact on any method because the diffusion term containing $D_g$ is canceled out by the
+transport correction terms as the solution converges. This behavior was also confirmed through
+email correspondence with Dr.\ Yaqi Wang regarding nonlinear diffusion acceleration of the
+\gls{SAAF} $S_N$ method \cite{wang_diffusion_2014}.
 
 \section{Iteration Algorithm} \label{sec:hybrid-algorithm}
 

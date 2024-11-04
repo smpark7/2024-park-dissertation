@@ -124,7 +124,7 @@ of travel, neutron energy, and angle-dependence in $\Sigma_s$. The hybrid $S_N$-
 features representations from either $S_N$ or neutron diffusion depending on the subregion under
 consideration. Comparing OpenMC-MG results with OpenMC-CE results allows us
 to quantify errors arising from neutron energy group discretization and the scattering cross
-section simplifications.
+section approximations.
 
 \begin{table}[htb!]
   \centering
@@ -644,7 +644,7 @@ would increase from 2 to 3 if the tolerance value is further tightened.
 
 \section{2-D Neutronics Models \& Results} \label{sec:2d-results}
 
-\subsection{2-D Neutronics Model Setup}
+\subsection{2-D Neutronics Model Setup} \label{sec:2d-model-setup}
 
 Figures \ref{fig:1/4-geom} and \ref{fig:full-geom} show the 2-D quarter-core and full-core
 \gls{MSRE} models investigated. I adapted the models from the horizontal cross section of the base
@@ -657,7 +657,7 @@ in the 2-D \gls{MSRE} model for this work:
     strung on flexible steel cables. Ignored the inconel shells encasing the control elements and
     the steel helical cables linking the control elements together.
   \item Set channel pitch, width, and length to 2, 0.2, and 1.2 inches, respectively.
-  \item Homogenized the INOR, graphite, and molten salt regions in the sample basket.
+  \item Homogenized the INOR-8, graphite, and molten salt regions in the sample basket.
   \item Modified the outer edge of the core graphite to be circular with no jagged edges.
   \item Replaced partial channels with full-size channels near the edge of the core graphite.
   \item Ignored the thermal insulation and shield structures outside the core.
@@ -739,7 +739,7 @@ drift correction parameters for the coupled diffusion solver.
 
 \subsection{2-D Neutronics Numerical Results} \label{sec:2d-nts-results}
 
-\subsubsection{2-D quarter-core results}
+\subsubsection{2-D Quarter-Core}
 
 Table \ref{table:quarter-core} details the $k_\text{eff}$ and control rod worth estimates and error
 values relative to OpenMC-CE. For the ``No Rod'' case, OpenMC-CE estimated the $k_\text{eff}$ to be
@@ -862,7 +862,7 @@ the existence of near-void and highly neutron-absorbing regions.
 
 \FloatBarrier
 
-\subsubsection{2-D full-core results}
+\subsubsection{2-D Full-Core}
 
 I performed the same $k_\text{eff}$ and fission rate distribution analyses with the 2-D full-core
 model under four configurations starting from no rod inserted to all three rods inserted. The
@@ -951,15 +951,175 @@ geometries.
 
 \section{3-D Neutronics Models \& Results} \label{sec:3d-results}
 
-TBD
+\subsection{3-D Neutronics Model Setup} \label{sec:3d-model-setup}
 
-%\subsection{3-D Model Setup}
+Figure \ref{fig:msre-picture} shows the vertical cross section of the actual \gls{MSRE} vessel.
+The actual design has rounded upper and lower plena to help direct salt flow through the system.
+This work uses a modified 3-D numerical \gls{MSRE} model as shown by the vertical cross section
+in Figure \ref{fig:msre-geom-vert}. The model excludes the toroidal flow distributor near the top
+of the vessel and reshapes the plena into right cylinders. It has the same horizontal cross section
+as the 2-D model (Figure \ref{fig:full-geom}) throughout most of the salt-graphite lattice. In
+addition to modifications in the 2-D model listed in Section \ref{sec:2d-model-setup}, the
+3-D model includes the following modifications:
 
-%\subsection{3-D Numerical Results}
+\begin{itemize}
+  \item Removed the toroidal flow distributor near the top of the vessel.
+  \item Reshaped the upper and lower plena into right cylinders while keeping the salt volume
+    constant.
+  \item Flattened the conical tops of the graphite lattice blocks.
+  \item Regularized the complicated graphite lattice structure at the bottom.
+  \item Set a fixed outer vessel thickness of 2.54 cm.
+  \item Homogenized the lower plenum by 90.8\% salt- 9.2\% INOR-8 (vessel) by volume.
+  \item Removed the reactor access nozzle and the various components within it.
+  \item Added a graphite block at the bottom of the control rod thimbles.
+\end{itemize}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.97\columnwidth]{msre-picture}
+  \caption{Vertical cross section of the actual \gls{MSRE} vessel. It has rounded upper and lower
+  plena, and a toroidal flow distributor that distributes the salt inflow evenly as it enters the
+  core through holes on the inside vessel surface of the distributor.}
+  \label{fig:msre-picture}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\columnwidth]{msre-geom-vert}
+  \caption{Vertical cross section of the 3-D numerical \gls{MSRE} model.}
+  \label{fig:msre-geom-vert}
+\end{figure}
+
+Table \ref{table:reactor-dimensions} lists relevant dimensions of the 3-D \gls{MSRE} model.
+All material compositions remain
+the same as the 2-D models and the \gls{MSRE} benchmark specifications \cite{fratoni_molten_2020}.
+All 3-D neutronics simulations in this section used the molten salt composition with 65.25 kg
+$^{235}$U loaded (Table \ref{table:2d-salt-composition}), except the simulations for temperature
+reactivity coefficient calculations which had a higher $^{235}$U loading of 67.00 kg (Table
+\ref{table:67-salt-composition}.
+
+\begin{table}[htb]
+  \centering
+  \caption{List of reactor dimensions.}
+  \label{table:reactor-dimensions}
+\end{table}
+
+\begin{table}[htb]
+  \small
+  \centering
+  \setlength\tabcolsep{4pt}
+  \caption{\gls{MSRE} molten salt composition when the $^{235}$U loading was at 65.25 kg.}
+  \begin{tabular}{l S S S S S S S}
+    \toprule
+    Element & {Li} & {Be} & {Zr} & {Hf} & {$^{234}$U} & {$^{235}$U} & {$^{236}$U} \\
+    \midrule
+    Composition [kg] & 507.42 & 293.96 & 513.97 & 0.0029 & 0.68 & 67.00 & 0.28 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tabular}{l S S S S S S}
+    \toprule
+    Element & {$^{238}$U} & {Fe} & {Cr} & {Ni} & {O} & {F} \\
+    \midrule
+    Composition [kg] & 142.02 & 0.75 & 0.13 & 0.14 & 2.27 & 3104.22 \\
+    \bottomrule
+  \end{tabular}
+  \label{table:67-salt-composition}
+\end{table}
+
+All neutronics simulations ran on OpenMC under continuous energy mode and on Moltres with the
+hybrid $S_N$-diffusion method. The hybrid simulations ran with a maximum stabilization factor of
+$c=250$, a void constant $\varsigma=0.5$, and a uncorrected diffusion coefficient cap of $D_g=2.5$.
+Refer to Sections \ref{sec:void-treatment} and \ref{sec:diffcoef-cap} for the relevant discussion
+on void treatment for near-void regions and the impact of large diffusion coefficient values on
+solver performance. As for the standard neutron diffusion method, it either converges very slowly
+or does not converge at all when $D_g$ values are uncapped due to excessive diffusive effects in
+the air-filled control rod thimbles. Group-wise $D_g$ values, generated using OpenMC, ranged from
+100 cm to 850 cm in the air regions as compared to the typical 0.5 cm to 2.0 cm range observed in
+non-air regions. Therefore, all neutron diffusion method simulation results in the following
+section were measured with the diffusion coefficient capped at $D_g=2.5$.
+
+Unlike the 2-D hybrid simulations which ran with $S_8$ angular discretization, the 3-D hybrid
+simulations ran with $S_6$ angular discretization due to significantly
+larger computational and memory requirements demanded by the 3-D simulations. Further discussion on
+computational performance may be found at the end of Section \ref{sec:3d-nts}. All simulations,
+except those for temperature reactivity coefficient calculations, ran on isothermal 3-D models at
+911 K. 
+
+\subsection{3-D Numerical Results} \label{sec:3d-nts}
+
+\subsubsection{Initial Criticality Configuration}
+
+The \gls{MSRE} achieved initial criticality with Rod 1 inserted to a height of 46.6 inches relative
+to the fully inserted position. For reference, the rods are at a height of 51 inches when fully
+withdrawn. Table \ref{table:initial-crit}
+shows the $k_\text{eff}$ values from \gls{MSRE} experimental data, numerical benchmark data
+\cite{fratoni_molten_2020}, and this work. All numerical models overestimate the $k_\text{eff}$
+relative to the experimental value. In the \gls{MSRE} numerical benchmark report, the authors
+attribute this $k_\text{eff}$ discrepancy largely to discrepancies in the carbon cross section data
+in nuclear data libraries. They noted similar $k_\text{eff}$ overestimations by 1-2\% in benchmark
+results for the HTTR, a graphite-moderated, helium-cooled reactor. The OpenMC and Moltres
+simulations in this work used the same
+ENDF/B-VII.1 nuclear data library as the \gls{MSRE} numerical benchmark report.
+
+\begin{table}[htb]
+  \centering
+  \caption{$k_\text{eff}$ values from \gls{MSRE} experimental data, the \gls{MSRE} numerical
+  benchmark \cite{fratoni_molten_2020}, and the OpenMC and Moltres models in this work.}
+  \begin{tabular}{l S[table-format=1.5(2)]}
+    \toprule
+     & {$k_\text{eff}$} \\
+     \cmidrule(l){1-1}
+    \gls{MSRE} experimental data & 1.00000(420) \\
+    Serpent 2 (Numerical benchmark) & 1.02132(3) \\
+    OpenMC (This work) & 1.01308(20) \\
+    Hybrid (This work) & 1.01955 \\
+    Diffusion (This work) & 1.01885 \\
+    \bottomrule
+  \end{tabular}
+  \label{table:initial-crit}
+\end{table}
+
+Of the four $k_\text{eff}$ values, we expect to see the closest agreement between the Serpent 2
+model from the numerical benchmark and OpenMC from this work. However, the OpenMC \gls{MSRE} model
+differs from the Serpent 2 \gls{MSRE} models due to geometry modifications listed in Sections
+\ref{sec:2d-model-setup} and \ref{sec:3d-model-setup}. The benchmark report quantified the impact
+of several geometry modifications, namely the removal of the flow distributor, the homogenization
+of the sample basket, and the removal of the thermal shield. These modifications contribute to
+-$0.098\%$, -$0.037\%$, and -$0.885\%$ change in the $k_\text{eff}$, respectively, for a final
+$k_\text{eff}$ estimate of $1.01093(3)$. This brings the OpenMC $k_\text{eff}$ estimate of
+$1.01308(20)$ to closer agreement with the numerical benchmark value.
+
+The hybrid method $k_\text{eff}$ estimate is 0.00647 higher than the OpenMC estimate. For this
+initial criticality configuration, the neutron diffusion method $k_\text{eff}$ estimate is closer
+to OpenMC than the hybrid method. Overall, the OpenMC and Moltres models show good agreement with
+the Serpent 2 model from the numerical benchmark.
+Figures * show the neutron group fluxes on the interior of the 3-D models. The salt-graphite
+lattice structure is visible from the group flux distributions. Group 7 and 8 neutron fluxes are
+particularly small near the control rods due to strong thermal neutron capture by Gadolinium in the
+rods.
+
+\subsubsection{Control Rod Worth}
+
+After achieving initial criticality, \gls{ORNL} researchers ran control rod calibration experiments
+with the \gls{MSRE} at zero-power (typically at about 10 W power output).
+
+For control rod worth calculations, the OpenMC and Moltres simulations ran  with Rod 1 at fourteen
+different rod positions from full insertion (0 inch) to full withdrawal (51 inches). The rod
+positional limits of 0 inch and 51 inches represents the full range of deliberate rod motion
+allowable by the control rod drive motor \cite{robertson_msre_1965}.
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{rod-worth-curve}
+  \caption{Reactivity inserted by Rod 1 at various rod positions relative to the full insertion.}
+  \label{fig:rod-worth}
+\end{figure}
+
+\subsubsection{Temperature Reactivity Coefficient}
+
+\subsubsection{Computational Performance}
 
 \section{Summary}
-
-TBD
 
 %The hybrid method does not alter the $k_\text{eff}$ and flux estimates relative to the neutron
 %diffusion method in cases where the neutron diffusion method provides 
