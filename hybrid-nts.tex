@@ -314,7 +314,7 @@ level 4.
 
 \FloatBarrier
 
-\subsection{1-D Neutronics Numerical Results}
+\subsection{1-D Neutronics Numerical Results \& Discussion}
 
 \subsubsection{Reactivity}
 
@@ -737,7 +737,7 @@ drift correction parameters for the coupled diffusion solver.
 
 \FloatBarrier
 
-\subsection{2-D Neutronics Numerical Results} \label{sec:2d-nts-results}
+\subsection{2-D Neutronics Numerical Results \& Discussion} \label{sec:2d-nts-results}
 
 \subsubsection{2-D Quarter-Core}
 
@@ -1006,6 +1006,7 @@ reactivity coefficient calculations which had a higher $^{235}$U loading of 67.0
   \begin{tabular}{l l}
     Height [cm] & 215 \\
     TODO: Populate table & \\
+  \end{tabular}
   \label{table:reactor-dimensions}
 \end{table}
 
@@ -1050,16 +1051,16 @@ computational performance may be found at the end of Section \ref{sec:3d-nts}. A
 except those for temperature reactivity coefficient calculations, ran on isothermal 3-D models at
 911 K. 
 
-\subsection{3-D Numerical Results} \label{sec:3d-nts}
+\subsection{3-D Numerical Results \& Discussion} \label{sec:3d-nts}
 
 \subsubsection{Initial Criticality Configuration}
 
 The \gls{MSRE} achieved initial criticality with Rod 1 inserted to a height of 46.6 inches relative
 to the fully inserted position. For reference, the rods are at a height of 51 inches when fully
-withdrawn. Table \ref{table:initial-crit}
-shows the $k_\text{eff}$ values from \gls{MSRE} experimental data, numerical benchmark data
-\cite{fratoni_molten_2020}, and this work. All numerical models overestimate the $k_\text{eff}$
-relative to the experimental value. In the \gls{MSRE} numerical benchmark report, the authors
+withdrawn. Table \ref{table:initial-crit} shows the $k_\text{eff}$ values from \gls{MSRE}
+experimental data, numerical benchmark data \cite{fratoni_molten_2020}, and this work. All
+numerical models overestimate the $k_\text{eff}$ relative to the experimental value by 1-2\%
+(1000-2000 pcm). In the \gls{MSRE} numerical benchmark report, the authors
 attribute this $k_\text{eff}$ discrepancy largely to discrepancies in the carbon cross section data
 in nuclear data libraries. They noted similar $k_\text{eff}$ overestimations by 1-2\% in benchmark
 results for the HTTR, a graphite-moderated, helium-cooled reactor. The OpenMC and Moltres
@@ -1100,8 +1101,8 @@ to OpenMC than the hybrid method. Overall, the OpenMC and Moltres models show go
 the Serpent 2 model from the numerical benchmark.
 Figures * show the neutron group fluxes on the interior of the 3-D models. The salt-graphite
 lattice structure is visible from the group flux distributions. Group 7 and 8 neutron fluxes are
-particularly small near the control rods due to strong thermal neutron capture by Gadolinium in the
-rods.
+particularly small near the control rods due to strong thermal neutron capture cross section of
+gadolinium.
 
 \subsubsection{Control Rod Worth}
 
@@ -1126,29 +1127,31 @@ represented by the gradient in the plot, is steepest as the tip of the rod passe
 center of the core. The hybrid method performs well in reproducing the rod worth curve from OpenMC;
 all hybrid method rod worth values fall within one or two sigma range of OpenMC.
 
-Due to the experimental procedure of computing integral rod worth from cumulative differential rod
-worth measurements, the uncertainty range of the \gls{MSRE} data scales with rod position.
+Due to the experimental procedure of computing integral rod worth through cumulative differential
+rod worth measurements, the uncertainty range of the \gls{MSRE} data scales with rod position.
 Both OpenMC and the hybrid method report consistently larger integral rod worths than the
 \gls{MSRE} data across all rod positions. Nevertheless, they are in good agreement with the
 \gls{MSRE} data as compared to the neutron diffusion method, which significantly overestimates the
 integral rod worth.
+Table \ref{table:rod-worth} shows the total rod worth of Rod 1. Similar to observations from Figure
+\ref{fig:rod-worth}, OpenMC and the hybrid method report total rod worths marginally larger than
+the \gls{MSRE} data by 5.1\% and 4.2\%, respectively, while the diffusion method exceeds the
+experimental value by 21.1\%.
 
-Table \ref{table:rod-worth} shows the total rod worth of Rod 1. 
-
-\begin{figure}[p]
+\begin{figure}[t]
   \centering
   \includegraphics[width=0.8\columnwidth]{rod-worth-curve}
   \caption{Reactivity inserted by Rod 1 at various rod positions relative to the full insertion.}
   \label{fig:rod-worth}
 \end{figure}
 
-\begin{table}[htb]
+\begin{table}[t]
   \centering
   \caption{Total rod worth of Rod 1 when fully inserted.}
   \begin{tabular}{l S[table-format=4(2)] S}
     \toprule
      & {$\rho_\text{worth}$ [pcm]} & {Percentage discrepancy [\%]}\\
-     \cmidrule(l){2-2}
+     \cmidrule(rl){2-2} \cmidrule(l){3-3}
     \gls{MSRE} experimental data & 2250(67) & {-}\\
     OpenMC (This work) & 2364(44) & 5.1 \\
     Hybrid (This work) & 2345 & 4.2 \\
@@ -1158,9 +1161,80 @@ Table \ref{table:rod-worth} shows the total rod worth of Rod 1.
   \label{table:rod-worth}
 \end{table}
 
+The most likely factor for OpenMC and the hybrid method overpredicting the control rod worth is the
+modeling of control rods as solid annular cylinders as opposed to 36 separate control elements
+strung along a flexible stainless steel cable. Figure \ref{fig:rod-bead} depicts a poison element
+and its physical dimensions. Other than the Gd$_2$O$_3$-Al$_2$O$_3$ poison material, each control
+element has a top and bottom closure made of INOR-8 alloy. According to the physical dimensions,
+the closures make up 15.1\% of the total element height. The 3-D numerical \gls{MSRE} model in this
+work omits the outer and inner INOR-8 tubes and the flexible stainless cable, and replaces the top
+and bottom closure with poison material. Fully resolving the closures in Moltres would require
+excessively fine axial mesh resolution and advanced adaptive meshing features not currently
+available. A straightforward corrective measure for future \gls{MSRE} simulations would be to
+retain the solid annular cylinder structure and adjust the rod dimensions or the rod material
+composition to match the expected worth from \gls{MSRE} data or OpenMC simulations with the beaded
+geometry.
+
+\begin{figure}[t]
+  \begin{subfigure}[b]{0.33\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{rod-bead-2}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.65\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{rod-bead}
+  \end{subfigure}
+  \caption{Cutaway view and dimensions of a control rod poison element.}
+  \label{fig:rod-bead}
+\end{figure}
+
+Overall, the results show that the hybrid $S_N$-diffusion method accurately reproduces the control
+rod worth at various levels of insertion. As observed in the 1-D and 2-D models, the 3-D model
+$k_\text{eff}$ values exhibit some discrepancies relative to OpenMC, but the discrepancies do not
+affect rod worth estimates because they are systematic errors. This \gls{MSRE} hybrid model may be
+improved in future work by characterizing and applying neutron albedo at the vacuum boundaries.
+
 \subsubsection{Temperature Reactivity Coefficient}
 
+This work compares isothermal temperature reactivity coefficients calculated from $k_\text{eff}$
+values measured at 872 K and 972 K with 67.86 $^{235}$U loading. This approach is identical to that
+of the \gls{MSRE} experimental measurements \cite{prince_zero-power_1968} and the \gls{MSRE}
+numerical benchmark calculations \cite{fratoni_molten_2020}. The temperature reactivity coefficient
+is calculated by dividing the difference in reactivities by the temperature change (100 K). All
+simulations included the effects of thermal expansion on the material density but left all reactor
+physical dimensions unchanged.
+
+Table \ref{table:temp-coef} compares the isothermal reactivity coefficients from the experimental
+and numerical sources. The OpenMC and Moltres models in this work show closer agreement with the
+\gls{MSRE} data than the Serpent 2 model from the \gls{MSRE} numerical benchmark. All numerical
+results fall within one standard deviation of the \gls{MSRE} data.
+
+\begin{table}[t]
+  \small
+  \centering
+  \caption{Isothermal temperature reactivity coefficients with 67.86 kg $^{235}$U loading from
+  \gls{MSRE} data, the \gls{MSRE} numerical benchmark \cite{fratoni_molten_2020}, and the OpenMC
+  and Moltres models in this work.}
+  \begin{tabular}{l S[separate-uncertainty=true,table-format=2.2(2)] S}
+    \toprule
+     & {Temperature coefficient [pcm K$^{-1}$]} & {Percentage discrepancy [\%]}\\
+     \cmidrule(rl){2-2} \cmidrule(l){3-3}
+    \gls{MSRE} experimental data & 13.41(150) & {-}\\
+    Serpent 2 (Numerical benchmark) & 12.51(23) & -6.7 \\
+    OpenMC (This work) & 13.85(43) & 3.3 \\
+    Hybrid (This work) & {TBD} &  \\
+    Diffusion (This work) & {TBD} &  \\
+    \bottomrule
+  \end{tabular}
+  \label{table:temp-coef}
+\end{table}
+
 \subsubsection{Computational Performance}
+
+% Strong scaling tests & discussion
+
+% Difficulties with 3-D modeling
+% SN void treatment constants, Transfer times
 
 \section{Summary}
 
