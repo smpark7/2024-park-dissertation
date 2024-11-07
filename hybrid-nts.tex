@@ -11,7 +11,7 @@ against OpenMC as well as to analyze the impact of key input parameters on the h
 geometric asymmetry relative to the 1-D models. Lastly, the 3-D models serve as neutronics model
 validation against the \gls{MSRE} benchmark model by Fratoni et al.\ \cite{fratoni_molten_2020}, a
 testbed for \gls{HPC} scaling tests, and preparation for the time-dependent multiphysics
-simulations of \gls{MSRE} reactivity insertion transients.
+simulations in Chapter 6.
 
 Section \ref{sec:msre-gc} details the OpenMC model setup for group constant generation. Section
 \ref{sec:nts-methods} describes and labels the different neutronics methods employed for the
@@ -647,9 +647,9 @@ would increase from 2 to 3 if the tolerance value is further tightened.
 \subsection{2-D Neutronics Model Setup} \label{sec:2d-model-setup}
 
 Figures \ref{fig:1/4-geom} and \ref{fig:full-geom} show the 2-D quarter-core and full-core
-\gls{MSRE} models investigated. I adapted the models from the horizontal cross section of the base
-\gls{MSRE} benchmark model developed by \cite{fratoni_molten_2020} with the following differences
-in the 2-D \gls{MSRE} model for this work:
+\gls{MSRE} models investigated. I adapted the models from the horizontal cross section of the
+\gls{MSRE} numerical benchmark model \cite{fratoni_molten_2020} with the
+following differences in the 2-D \gls{MSRE} model for this work:
 
 \begin{itemize}
   \item Ignored thermal expansion of all reactor components.
@@ -1004,8 +1004,11 @@ reactivity coefficient calculations which had a higher $^{235}$U loading of 67.0
   \centering
   \caption{List of reactor dimensions.}
   \begin{tabular}{l l}
+    \toprule
     Height [cm] & 215 \\
+    \midrule
     TODO: Populate table & \\
+    \bottomrule
   \end{tabular}
   \label{table:reactor-dimensions}
 \end{table}
@@ -1125,7 +1128,7 @@ data and the OpenMC and Moltres numerical models. By taking the $k_\text{eff}$ w
 inserted as reference, all rod worth curves start at 0 pcm. The change in integral rod worth,
 represented by the gradient in the plot, is steepest as the tip of the rod passes through the
 center of the core. The hybrid method performs well in reproducing the rod worth curve from OpenMC;
-all hybrid method rod worth values fall within one or two sigma range of OpenMC.
+all hybrid method rod worth values fall within one or two standard deviations of OpenMC.
 
 Due to the experimental procedure of computing integral rod worth through cumulative differential
 rod worth measurements, the uncertainty range of the \gls{MSRE} data scales with rod position.
@@ -1222,8 +1225,8 @@ results fall within one standard deviation of the \gls{MSRE} data.
     \gls{MSRE} experimental data & 13.41(150) & {-}\\
     Serpent 2 (Numerical benchmark) & 12.51(23) & -6.7 \\
     OpenMC (This work) & 13.85(43) & 3.3 \\
-    Hybrid (This work) & {TBD} &  \\
-    Diffusion (This work) & {TBD} &  \\
+    Hybrid (This work) & 13.98 & 4.3 \\
+    Diffusion (This work) & 14.01 & 4.5 \\
     \bottomrule
   \end{tabular}
   \label{table:temp-coef}
@@ -1231,12 +1234,138 @@ results fall within one standard deviation of the \gls{MSRE} data.
 
 \subsubsection{Computational Performance}
 
-% Strong scaling tests & discussion
+Beyond demonstrating the hybrid $S_N$-diffusion method, its computational performance is of
+interest as a candidate for 3-D, time-dependent reactor simulations. All simulations ran on the
+Polaris supercomputer system at \gls{ANL}. Each compute node consists of a 2.8-GHz AMD EPYC Milan
+7543P 32-core CPU, four NVIDIA A100 GPUs, and 512 GB of RAM. The GPUs were not utilized in this
+work. Moltres uses the \gls{MPI} communication protocol for parallelizing simulations. For this
+work, simulations ran with 1-to-1 ratio of \gls{MPI} ranks and processor cores (i.e., 32 \gls{MPI}
+ranks for each compute node).
 
+Every 3-D hybrid method $k$-eigenvalue
+simulation of the \gls{MSRE} consisted of 747,688,760 \glspl{DOF} and 1,690,777,728 \glspl{DOF} for
+the neutron diffusion and $S_N$ components, respectively. Each \gls{DOF} corresponds to a scalar
+or angular group flux variable value defined at a mesh node. Each simulation ran with the distributed
+mesh feature, which partitions and distributes the mesh across however many \gls{MPI} ranks used
+in the simulation. All variable and mesh-linked data are also distributed with the mesh. This
+greatly reduces memory requirements compared to storing the full mesh for each \gls{MPI} rank.
+
+Each 3-D \gls{MSRE} simulation required at least forty nodes for sufficient memory to run. This
+sets a strict minimum requirement for the 3-D hybrid simulations. On forty nodes, the simulations
+required approximately 2.2 h to complete for a total of 88 node-hours or 2816 core-hours. The
+distributed mesh capability comes with the cost of increased data transfer times between the $S_N$
+and diffusion solvers due to increased inter-core data transfers. Transfers accounted for
+approximately 0.675 h or 30 \% of the total simulation time. Future research into optimizing mesh
+distribution and transfer-related data caching may help to minimize data transfers and speed-up
+hybrid method simulations. The solution time for the initial neutron diffusion calculation with zero
+drift correction also takes up approximately 30 \% of the total simulation time. After subtracting
+the minor computational cost of evaluating the drift term even if it is zero, the hybrid method
+requires about four times the solution time of the standard neutron diffusion method.
+
+For the hybrid method to be viable for large time-dependent simulations, it must scale reasonably
+well on computing clusters. For this work, I investigated strong scaling, which measures how the
+solution time decreases when more cores are used while keeping the problem size fixed. This strong
+scaling study used 3-D quarter-core models run on 10, 20, 30, and 40 compute nodes.
+Figure * shows the results of this scaling study.
+The hybrid method implementation scales well as shown by the nearly linear scaling between the
+solution time and the number of processors. Therefore, the hybrid method appears promising for the
+modeling of larger reactor analyses with little scaling performance penalty.
+
+% Strong scaling tests & discussion
 % Difficulties with 3-D modeling
 % SN void treatment constants, Transfer times
 
 \section{Summary}
 
-%The hybrid method does not alter the $k_\text{eff}$ and flux estimates relative to the neutron
-%diffusion method in cases where the neutron diffusion method provides 
+This chapter covers work demonstrating the hybrid $S_N$-diffusion method implemented in Moltres
+through 1-D, 2-D, and 3-D neutronics simulations of \gls{MSRE} models. The hybrid method combines
+the $S_N$
+and diffusion methods by applying transport corrections generated using the high-fidelity $S_N$
+method near control rods while treating the rest of the problem with the lower-fidelity diffusion
+method for tractable 3-D time-dependent reactor analyses. This is achieved by identifying and
+setting up a subregion containing the control rod and its vicinity for $S_N$ transport
+calculations. The $S_N$ and diffusion solvers are coupled through boundary sources at the subregion
+boundaries. The hybrid method applies an adaptive algorithm for discarding inaccurate transport
+correction values near the subregion boundaries and preserving the smoothness of the neutron flux
+gradient. In this chapter, the 1-D simulations provided verification of the hybrid method for
+estimating control rod worth. The simulations also compared two different implementations of the
+hybrid method which differed by the use of drift or diffusion correction schemes.
+The 2-D and 3-D simulations extended the hybrid method to multi-dimensional problems. Additionally,
+the 3-D simulations validated the numerical \gls{MSRE} model against \gls{MSRE} experimental data
+and provided useful insight on the computational performance of the hybrid method for
+large reactor analyses.
+
+Six 1-D test cases based on the \gls{MSRE} with increasing geometric complexity were run using the
+standard $S_N$ method, the hybrid method, and standard neutron diffusion method and verified against
+reference OpenMC Monte Carlo neutron transport simulations under continuous neutron energy (OpenMC-CE) and
+multigroup (OpenMC-MG) modes. The $S_N$ implementation with nonlinear diffusion acceleration
+showed good agreement with OpenMC-MG which indicated that discrepancies between those codes and
+OpenMC-CE largely arose from the eight neutron energy group structure for multigroup simulations.
+Both hybrid method implementations, with drift or diffusion correction schemes, showed similar
+performance in the 1-D cases. While the $k_\text{eff}$ estimates from the hybrid method deviated
+from the $S_N$ method and OpenMC-MG by 100 to 400 pcm, the hybrid method accurately reproduces
+control rod worths. Rod worth estimates from OpenMC-MG, $S_N$, and hybrid methods differed from
+OpenMC-CE by 2 to 3 \%. The hybrid method improves on the neutron diffusion method whose rod worth
+error estimate is 8 \%. The hybrid method also produced better agreement in neutron flux
+distributions with the neutron transport methods compared to the neutron diffusion method.
+
+Analysis on the drift and diffusion correction schemes showed that the diffusion correction
+parameter led to numerous discontinuities tending to infinity values near points in the problem
+domain where flux peaks and troughs occur. These discontinuities and negative diffusion coefficient
+values are unphysical and would lead to numerical stability issues. Therefore, the hybrid method
+implementation with drift correction scheme was chosen for the remaining 1-D analyses and the
+2-D and 3-D analyses.
+
+Analysis on the impact of $S_N$ correction subregion size found that it has little impact on the
+control rod worth estimates as long as the subregion size is kept consistent (i.e., same size) when
+performing control rod worth measurements. Rod worths varied by less than 0.35 \% across the
+different subregion sizes investigated. A separate analysis showed that the $k_\text{eff}$
+estimates from the hybrid method exhibit superlinear convergence rate when tightening the $S_N$
+convergence tolerance value. The convergence tolerance value also impacts the number of outer
+iterations between $S_N$ and diffusion solvers. After just two outer iterations, the error in
+$k_\text{eff}$ fell to below 10$^{-7}$.
+
+The hybrid method continued to show improved control rod estimates over the neutron diffusion
+method in 2-D quarter-core and full-core \gls{MSRE} simulations with up to three rods inserted in the
+full-core model. The hybrid method reported rod worth error magnitudes of less than 40 pcm relative
+to OpenMC-CE, which are significant improvements over the neutron diffusion method error estimates
+ranging from 569 pcm to 1484 pcm. The hybrid method also showed significant improvements in the
+absolute mean and maximum errors in fuel channel power distributions relative to the reference
+OpenMC-CE distribution.
+
+For 3-D simulations, the \gls{MSRE} experimental data and the \gls{MSRE} numerical benchmark
+report \cite{fratoni_molten_2020} both served as references for model validation. The numerical
+benchmark is included in the International Reactor Physics Experiment Evaluation Project (IRPhEP)
+handbook. The
+$k_\text{eff}$ estimates of the \gls{MSRE} at initial criticality from OpenMC, the hybrid method,
+and the neutron diffusion method in this work showed good agreement with the \gls{MSRE} numerical
+benchmark. All numerical $k_\text{eff}$ estimates, including that from the benchmark report
+\cite{fratoni_molten_2020}, exceeded the \gls{MSRE} experimental value by 1-2 \% due to possible
+biases and uncertainties in the neutronic properties of graphite. Temperature reactivity
+coefficient values from OpenMC, the hybrid method, and the neutron diffusion method also show good
+agreement with the \gls{MSRE} data within experimental uncertainty with percentage discrepancies of
+about 3 \%, but differ from the numerical benchmark which has a percentage discrepancy of -6.7 \%.
+
+Control rod worth calculations were also performed for Rod 1 of the \gls{MSRE} under various levels
+of insertion from its fully inserted to its fully withdrawn state. OpenMC and the hybrid method
+showed excellent agreement at every stage within one standard deviation. Due to geometric
+approximations of the control rods in the numerical models, they overestimated the total
+rod worth relative to the \gls{MSRE} experimental data by approximately 4-5 \%. The hybrid method
+compares favorably against the neutron diffusion method which overestimated the total worth by
+21.1 \%.
+
+The 3-D simulations performed well under the strong scaling test which studies how the solution
+time scales with the number of processors used to run the simulation. The 3-D simulations showed
+close to linear scaling within the scope of the strong scaling test. Therefore, the hybrid method
+exhibits good computational scaling performance which is essential for large 3-D reactor analyses.
+Excessively large memory requirements were mitigated through the distributed mesh capability in
+Moltres. Some performance optimizations may be possible to reduce data transfer times
+between the $S_N$ and diffusion solvers which currently take up about 30 \% of the total solution
+time as a result of the inter-processor communications.
+
+Overall, the hybrid $S_N$-diffusion method provides a significant improvement over the neutron
+diffusion method at only four times the computational expense. Control rod estimates
+show good agreement with reference Monte Carlo solutions and \gls{MSRE} experimental data.
+Further investigations into characterizing and minimizing neutron leakage rates at vacuum
+boundaries may help with reducing $k_\text{eff}$ discrepancies with reference Monte Carlo
+solutions.
