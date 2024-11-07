@@ -1,3 +1,32 @@
-\section{Rod Drop Experiment}
+Chapter \ref{chap:msre} verified the hybrid $S_N$-diffusion method implemented in Moltres through
+1-D, 2-D, and 3-D
+$k$-eigenvalue simulations of the \gls{MSRE} against the OpenMC Monte Carlo neutron transport code
+for molten salt reactor control rod modeling. The 3-D simulations validated the 3-D \gls{MSRE}
+model in this work against \gls{MSRE} experimental data and the \gls[MSRE} numerical benchmark
+study \cite{fratoni_molten_2020} in the context of the initial criticality and rod worth
+measurement experiments. The 3-D simulations also showed that the hybrid method runs with
+reasonable computational costs compared to the standard neutron diffusion method and exhibited
+efficient strong scaling across compute nodes.
 
-\section{Reactivity Insertion Experiment}
+This chapter builds on the foundations of Chapter \ref{chap:msre} to verify and validate the hybrid
+method for time-dependent 3-D simulations of reactivity-initiated transients. This chapter includes
+two demonstrations using the hybrid method of the \gls{MSRE} rod drop and reactivity insertion
+experiments. Beyond time-dependent modeling, the simulations will also verify and validate
+compatibility between the existing neutronics/thermal-hydraulics coupling capabilities in Moltres
+and the newly-implemented hybrid method.
+
+Section \ref{sec:rod-drop} 
+
+\section{Rod Drop Experiment} \label{sec:rod-drop}
+
+\subsection{Model Setup}
+
+\subsection{Rod Drop Numerical Results \& Discussion}
+
+\section{Reactivity Insertion Experiment} \label{sec:reactivity-insertion}
+
+\subsection{Model Setup}
+
+\subsection{Reactivity Insertion Numerical Results \& Discussion}
+
+\section{Summary} \label{sec:transient-summary}
