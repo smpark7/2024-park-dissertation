@@ -11,7 +11,7 @@ against OpenMC as well as to analyze the impact of key input parameters on the h
 geometric asymmetry relative to the 1-D models. Lastly, the 3-D models serve as neutronics model
 validation against the \gls{MSRE} benchmark model by Fratoni et al.\ \cite{fratoni_molten_2020}, a
 testbed for \gls{HPC} scaling tests, and preparation for the time-dependent multiphysics
-simulations in Chapter 6.
+simulations in Chapter \ref{chap:transient}.
 
 Section \ref{sec:msre-gc} details the OpenMC model setup for group constant generation. Section
 \ref{sec:nts-methods} describes and labels the different neutronics methods employed for the
@@ -1236,7 +1236,7 @@ results fall within one standard deviation of the \gls{MSRE} data.
 \subsubsection{Computational Performance}
 
 Beyond demonstrating the hybrid $S_N$-diffusion method, its computational performance is of
-interest as a candidate for 3-D, time-dependent reactor simulations. All simulations ran on the
+interest as a candidate for time-dependent 3-D reactor simulations. All simulations ran on the
 Polaris supercomputer system at \gls{ANL}. Each compute node consists of a 2.8-GHz AMD EPYC Milan
 7543P 32-core CPU, four NVIDIA A100 GPUs, and 512 GB of RAM. The GPUs were not utilized in this
 work. Moltres uses the \gls{MPI} communication protocol for parallelizing simulations. For this
@@ -1279,11 +1279,11 @@ modeling of larger reactor analyses with little scaling performance penalty.
 \section{Summary}
 
 This chapter covers work demonstrating the hybrid $S_N$-diffusion method implemented in Moltres
-through 1-D, 2-D, and 3-D neutronics simulations of \gls{MSRE} models. The hybrid method combines
-the $S_N$
+through 1-D, 2-D, and 3-D $k$-eigenvalue simulations of \gls{MSRE} models. The hybrid method
+combines stengths of the $S_N$
 and diffusion methods by applying transport corrections generated using the high-fidelity $S_N$
 method near control rods while treating the rest of the problem with the lower-fidelity diffusion
-method for tractable 3-D time-dependent reactor analyses. This is achieved by identifying and
+method for tractable time-dependent 3-D reactor analyses. This is achieved by identifying and
 setting up a subregion containing the control rod and its vicinity for $S_N$ transport
 calculations. The $S_N$ and diffusion solvers are coupled through boundary sources at the subregion
 boundaries. The hybrid method applies an adaptive algorithm for discarding inaccurate transport

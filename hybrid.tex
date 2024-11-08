@@ -319,7 +319,7 @@ However, the $\mathbb{L}^{-1}_2$ operators render the current \gls{SAAF} formula
 unsolveable in void and near-void regions where the total cross sections $\Sigma_{t,g}$ approach
 zero \cite{wang_diffusion_2014}.
 
-\subsection{Spatial Discretization and Void Treatment} \ref{sec:void-treatment}
+\subsection{Spatial Discretization and Void Treatment} \label{sec:void-treatment}
 
 To overcome the issue of voids, Wang et al.\ \cite{wang_diffusion_2014} modified the standard
 \gls{SAAF} formulation by taking inspiration from the \gls{SUPG} stabilization technique
@@ -846,7 +846,7 @@ can be evaluated as
   \Psi_{g,d}}{\sum^{N_d}_{d=1}w_d\Psi_{g,d}}. \label{eq:bound-coef}
 \end{gather}
 
-\subsection{Setting Caps on the Diffusion Coefficient Values} \ref{sec:diffcoef-cap}
+\subsection{Setting Caps on the Diffusion Coefficient Values} \label{sec:diffcoef-cap}
 
 From experience, the $S_N$-diffusion outer iterations under both hybrid schemes or the standard
 $S_N$ method with nonlinear diffusion acceleration converged at a faster rate when the uncorrected
