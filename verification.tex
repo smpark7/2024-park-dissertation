@@ -9,7 +9,7 @@ descriptions, the section also summarizes and assesses previous \gls{MSR} analys
 performed with Moltres. Section \ref{sec:cnrs-benchmark} presents verification results from Moltres
 for the CNRS benchmark study. Section \ref{sec:msre-pump} presents key findings from a
 collaborative \gls{VV} study based on the \gls{MSRE} pump transient tests conducted in the 1960s.
-Section \ref{sec:turbulence} describes the \gls{SA} turbulence model implementation in
+Section \ref{sec:turbulence} describes the Spalart-Allmaras turbulence model implementation in
 Moltres and presents the model \gls{VV} results against common wall-bounded turbulent flow case
 studies from literature.
 
@@ -54,11 +54,11 @@ upper and lower plena in the numerical model. The numerical study remains a usef
 assessing \gls{DNP} advection modeling in \gls{MSR} simulation software due to clearly defined
 salt recirculation behavior reflected in the results.
 
-Lastly, this chapter presented the implementation and verification of the \gls{SA} model
+Lastly, this chapter presented the implementation and verification of the Spalart-Allmaras model
 \cite{spalart_one-equation_1994} in Moltres for enabling wall-bounded turbulent molten salt flow
-modeling. The \gls{SA} model includes a rotation correction scheme
+modeling. The Spalart-Allmaras model includes a rotation correction scheme
 \cite{aupoix_extensions_2003, dacles-mariani_numericalexperimental_1995} for improved accuracy when
-modeling turbulent flow with curved streamlines. The \gls{SA} model performed well under the
+modeling turbulent flow with curved streamlines. The Spalart-Allmaras model performed well under the
 turbulent channel flow verification test \cite{moser_direct_1999}, the turbulent pipe flow
 validation test \cite{laufer_structure_1954}, and the \gls{BFS} flow validation test
 \cite{driver_features_1985}.

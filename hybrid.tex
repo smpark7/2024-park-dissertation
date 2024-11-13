@@ -603,7 +603,7 @@ selection through 1-D test case results in Chapter \ref{chap:msre}.
 Consequently, most of this chapter focuses on the $S_N$ and the drift correction-based hybrid
 method implementations on Moltres. On the other hand, I implemented the diffusion correction-based
 hybrid method using the Python programming language for quick
-prototyping. Implementation details of the $S_N$, neutron diffusion, and hybrid methods on Python
+prototyping. Implementation details of the $S_N$, neutron diffusion, and hybrid methods in Python
 are available in Appendix \ref{chap:implementation}. Both correction schemes share the iteration
 algorithm described in Section \ref{sec:hybrid-algorithm}.
 
@@ -1011,14 +1011,14 @@ the right boundary.
     \caption{The reference and hybrid drift ($\vec{D}_g$) distributions for group 1 and 8 calculated
       from $S_8$ and $S_8$-diffusion simulations. The correction subregion $V_1$ spans $x=0$ cm to
       $x=10$ cm.}
-    \label{fig:3b-drift}
+    \label{fig:3b-drift-1}
 \end{figure}
 
 I ran an eight energy group $S_8$ $k$-eigenvalue simulation with the newly implemented $S_N$ solver
 on Moltres to generate reference $\vec{D}_g$ distributions. I also ran an eight-group hybrid
 $S_8$-diffusion simulation with the $S_8$ method for generating $\vec{D}_g$ in $V_1$. I set $V_1$
 to encompass the control rod region and its vicinity from $x=0$ to $10$ cm based on the geometry in
-Figure \ref{fig:3b-geometry}. Figure \ref{fig:3b-drift} shows the $\vec{D}_1$ and $\vec{D}_8$
+Figure \ref{fig:3b-geometry}. Figure \ref{fig:3b-drift-1} shows the $\vec{D}_1$ and $\vec{D}_8$
 distributions from $x=0$ to $15$ from the reference $S_8$ and hybrid simulations. The hybrid
 $\vec{D}_g$ distribution is zero beyond $x=10$ cm because no corrections are generated outside of
 $V_1$. Comparing the hybrid distributions to the reference distributions in both energy groups, the

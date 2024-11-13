@@ -52,9 +52,12 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-\usepackage[bibstyle=ieee,backend=bibtex8,sorting=none]{biblatex}
+\usepackage[bibstyle=ieee,backend=bibtex8,sorting=none,eprint=false,isbn=false,doi=false]{biblatex}
 \usepackage{textalpha}
 \addbibresource{./bibliography.bib}
+\AtEveryBibitem{%
+  \clearfield{note}%
+}
 
 \usepackage{tikz}
 \usepackage{tkz-euclide}
@@ -72,13 +75,15 @@
 \SetArgSty{textrm}
 
 
-\title{A Hybrid Neutronics Method for Time-Dependent Control Rod Modeling in Molten Salt Reactors}
+%\title{A Hybrid Neutronics Method for Time-Dependent Control Rod Modeling in Molten Salt Reactors}
+\title{Advancements in Moltres for Time-Dependent Multiphysics Molten Salt Reactor Modeling}
 \author{Sun Myung Park}
 \department{Nuclear, Plasma \& Radiological Engineering}
 \degreeyear{2024}
-\committee{Dr Madicken Munk, Chair \\
+\committee{Associate Professor Kathryn D. Huff, Chair \& Co-Director of Research \\
+           Assistant Professor Madicken Munk, Co-Director of Research, Oregon State University \\
            Professor Rizwan Uddin \\
-           Associate Professor Tomasz Kozlowski \\
+           Professor Tomasz Kozlowski \\
            Professor Paul Fischer}
 
 \newcounter{counterforappendices}
@@ -91,7 +96,7 @@
 %% Note that ProQuest truncates their abstracts at 350 words.
 \begin{abstract}
 
-%\input{abstract}
+\input{abstract}
 
 \end{abstract}
 \addcontentsline{toc}{chapter}{Abstract}
@@ -100,12 +105,12 @@
 %
 %\end{dedication}
 
-%\begin{acknowledgments}
-%
-%%\input{acks}
-%
-%\end{acknowledgments}
-%\addcontentsline{toc}{chapter}{Acknowledgments}
+\begin{acknowledgments}
+
+%\input{acks}
+
+\end{acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgments}
 
 %% The thesis format requires the Table of Contents to come
 %% before any other major sections, all of these sections after
@@ -134,25 +139,25 @@ nogroupskip=true]
 \mainmatter
 \glsresetall
 
-%\chapter{Introduction}
-%\label{chap:intro}
-%%\input{introduction}
-%%\glsresetall
-%
-%\chapter{Molten Salt Reactor Modeling and Simulation}
-%\label{chap:lit}
-%\input{lit}
-%\glsresetall
-%
-%\chapter{Verification of Multiphysics Features in Moltres}
-%\label{chap:verification}
-%\input{verification}
-%\glsresetall
-%
-%\chapter{Hybrid $S_N$-Diffusion Method}
-%\label{chap:hybrid}
-%\input{hybrid}
-%\glsresetall
+\chapter{Introduction}
+\label{chap:intro}
+\input{introduction}
+\glsresetall
+
+\chapter{Molten Salt Reactor Modeling and Simulation}
+\label{chap:lit}
+\input{lit}
+\glsresetall
+
+\chapter{Verification of Multiphysics Features in Moltres}
+\label{chap:verification}
+\input{verification}
+\glsresetall
+
+\chapter{Hybrid $S_N$-Diffusion Method}
+\label{chap:hybrid}
+\input{hybrid}
+\glsresetall
 
 \chapter{Demonstration of the Hybrid Method with the MSRE}
 \label{chap:msre}
@@ -164,17 +169,25 @@ nogroupskip=true]
 \input{transient}
 \glsresetall
 
+\chapter{Conclusion}
+\label{chap:conclusion}
+\input{conclusion}
+\glsresetall
+
 \backmatter
 
+{
+\setstretch{1}
 % \bibliographystyle{IEEEtran}
 \printbibliography[heading=bibintoc,title={References}]
+}
 
 \clearpage
 \setcounter{counterforappendices}{\value{page}}
 \mainmatter
 \setcounter{page}{\value{counterforappendices}}
 \appendix
-%\input{appendix}
+\input{appendix}
 
 \end{document}
 \endinput

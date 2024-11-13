@@ -30,10 +30,10 @@ from neutron detectors placed near the reactor. A rapid-action camera photograph
 count shown on the detectors about once every second starting from a few seconds before the rod
 drop to about thirty seconds after the rod drop.
 
-This work aims to replicate the integral count curve following a rod
-drop of Rod 1 with the $^{235}$U loading corresponding to "30 capsule additions" of highly-enriched
-$^{235}$U capsules. Each capsule contains 85 g of $^{235}$U, of which 94.94 \% enters the core due
-to residual fuel salt remaining in the drain tanks after mixing \cite{fratoni_molten_2020}.
+This work aims to replicate the integral count curve following a rod drop of Rod 1 with the
+$^{235}$U loading corresponding to ``30 capsule additions'' of highly-enriched $^{235}$U capsules
+into the ``pump bowl''. Each capsule contains 85 g of $^{235}$U, of which 94.94 \% enters the core
+due to residual fuel salt remaining in the drain tanks after mixing \cite{fratoni_molten_2020}.
 
 \subsection{Model Setup} \label{sec:rod-drop-setup}
 
@@ -56,7 +56,7 @@ inches can estimated through the following steps:
   \frac{\Delta k / k}{\Delta m / m} &= 0.223 \nonumber \\
   \frac{m}{k}\frac{dk}{dm} &= 0.223 \nonumber \\
   \int^{1.00072}_1 \frac{1}{k}\ dk &= 0.223 \int^{65.25+\Delta m}_{65.25} \frac{1}{m}\ dm \nonumber \\
-  \ln 1.00072 &= 0.223 \ln\left(\frac{65.25+\Delta m}{65.25}\right) \nonumber \\
+  \ln \left(1.00072\right) &= 0.223 \ln\left(\frac{65.25+\Delta m}{65.25}\right) \nonumber \\
   \Delta m &= 0.2109 \mbox{ kg}.
 \end{align}
 %
@@ -167,7 +167,7 @@ In contrast to the rod drop experiments, these reactivity insertion
 experiments were conducted with the \gls{MSRE} in power operation.
 
 This work aims to replicate the power response following a reactivity insertion of 24.8 pcm of the
-\gls{MSRE} initially at 1 MW. Figure \ref{msre-reactivity-insertion} shows the theoretical and
+\gls{MSRE} initially at 1 MW. Figure \ref{fig:msre-reactivity-insertion} shows the theoretical and
 experimental power response following the reactivity insertion. Three separate publications
 \cite{zanetti_innovative_2015, singh_study_2019, mochizuki_validation_2022} noted that the plot is
 mislabeled with the wrong reactivity insertion value of 0.0139 \% $\delta k/k$, which had been the
@@ -187,9 +187,10 @@ mentioned prior.
 \subsection{Model Setup}
 
 For the reactivity insertion simulation, we must first identify the $^{233}$U salt composition used
-in the experiment. The \gls{MSRE} $^{233}$ power operations occurred during Runs 16 to 18 according
+in the experiment. Power operations with the $^{233}$U-fueled \gls{MSRE} core
+occurred during Runs 16 to 18 according
 to \gls{MSRE} reports \cite{thoma_chemical_1971, burke_analysis_2019}. Table \ref{table:u233-salt}
-lists the proportion of elements in the \gls{MSRE} fuel salt during Runs 16 to 18. Noted that the
+lists the proportion of elements in the \gls{MSRE} fuel salt during Runs 16 to 18. Note that the
 components do not sum up to 100 \% due to experimental uncertainty in chemical analysis and the
 presence of other elements that were not measured. Taking the nominal uranium value to be true, I scaled
 up the compositions of non-uranium elements to make up the remaining $(100\%-0.8155\%)$ of the salt. I
@@ -447,8 +448,8 @@ insertion on the \gls{MSRE} initially running at 1 MW with steady salt flow. Mol
 the general shape of the first power peak and the subsequent power oscillations. The power peak
 magnitude differs by y \% compared to \gls{MSRE} data. The fuel
 salt, graphite, inlet, and outlet temperature measurements show delayed responses to the increase
-in power output due to the time taken for the salt and graphite to heat up. Over the simulation
-time, the numerical \gls{MSRE} model settles into higher temperature distributions than the initial
+in power output due to the time taken for the salt and graphite to heat up. The temperature values
+eventually settle higher than the initial
 state to compensate for the reactivity insertion.
 
 Overall, this work has successfully demonstrated the hybrid method for coupled time-dependent

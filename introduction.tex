@@ -15,8 +15,9 @@ moderators (e.g., graphite, heavy water, or molten sodium hydroxide).
 	\label{fig:msr}
 \end{figure}
 
-The \gls{MSR} is one of six advanced reactor designs selected for improved safety, sustainability,
-efficiency, and cost over the current generation of predominantly \glspl{LWR} at the \gls{GIF}.
+The \gls{MSR} is one of six advanced reactor concepts selected for improved safety, sustainability,
+efficiency, and cost over the current generation of predominantly \glspl{LWR} at the \gls{GIF}
+\cite{u.s._doe_nuclear_energy_research_advisory_committee_technology_2002}.
 Due to the high thermal expansion coefficient, \glspl{MSR} possess an inherently robust
 safety feature in the strong negative fuel temperature coefficient of
 reactivity \cite{elsheikh_safety_2013}. This reactivity coefficient limits the
@@ -25,9 +26,9 @@ scenario such as an unprotected reactivity insertion because the subsequent
 rise in core temperatures induces a significant drop in reactivity,
 quickly neutralizing the initial reactivity insertion. \glspl{MSR} also
 operate at a large thermal margin to boiling and can rely on natural
-circulation in the event of a pump failure. As a last resort, many \gls{MSR}
+circulation in the event of a pump failure. For an additional layer of safety, many \gls{MSR}
 designs incorporate a drain plug made of actively-cooled frozen salt, which
-melts when the core temperatures exceed safety thresholds. The hot molten salt
+melts when the core temperatures exceed safety thresholds. Hot molten salt
 in the core would then flow into a drain tank designed to hold the fuel salt in
 a subcritical configuration to disrupt any further chain fission reactions.
 
@@ -48,10 +49,10 @@ encourages the construction of heat storage and peak power
 production plants. At the same time, demand for carbon-neutral
 fuel will rise as electrification is economically unfeasible
 for some industries, such as the aviation and marine sectors, which depend on
-energy-dense fuels for propulsion. As described by Forsberg
-\cite{forsberg_market_2020}, the most cost-efficient options for heat storage, peak power
-production, and carbon-neutral fuel production all require high-temperature heat.
-This requirement favors \glspl{MSR} which can deliver heat at higher average
+energy-dense fuels for propulsion.
+The most cost-efficient options for heat storage, peak power production, and carbon-neutral fuel
+production all require high-temperature heat \cite{forsberg_market_2020}.
+This requirement favors \glspl{MSR}, which can deliver heat at higher average
 temperatures than \glspl{LWR} and \glspl{SFR}.
 
 Significant hurdles still stand in the way of commercial \gls{MSR} deployment \cite{dolan_27_2017}.
@@ -169,18 +170,17 @@ heat and particle transfer in molten salt systems, thereby causing enhanced mixi
 multiphysics software for \gls{MSR} analysis require adequate flow modeling capabilities with
 support for \gls{DNP} drift and some form of turbulence modeling.
 
-We require
-\gls{MSR} simulation tools that possess transient modeling capabilities to simulate transient
+\gls{MSR} simulation tools require transient modeling capabilities to simulate transient
 accident scenarios. Furthermore, several transient scenarios involve control rods, either as active
-safety mechanisms or as accident initiators through unintended control rod ejection. Therefore, we
-also require \gls{MSR} simulation tools with accurate control rod modeling capabilities to run
+safety mechanisms or as accident initiators through unintended control rod ejection. Therefore,
+\gls{MSR} simulation tools also require accurate control rod modeling capabilities to run
 numerical analyses of accident scenarios involving control rods.
 
 \subsection{Moltres for Multiphysics \gls{MSR} Analysis}
 
 Moltres \cite{lindsay_moltres_2017} is an open-source multiphysics reactor simulation software
 explicitly developed considering \gls{MSR} characteristics in mind. Moltres is
-built on the \gls{MOOSE} \cite{permann_moose_2020} open-source finite-element framework,
+built on the \gls{MOOSE} \cite{giudicelli_30_2024} open-source finite-element framework,
 which facilitates multiphysics coupling between different
 \gls{MOOSE}-based and \gls{MOOSE}-wrapped applications. The \gls{MOOSE} framework also provides
 Moltres with advanced meshing and numerical solver capabilities through interfacing with libMesh
@@ -218,7 +218,7 @@ uniform eddy viscosity assumption, which proved inadequate under non-steady flow
 advance Moltres as a multiphysics simulation software for \gls{MSR} analysis, Moltres requires a
 turbulence modeling capability to capture adequate turbulent flow phenomena and their interactions
 with other physics present in \glspl{MSR}. Of the various classes of turbulence models, a
-\gls{RANS}-based model is most suitable for coupling with Moltres when we consider computational
+\gls{RANS}-based model is most suitable for coupling with Moltres when considering computational
 efficiency. The \gls{RANS}-based equations are time-averaged fluid flow equations
 derived by separating the flow variable into its time-averaged and fluctuating components.
 \gls{RANS}-based models are also well-validated, representing the most widely used turbulence
@@ -227,28 +227,28 @@ models for engineering applications.
 In addition to new features, Moltres would benefit from further \gls{VV} of its existing
 multiphysics capabilities to identify software bugs and ensure reliable results. Accurate modeling
 and simulation of salt flow-induced \gls{DNP} drift and the strong coupling between neutronics and
-thermal-hydraulics are crucial for \gls{MSR} simulation tools. Therefore, the
-proposed work will include relevant \gls{VV} studies for Moltres.
+thermal-hydraulics are crucial for \gls{MSR} simulation tools.
+% Therefore, the proposed work will include relevant \gls{VV} studies for Moltres.
 
 \subsection{Control Rod Modeling in \glspl{MSR}}
 
-Most reactor designs include control rods as a means to control the fission rate. Control rods
-consist of strong
-neutron absorbers like boron, cadmium, and gadolinium to absorb and thus reduce the number of
+While some \gls{MSR} concepts completely eliminated control rods from their signs, many still
+retain them. Control rods consist of strong
+neutron absorbers like boron, cadmium, or gadolinium to absorb and thus reduce the number of
 neutrons available to contribute to further fission chain reactions. All reactors start operation
-with excess reactivity to ensure enough fissile material is available to last through to the next
-scheduled refueling. Control rods and burnable poisons allow reactors to operate at a safe
-multiplication factor by canceling out the excess reactivity. Control rods are also helpful
+with excess reactivity to ensure enough fissile material is available to maintain power operation
+and last through to the next scheduled refueling. Control rods and burnable poisons cancel out the
+excess reactivity. Control rods are also helpful
 for ramping the power up or down during start-up, shut-down, or load-following operations. Most
 importantly, control rods provide a safety mechanism for quickly shutting down a reactor under
 dangerous conditions. Rapid control rod insertion is the primary mechanism of a reactor scram to
 reliably introduce a large negative reactivity insertion in response to an unintended reactivity
 insertion or other events that may threaten the reactor's safe operation. 
 
-Amongst other tasks in reactor modeling, we aim to accurately reproduce control rod worth, which we
-can measure as the relative reduction
-in the neutron multiplication factor $k_{eff}$ due to the presence of the control rod in the
-reactor. We are also interested in the accompanying change in flux shape near the
+Amongst other tasks in reactor modeling, reactor physics analysts aim to accurately reproduce
+control rod worth, which is measured as the relative reduction
+in the neutron multiplication factor $k_{eff}$ due to the insertion of the control rod in the
+reactor. They are also interested in the accompanying change in flux shape near the
 control rod. Neutrons entering the control rods are more likely to be absorbed than
 adjacent regions in the reactor core. Therefore, control rods induce highly anisotropic neutron
 angular fluxes and sharp gradients in the neutron flux in their vicinity. Control rods also cause
@@ -259,7 +259,7 @@ high-fidelity computational methods to capture the angular dependence in the neu
 flux near the highly absorbing medium. Existing reactor analysis workflows often rely on Monte
 Carlo methods for high-fidelity neutron transport calculations.
 
-However, neutron transport methods, like Monte Carlo, are very computationally expensive
+However, traditional neutron transport methods, including Monte Carlo methods, are computationally expensive
 and thus are mainly used for time-independent neutronic analyses. For solid-fueled reactors,
 static control rod analyses can be justified due to the relatively static temperature distribution
 shape in the fuel and disparate timescales of heat transfer from the fuel to
@@ -272,62 +272,78 @@ neutron diffusion theory near control rods arises because neutron diffusion theo
 neutron transport theory by integrating over the angular variables. As a result, diffusion-based
 methods perform poorly in reactor systems with control rods.
 
-To tackle the issue of modeling control rods in \glspl{MSR} with the multigroup neutron diffusion
-solver in Moltres, I will develop and implement a novel hybrid method for incorporating neutron
-transport-derived corrections to the neutron diffusion method while largely preserving the
-computational efficiency of the neutron diffusion method over neutron transport methods. This will
-allow for computationally feasible transient analysis of \glspl{MSR} that incorporate thermal and
-neutronic feedback on variable timescales.
+% To tackle the issue of modeling control rods in \glspl{MSR} with the multigroup neutron diffusion
+% solver in Moltres, I will develop and implement a novel hybrid method for incorporating neutron
+% transport-derived corrections to the neutron diffusion method while largely preserving the
+% computational efficiency of the neutron diffusion method over neutron transport methods. This will
+% allow for computationally feasible transient analysis of \glspl{MSR} that incorporate thermal and
+% neutronic feedback on variable timescales.
 
-\section{Objectives}
+\section{Research Objectives}
 
 The overarching goal of this work is to improve on Moltres as a reliable, intermediate-fidelity
 simulation tool for multiphysics \gls{MSR} analysis that can be run on workstations as well as on
 larger computing clusters. Thus, new and existing capabilities in Moltres must
 be accurate within accepted bounds, rigorously verified, computationally efficient, and highly
-scalable. These conditions form the underlying development principles of the proposed work.
+scalable. These conditions form the underlying development principles of this work.
 
-The scope of the proposed work can be divided into three main objectives. These objectives are:
+The scope of this dissertation can be divided into two main objectives.
 %
-\begin{enumerate}[itemindent=20pt, listparindent=1.5em, label=\textbf{\arabic*}]
-  \item \textbf{verification and validation of existing multiphysics coupling capabilities in
-    Moltres}
+%\begin{enumerate}[itemindent=20pt, listparindent=1.5em, label=\textbf{\arabic*}]
+%  \item \textbf{Verification and validation of multiphysics capabilities in
+%    Moltres}
 
-    Verify and validate existing multiphysics capabilities in Moltres for modeling and simulating
+    The first objective is to verify and validate multiphysics capabilities in Moltres for
+    modeling and simulating
     the strong interactions between the neutronics and thermal-hydraulics in \glspl{MSR}. This
-    objective will be met through two separate studies: verifying Moltres against the CNRS
+    will be accomplished through two separate studies: verifying Moltres against the CNRS
     benchmark \cite{tiberga_results_2020} for fast-spectrum \gls{MSR} analysis, and modeling the
     \gls{MSRE} zero-power pump start-up and coast-down experiments. I will perform the second study
     in collaboration with the developer of QuasiMolto \cite{reynolds_analysis_2023} as a \gls{VV}
-    study with the additional aim of creating a reproducible numerical benchmark of the listed
-    \gls{MSRE} experiments.
+    study.
+%    with the additional aim of creating a reproducible numerical benchmark of the listed
+%    \gls{MSRE} experiments.
+%
+%  \item \textbf{Implementation and verification of a \gls{RANS}-based turbulence model in Moltres}
+    This objective includes implementing and verifying a Spalart-Allmaras turbulence model in
+    Moltres to support future turbulent flow
+    simulations for \gls{MSR} analyses. This will address the absence of turbulence modeling
+    capability in Moltres and the consequent restriction on Moltres for modeling \gls{MSR} systems
+    with complex turbulent flow.
 
-  \item \textbf{implementation of a \gls{RANS}-based turbulence model in Moltres, and}
+%  \item \textbf{Development of a novel hybrid $S_N$-diffusion method for improved control rod modeling in Moltres}
 
-    Implement a Spalart-Allmaras turbulence model in Moltres to support turbulent flow simulations
-    in \gls{MSR} analyses. This objective addresses the absence of turbulence modeling capability
-    in Moltres and the consequent restriction on Moltres for modeling \gls{MSR} systems with
-    complex turbulent flow.
-
-  \item \textbf{development of a novel hybrid method to improve control rod modeling in Moltres}
-
-    Develop a novel hybrid $S_N$-diffusion method for improved modeling of \gls{MSR} systems with
-    control rods. The hybrid method uses the discrete ordinates ($S_N$) method for solving the
-    neutron transport equations to generate corrections for the diffusion-approximated streaming
-    term in the neutron diffusion equations. The $S_N$ calculations are high-level
-    calculations on a reduced problem domain containing the control rods to minimize computational
-    expense.
-\end{enumerate}
+    The second objective is to
+    develop a novel hybrid $S_N$-diffusion method for accurate control rod modeling in
+    time-dependent \gls{MSR} analyses. The hybrid method uses the discrete ordinates ($S_N$)
+    neutron transport method to generate transport corrections in regions near control rods for
+    drift correction terms in modified neutron diffusion equations. The $S_N$ method is applied on
+    a reduced problem domain to ensure the hybrid method remains tractable on small to moderate
+    computing clusters.
+%\end{enumerate}
 
 \section{Outline}
 
 Chapter 2 presents a literature review of existing multiphysics \gls{MSR} simulation software,
 \gls{VV} studies on \gls{MSR} modeling and simulation, turbulence modeling in \gls{MSR} systems,
-and correction techniques for neutron diffusion methods.
-Chapter 3 describes Moltres and its existing capabilities in the context of previously published
-work.
-Chapter 4 summarizes the findings of the first verification study under the first objective: the
-verification of Moltres for multiphysics \gls{MSR} modeling against the CNRS benchmark.
-Chapter 5 presents the theory and preliminary results of the novel hybrid $S_N$-diffusion
-method for the third objective.
-Chapter 6 details the proposed work to fully meet the three objectives.
+and transport-correction techniques for neutron diffusion methods.
+Chapter 3 provides an in-depth description of Moltres and its existing capabilities in the context
+of previously published work. This chapter then presents Moltres \gls{VV} results for the CNRS
+benchmark and the numerical \gls{MSRE} zero-power pump experiment studies. Following these studies,
+the chapter presents the implementation and verification of the Spalart-Allmaras turbulence model
+in Moltres.
+Chapter 4 presents the theory and numerical implementation of the hybrid
+$S_N$-diffusion method in Moltres. These include the $S_N$ method implementation, the transport
+correction formulations, the iteration algorithm, the $S_N$-diffusion coupling implementation, and
+general implementation details relating to the underlying numerical solver in Moltres.
+Chapter 5 presents the verification and demonstration of the hybrid $S_N$-diffusion method for
+$k_\text{eff}$ and rod worth calculations through
+$k$-eigenvalue simulations of 1-D, 2-D, and 3-D \gls{MSRE} models. The hybrid method is verified
+against reference results from OpenMC Monte Carlo neutron transport code and \gls{MSRE}
+experimental data.
+Chapter 6 presents the demonstration of the hybrid $S_N$-diffusion method in time-dependent
+reactivity-initiated simulations modeling the \gls{MSRE} rod drop and reactivity insertion
+experiments.
+Chapter 7 concludes this dissertation by summarizing the results presented, identifying limitations
+in this work, and providing potential research directions to address those limitations or extend
+this work.

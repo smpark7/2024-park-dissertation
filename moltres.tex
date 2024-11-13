@@ -250,13 +250,13 @@ time-dependent incompressible Navier-Stokes equations for velocity $\vec{u}$
 with the Boussinesq approximation for buoyancy-driven flow are given as:
 
 \begin{align}
-    \text{Momentum equation: } \rho \frac{\partial \vec{u}}{\partial t} =&
+    \rho \frac{\partial \vec{u}}{\partial t} =&
     -\rho (\vec{u}
     \cdot \nabla) \vec{u} - \nabla p + \mu \nabla^2 \vec{u}
     + \rho \alpha \vec{g} \left(T - T_{\text{ref}} \right)
     \label{eq:momemtum}
     \shortintertext{and}
-    \text{Mass equation: } \nabla \cdot \vec{u} =& 0
+    \nabla \cdot \vec{u} =& 0
     \label{eq:divergence}
     \shortintertext{where}
     \rho =& \text{ fluid density,} \nonumber \\
@@ -312,17 +312,17 @@ The \texttt{Navier-Stokes} module provides the following types of boundary
 conditions for the velocity and temperature variables:
 
 \begin{align}
-    \text{Dirichlet: }& & u \ \left(\text{or } T\right) =& c & \\
-    \text{Homogeneous Neumann: }& & \frac{\partial u}{\partial x_i} \
-    \left(\text{or } \frac{\partial T}{\partial x_i}\right) =& 0 & \\
-    \text{``No boundary condition'' outflow: }& &
+  \shortintertext{Dirichlet:}
+  u \ \left(\text{or } T\right) =& c \\
+    \shortintertext{Homogeneous Neumann:}\frac{\partial u}{\partial x_i} \
+    \left(\text{or } \frac{\partial T}{\partial x_i}\right) =& 0 \\
+    \shortintertext{``No boundary condition'' outflow:}
     \left[ \nabla \vec{u} + \left(\nabla \vec{u} \right)^T \right] \cdot
-    \hat{n} =& 0 \ \text{ (velocity)} & \\
-    \text{``No boundary condition'' outflow: }& &
-    k \nabla T \cdot\hat{n} =& 0 \ \text{ (temperature)} &
+    \hat{n} =& 0 \ \text{ (velocity)} \\
+    k \nabla T \cdot\hat{n} =& 0 \ \text{ (temperature)}
     \shortintertext{where}
-    & & c =& \text{ user-defined constant value,} & \nonumber \\
-    & & \hat{n} =& \text{ unit normal vector to the boundary.} & \nonumber
+    c =& \text{ user-defined constant value,} \nonumber \\
+    \hat{n} =& \text{ unit normal vector to the boundary.} \nonumber
 \end{align}
 
 The Dirichlet boundary condition can be used to set the inlet velocities and
@@ -684,15 +684,17 @@ out through the outlet at the top-right corner.
 
 \begin{figure}[htb!]
     \centering
-    \begin{subfigure}[t]{.35\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{flow-temp-plasma}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{.625\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{flow-temp-fiorina}
-    \end{subfigure}
+    \includegraphics[width=\textwidth]{flow-temp-masters}
+%    \begin{subfigure}[t]{.33\textwidth}
+%        \centering
+%        \includegraphics[width=\textwidth]{flow-temp-plasma}
+%        \vspace{.9cm}
+%    \end{subfigure}
+%    \hfill
+%    \begin{subfigure}[t]{.625\textwidth}
+%        \centering
+%        \includegraphics[width=\textwidth]{flow-temp-fiorina}
+%    \end{subfigure}
     \caption{Temperature and velocity fields in the core from Moltres
     (left), PoliMi (center), and TU Delft (right) models. The colors represent
     temperature according to the respective color bars and the arrows
@@ -719,16 +721,17 @@ despite the fixed turbulent viscosity assumption.
 
 \begin{figure}[b!]
     \centering
-    \begin{subfigure}[t]{.30\textwidth}
-        \centering
-        \vspace{.9cm}
-        \includegraphics[width=\textwidth]{pre}
-    \end{subfigure}
-    \begin{subfigure}[t]{.69\textwidth}
-        \centering
-        \vspace{0pt}
-        \includegraphics[width=\textwidth]{fiorina-pre}
-    \end{subfigure}
+    \includegraphics[width=\textwidth]{pre-masters}
+%    \begin{subfigure}[t]{.27\textwidth}
+%        \centering
+%        \vspace{.9cm}
+%        \includegraphics[width=\textwidth]{pre}
+%    \end{subfigure}
+%    \begin{subfigure}[t]{.72\textwidth}
+%        \centering
+%        \vspace{0pt}
+%        \includegraphics[width=\textwidth]{fiorina-pre}
+%    \end{subfigure}
     \caption{Total delayed neutron source distribution in the core from the
     Moltres (left), PoliMi (center), and TU Delft (right) models.}
     \label{fig:pre}

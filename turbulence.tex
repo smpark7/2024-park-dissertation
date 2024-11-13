@@ -5,23 +5,23 @@ As detailed in Section \ref{sec:th}, Moltres compiles with the MOOSE Navier-Stok
 modeling capabilities by default. Moltres couples with these modules natively because they are all
 built on the MOOSE framework.
 
-To address the lack of turbulence modeling in Moltres, I implemented a \gls{SA} turbulence model
+To address the lack of turbulence modeling in Moltres, I implemented a Spalart-Allmaras turbulence model
 \cite{spalart_one-equation_1994}, described in Section \ref{sec:lit-turb}, with \gls{SUPG}
-stabilization on Moltres. The \gls{SA} model estimates the turbulent eddy viscosity defined by the
+stabilization on Moltres. The Spalart-Allmaras model estimates the turbulent eddy viscosity defined by the
 eddy viscosity hypothesis applied to the \gls{RANS} equations \cite{rodi_turbulence_2017}.
-On balance the \gls{SA} model is a complete (does not require prior
+On balance the Spalart-Allmaras model is a complete (does not require prior
 knowledge of the actual turbulence behavior) and computationally efficient one-equation turbulence
-model for approximating wall-bounded turbulent flows. The \gls{SA} model implementation in Moltres
+model for approximating wall-bounded turbulent flows. The Spalart-Allmaras model implementation in Moltres
 couples seamlessly with the continuous \gls{FEM} \gls{INSAD}
 \cite{peterson_overview_2018, lindsay_automatic_2021} model
-from the Navier-Stokes module. Alongside the \gls{SA} model, Moltres also now has turbulent
+from the Navier-Stokes module. Alongside the Spalart-Allmaras model, Moltres also now has turbulent
 diffusion physics kernels for temperature and the delayed neutron precursors.
 
-The SA model in Moltres follows the \gls{SA} model with a rotation correction scheme
+The SA model in Moltres follows the Spalart-Allmaras model with a rotation correction scheme
 \cite{aupoix_extensions_2003, dacles-mariani_numericalexperimental_1995} as described on the
 \gls{NASA} Turbulence Modeling Resource website \cite{rumsey_turbulence_nodate}. The rotation
 correction reduces eddy viscosity in regions of rotational but non-turbulent flow where the
-original \gls{SA} model overestimates eddy viscosity. The \gls{SA} model implementation in Moltres
+original Spalart-Allmaras model overestimates eddy viscosity. The Spalart-Allmaras model implementation in Moltres
 solves for the modified dynamic viscosity $\tilde{\mu}$ (as opposed to $\tilde{\nu}$) as follows:
 
 \begin{gather}
@@ -32,16 +32,16 @@ solves for the modified dynamic viscosity $\tilde{\mu}$ (as opposed to $\tilde{\
   \frac{\tilde{\mu}}{d}\right)^2
   \shortintertext{where}
   \begin{align*}
-    \mu_t &= \tilde{\mu}f_{v1} = \text{turbulent eddy viscosity}, &
+    \mu_t &= \tilde{\mu}f_{v1} = \text{turbulent eddy viscosity}, \\
     f_{v1} &= \frac{\chi^3}{\chi^3 + c_{v1}^3}, \\
-    \chi &= \frac{\tilde{\mu}}{\mu}, &
+    \chi &= \frac{\tilde{\mu}}{\mu}, \\
     \tilde{S} &= \Omega + \frac{\tilde{\nu}}{\kappa^2 d^2} f_{v2}, \\
-    f_{v2} &= 1 - \frac{\chi}{1+\chi f_{v1}}, &
+    f_{v2} &= 1 - \frac{\chi}{1+\chi f_{v1}}, \\
     \Omega &= \sqrt{2W_{ij}W_{ij}} = \text{vorticity magnitude}, \\
     W_{ij} &= \frac{1}{2}\left(\frac{\partial u_i}{\partial x_j} - \frac{\partial u_j}{\partial x_i}
-    \right), &
+    \right), \\
       f_w &= g\left(\frac{1 + c_{w3}^6}{g^6 + c_{w3}^6}\right)^{1/6}, \\
-      g &= r + c_{w2}\left(r^6 - r\right), &
+      g &= r + c_{w2}\left(r^6 - r\right), \\
       r &= \text{min}\left(\frac{\tilde{\nu}}{\tilde{S}\kappa^2d^2}, 10\right), \\
       f_{t2} &= c_{t3} \exp{\left(-c_{t4}\chi^2\right)},
   \end{align*}
@@ -55,7 +55,7 @@ solves for the modified dynamic viscosity $\tilde{\mu}$ (as opposed to $\tilde{\
 The $f_{t2}$ turbulence trip term is togglable using the \texttt{use\_ft2\_term} input parameter
 (false by default) if turbulence trip (initiation) is not necessary
 \cite{rumsey_turbulence_nodate}. The following subsections cover verification and validation tests
-of the \gls{SA} model in Moltres using reference problems for turbulent channel, pipe, and
+of the Spalart-Allmaras model in Moltres using reference problems for turbulent channel, pipe, and
 \gls{BFS} flow. Moltres input files
 for all three reference problems are available at
 \url{https://github.com/arfc/moltres/tree/devel/problems/2023-basic-turbulence-cases}.
@@ -68,7 +68,8 @@ for friction Reynolds number, Re$_\tau\approx395$ (corresponds to Reynolds numbe
 $\approx 13750$). Their results serve as the reference solution for this turbulent channel flow
 test.
 
-The Moltres model for this test is a 2-D 140 m$\times$0.5 m half-channel. The main flow direction
+The Moltres model for this test is a 2-D 140 m$\times$0.5 m half-channel
+(Figure \ref{fig:channel-geom}). The main flow direction
 is in the positive $x$ direction with the inlet and outlet on the left and right ends,
 respectively. The channel wall lies along the top boundary ($y=0.5$ m) while the bottom boundary
 ($y=0$ m) serves as a symmetry axis for the half-channel geometry. Figure \ref{fig:channel-mesh}
@@ -85,7 +86,15 @@ automatically terminated at $t=186$ s when Moltres detected that the flow profil
 steady-state, i.e., the flow and turbulent viscosity distributions remained unchanged between
 successive timesteps.
 
-\begin{figure}[htb!]
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{channel-geom}
+  \caption{Channel geometry for the turbulent channel flow verification test. The red box indicates
+  the region shown by the close-up view in Figure \ref{fig:channel-mesh}.}
+  \label{fig:channel-geom}
+%\end{figure}
+%%
+%\begin{figure}[htb!]
   \centering
   \includegraphics[width=\columnwidth]{channel_mesh}
   \caption{Close-up view of the refined mesh near the inlet (left boundary) for the channel flow
@@ -98,7 +107,7 @@ successive timesteps.
   \centering
   \small
   \caption{Relevant turbulent channel flow problem parameters. The $\tilde{\mu}_\text{inlet}$ value
-  at the inlet is set to fives times the $\mu$ value as recommended for the \gls{SA} model
+  at the inlet is set to fives times the $\mu$ value as recommended for the Spalart-Allmaras model
   \cite{spalart_one-equation_1994}.}
   \begin{tabular}{l S}
     \toprule
@@ -117,7 +126,7 @@ successive timesteps.
 
 Figure \ref{fig:channel-verification} shows plots of normalized and nondimensionalized velocities,
 wall distances, and stresses from the \gls{DNS} data \cite{moser_direct_1999}
-and the Moltres \gls{SA} model. The Moltres \gls{SA} model is largely consistent with the reference
+and the Moltres Spalart-Allmaras model. The Moltres Spalart-Allmaras model is largely consistent with the reference
 \gls{DNS} flow data and reproduces the expected trends in the velocity and stress distributions
 across the channel and as a function of the wall distance.
 
@@ -143,7 +152,7 @@ across the channel and as a function of the wall distance.
     \label{fig:channel-stress}
   \end{subfigure}
   \caption{Comparison of turbulent channel flow results at Re$_\tau\approx395$ against reference
-  \gls{DNS} results \cite{moser_direct_1999}. The Moltres \gls{SA} model agrees consistently with
+  \gls{DNS} results \cite{moser_direct_1999}. The Moltres Spalart-Allmaras model agrees consistently with
   the reference data.}
   \label{fig:channel-verification}
 \end{figure}
@@ -154,16 +163,24 @@ In 1954, Laufer performed turbulent pipe flow experiments for Re $\approx 40000$
 \cite{laufer_structure_1954}. Their results serve as the reference solution for this turbulent pipe
 flow test.
 
-\begin{figure}[htb!]
+\begin{figure}[p]
   \centering
-  \begin{subfigure}[b]{0.42\columnwidth}
+  \includegraphics[width=0.8\columnwidth]{pipe-geom}
+  \caption{Pipe geometry for the turbulent pipe flow verification test. The red box indicates
+  the region shown by the close-up views in Figure \ref{fig:pipe-mesh}.}
+  \label{fig:pipe-geom}
+%\end{figure}
+%%
+%\begin{figure}[htb!]
+  \centering
+  \begin{subfigure}[b]{0.40\columnwidth}
     \centering
     \includegraphics[width=\columnwidth]{pipe_mesh}
     \caption{Close-up view of the refined mesh near the inlet for the pipe flow test.}
     \label{fig:pipe-mesh-1}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[b]{0.56\columnwidth}
+  \begin{subfigure}[b]{0.53\columnwidth}
     \centering
     \includegraphics[width=\columnwidth]{pipe_mesh_zoom}
     \caption{Close-up view of the refined mesh near the inlet and wall boundary interface.}
@@ -176,7 +193,7 @@ flow test.
 \end{figure}
 
 The Moltres model for this test is a 2-D axisymmetric (R-Z coordinates) half-pipe with a radius of
-0.5 m and a length of 150 m. The main flow direction
+0.5 m and a length of 150 m (Figure \ref{fig:pipe-geom}). The main flow direction
 is in the positive $z$ direction with the inlet and outlet on the bottom and top ends,
 respectively. The channel wall lies along the right boundary ($r=0.5$ m) while the left boundary
 ($r=0$ m) serves as a symmetry axis for the half-pipe geometry. Figure \ref{fig:pipe-mesh} shows
@@ -197,7 +214,7 @@ successive timesteps.
   \centering
   \small
   \caption{Relevant turbulent pipe flow problem parameters. The $\tilde{\mu}_\text{inlet}$ value
-  at the inlet is set to fives times the $\mu$ value as recommended for the \gls{SA} model
+  at the inlet is set to fives times the $\mu$ value as recommended for the Spalart-Allmaras model
   \cite{spalart_one-equation_1994}.}
   \begin{tabular}{l S}
     \toprule
@@ -216,7 +233,7 @@ successive timesteps.
 
 Figure \ref{fig:pipe-verification} shows plots of normalized and nondimensionalized velocities,
 wall distances, and stresses from the experimental data \cite{laufer_structure_1954}
-and the Moltres \gls{SA} model. The Moltres \gls{SA} model is largely consistent with the reference
+and the Moltres Spalart-Allmaras model. The Moltres Spalart-Allmaras model is largely consistent with the reference
 experimental flow data and reproduces the expected trends in the velocity and stress distributions
 across the channel and as a function of the wall distance.
 
@@ -254,13 +271,19 @@ Driver \& Seegmiller performed the \gls{BFS} flow experiment for Re $\approx3600
 step height)
 \cite{driver_features_1985}. Their results serve as the reference solution for this \gls{BFS} test.
 Additionally, the \gls{NASA} Turbulence Modeling Resource website \cite{rumsey_turbulence_nodate}
-provides \gls{BFS} simulation results generated from the regular \gls{SA} model in the CFL3D
-Navier-Stokes CFD code developed at \gls{NASA} \cite{krist_cfl3d_1998}. The CFL3D \gls{SA} model
+provides \gls{BFS} simulation results generated from the regular Spalart-Allmaras model in the CFL3D
+Navier-Stokes CFD code developed at \gls{NASA} \cite{krist_cfl3d_1998}. The CFL3D Spalart-Allmaras model
 does not contain the rotation correction scheme
 \cite{aupoix_extensions_2003, dacles-mariani_numericalexperimental_1995} present in the Moltres
-\gls{SA} model.
+Spalart-Allmaras model.
 
-\begin{figure}[htb!]
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{backstep-geom}
+  \caption{Backward step geometry for the turbulent \gls{BFS} flow verification test. The red box indicates
+  the region shown by the close-up view in Figure \ref{fig:bfs-mesh}.}
+  \label{fig:backstep-geom}
+%\begin{figure}[htb!]
   \centering
   \includegraphics[width=0.9\columnwidth]{bfs_mesh}
   \caption{Close-up view of the mesh for the \gls{BFS} flow test. The step is situated at $x=110$ m
@@ -268,7 +291,8 @@ does not contain the rotation correction scheme
   \label{fig:bfs-mesh}
 \end{figure}
 
-The Moltres model for this test is a 2-D 160 m-long channel. The main flow direction is in the
+The Moltres model for this test is a 2-D 160 m-long channel (Figure \ref{fig:backstep-geom}.
+The main flow direction is in the
 positive $x$ direction with the inlet and outlet on the left and right ends, respectively. The
 channel is 8 m tall before the 1 m-tall step at $x=110$ m. Figure \ref{fig:bfs-mesh} shows a
 close-up view of the mesh around the step. The dimensionless wall distance parameter $y^+$ of the
@@ -287,7 +311,7 @@ and $t=223$ s when Moltres detected that the flow profiles reached steady-state.
   \centering
   \small
   \caption{Relevant turbulent \gls{BFS} flow problem parameters. The $\tilde{\mu}_\text{inlet}$ value
-  at the inlet is set to fives times the $\mu$ value as recommended for the \gls{SA} model
+  at the inlet is set to fives times the $\mu$ value as recommended for the Spalart-Allmaras model
   \cite{spalart_one-equation_1994}.}
   \begin{tabular}{l S}
     \toprule
@@ -308,36 +332,37 @@ Figure \ref{fig:bfs} shows the velocity magnitude and streamlines around the ste
 streamlines illustrate the recirculation zones created by flow separation past the step.
 Figure \ref{fig:bfs-plots} shows the normalized velocity distributions at various distances from
 step, the skin friction and skin pressure coefficients along the bottom wall, and the normalized
-turbulent shear stress distributions at various distances downstream of the step. The \gls{SA}
+turbulent shear stress distributions at various distances downstream of the step. The Spalart-Allmaras
 model with the rotation correction scheme in Moltres performs largely similarly to the reference
-\gls{SA} model results provided on the \gls{NASA} Turbulence Modeling Resource website
+Spalart-Allmaras model results provided on the \gls{NASA} Turbulence Modeling Resource website
 \cite{rumsey_turbulence_nodate}. Compared with the reference experimental data, the Moltres
-\gls{SA} model predicts more accurate velocity (Figure \ref{fig:bfs-downstream}) and turbulent
+Spalart-Allmaras model predicts more accurate velocity (Figure \ref{fig:bfs-downstream}) and turbulent
 stress distributions (Figure \ref{fig:bfs-stress}) along $x/H=1$ downstream of the
-step than the CFL3D \gls{SA} model. This indicates that the Moltres
-\gls{SA} model reproduces the sizes and shapes of the largest and second-largest recirculation
-zones (see Figure \ref{fig:bfs}) more accurately than the CFL3D \gls{SA} model. Table
+step than the CFL3D Spalart-Allmaras model. This indicates that the Moltres
+Spalart-Allmaras model reproduces the sizes and shapes of the largest and second-largest recirculation
+zones (see Figure \ref{fig:bfs}) more accurately than the CFL3D Spalart-Allmaras model. Table
 \ref{table:bfs-reattach} further supports the prior observation since the flow reattachment length
 estimate from Moltres is more consistent with the experimental data than CFL3D. The Moltres
-\gls{SA} velocity distributions in Figure \ref{fig:bfs-downstream} are largely consistent with the
+Spalart-Allmaras velocity distributions in Figure \ref{fig:bfs-downstream} are largely consistent with the
 experimental data. Lastly, the reader should
 note that this turbulent \gls{BFS} flow setup induces complex flow separation effects despite the
 apparent simplicity of the geometry. All \gls{RANS}-based model results from the \gls{NASA}
 turbulence modeling resource website \cite{rumsey_turbulence_nodate} fail to accurately reproduce
 the turbulent shear stress distribution (Figure \ref{fig:bfs-stress}) from the reference
 experimental data. Therefore, the discrepancies observed in the turbulent shear stresses from the
-\gls{SA} model are within expectations of a \gls{RANS}-based model.
+Spalart-Allmaras model are within expectations of a \gls{RANS}-based model.
 
 \begin{table}[htb]
   \centering
   \small
   \caption{\gls{BFS} flow reattachment length estimates normalized by step height $H$.}
-  \begin{tabular}{l c c c}
+  \begin{tabular}{l S[table-format=1.2(2)]}
     \toprule
-    & {Experimental data \cite{driver_features_1985}} & {CFL3D \gls{SA} model
-  \cite{rumsey_turbulence_nodate}} & {Moltres \gls{SA} model} \\
+    Source & {Reattachment length [-]} \\
     \midrule
-    Reattachment length [-] & {$6.26 \pm 0.10$} & 6.1 & 6.36 \\
+    Experimental data \cite{driver_features_1985} & 6.26(10) \\
+    CFL3D Spalart-Allmaras model \cite{rumsey_turbulence_nodate} & 6.1 \\
+    Moltres Spalart-Allmaras model & 6.36 \\
     \bottomrule
   \end{tabular}
   \label{table:bfs-reattach}
@@ -401,16 +426,16 @@ experimental data. Therefore, the discrepancies observed in the turbulent shear 
 
 \glspl{MSR} feature turbulent flow along various sections of the primary molten salt loop which in
 turn induce turbulent temperature and \glspl{DNP} transport. This section presented the
-implementation, verification, and validation of the \gls{SA} turbulence model
+implementation, verification, and validation of the Spalart-Allmaras turbulence model
 \cite{spalart_one-equation_1994} in Moltres for turbulence
-modeling capabilities. The one-equation \gls{RANS}-based \gls{SA} model is computationally
+modeling capabilities. The one-equation \gls{RANS}-based Spalart-Allmaras model is computationally
 efficient relative to more complex \gls{RANS}-based and high-fidelity models while providing better
 accuracy than algebraic models when modeling flows with flow separation and significant streamline
 curvatures \cite{wilcox_turbulence_2006}.
 
 Verification and validation results for turbulent channel, pipe, and \gls{BFS} flow tests showed
-that the Moltres \gls{SA} model is largely consistent with reference simulation or experimental
-data in the literature. The Moltres \gls{SA} model includes a rotation correction scheme
+that the Moltres Spalart-Allmaras model is largely consistent with reference simulation or experimental
+data in the literature. The Moltres Spalart-Allmaras model includes a rotation correction scheme
 \cite{aupoix_extensions_2003, dacles-mariani_numericalexperimental_1995} and notably outperforms
-the reference \gls{SA} model in the turbulent \gls{BFS} flow test with more accurate velocity
+the CFL3D Spalart-Allmaras model in the turbulent \gls{BFS} flow test with more accurate velocity
 distributions and flow reattachment length estimate.

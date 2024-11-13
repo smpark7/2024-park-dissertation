@@ -1,0 +1,231 @@
+Five decades since the \gls{MSRE} \cite{haubenreich_experience_1970}, \glspl{MSR} are once again
+drawing significant interest as an advanced reactor concept with enhanced safety, sustainability,
+efficiency, and cost aspects over the
+current generation of predominantly \glspl{LWR}. This observation is supported by the
+nuclear start-ups developing \gls{MSR} designs and public funding from various governments around
+the world in the race to reduce carbon emissions. \gls{MSR} simulation tools are essential in
+supporting this wave of \gls{MSR} research and development and reaching the eventual \gls{MSR}
+commercialization to meet our growing energy needs.
+\glspl{MSR} feature physics interactions, such as \gls{DNP} flow, turbulent heat transport in fuel
+salt regions, and strong temperature reactivity feedback, that may render some conventional reactor
+software less suitable for \gls{MSR} analysis.
+
+The overarching goal of this work was to enhance Moltres, a \gls{MOOSE}-based application, as a
+reliable, intermediate-fidelity simulation tool for multiphysics \gls{MSR} analysis that scales
+well from workstations to larger computing clusters. I successfully met this goal through two main
+objectives:
+%
+\begin{enumerate}
+  \item Verification and validation of multiphysics capabilities in Moltres
+  \item Development of a novel hybrid $S_N$-diffusion method for improved control rod modeling in
+    Moltres
+\end{enumerate}
+
+I conducted two \gls{VV} studies on Moltres to meet the first objective.
+The first study follows the CNRS benchmark
+study proposed and investigated by several European research groups \cite{tiberga_results_2020}.
+The second study is a collaborative effort with Dr Aaron Reynolds (formerly of Oregon State
+University) based on the \gls{MSRE} zero-power pump experiments \cite{prince_zero-power_1968}.
+I also implemented and verified a Spalart-Allmaras turbulence model in Moltres to enable future
+turbulent salt flow simulations. Chapter \ref{chap:verification} covers the \gls{VV} studies and
+turbulence model implementation. Chapters \ref{chap:hybrid}, \ref{chap:msre}, and
+\ref{chap:transient} cover the development, verification, and demonstration of the hybrid
+$S_N$-diffusion method to meet the second objective.
+
+Chapter \ref{chap:verification} provided a detailed description of Moltres and its existing
+capabilities prior to this work. Moltres is a multiphysics simulation software for \glspl{MSR}. It
+has also been adopted, by itself or coupled to other \gls{MOOSE} applications, for high-temperature
+gas-cooled reactor and lead-cooled fast reactor analyses
+\cite{fairhurst-agosta_multi-physics_2020, ji_numerical_2024}. Moltres features a modular code
+architecture that enables the integration of its own multigroup neutron diffusion and \gls{DNP}
+models with the Squirrel \gls{MOOSE}-based application \cite{noauthor_arfcsquirrel_nodate} and the
+\gls{MOOSE} Navier-Stokes module \cite{peterson_overview_2018} for thermal-hydraulics modeling.
+The \gls{MOOSE} framework provides user- and developer-friendly interfaces that enable fast
+prototyping and implementation of experimental modeling features.
+The underlying libMesh \cite{kirk_libmesh_2006} and PETSc \cite{satish_petsc_2019} libraries
+provide state-of-the-art meshing and \gls{FEM} solver capabilities that are robust, efficient, and
+highly scalable.
+
+Chapter \ref{chap:verification} continued with the CNRS benchmark verification results from
+Moltres. The CNRS benchmark \cite{tiberga_results_2020} is a numerical benchmark study
+designed to assess multiphysics coupling in \gls{MSR} simulation tools for fast-spectrum
+\gls{MSR} modeling. The benchmark starts with three steady-state single-physics problems, followed by four
+steady-state multiphysics problems incrementally introducing various multiphysics coupling
+interactions, and lastly a series of transient multiphysics problems for dynamic analysis. Moltres
+showed good agreement with the four participating \gls{MSR} simulation tools published in the CNRS
+benchmark publication. Most of the test metric measurements from Moltres fell within one standard
+deviation of the benchmark average. The only discrepancies arose in temperature readings along the
+top boundary of the 2-D model due to discontinuous and unphysical velocity boundary conditions
+prescribed by the leaky lid-driven cavity flow profile. All spatial distributions of fission rate
+density, delayed neutron source, temperature, and velocity were nearly indistinguishable compared
+to the benchmark participants.
+
+Chapter \ref{chap:verification} also covered the collaboration study with the developer of
+QuasiMolto \cite{reynolds_analysis_2023} for a \gls{VV} study based on the \gls{MSRE} zero-power
+pump start-up and coast-down experiments \cite{prince_zero-power_1968}. This study was designed to
+assess the looped \gls{DNP} flow modeling capabilities in Moltres and QuasiMolto. QuasiMolto is a
+circulating fuel reactor simulation software that employs a multi-level quasi-diffusion method
+\cite{tamang_multilevel_2014} for 2-D axisymmetric multiphysics simulations of \glspl{MSR}.
+We developed a 2-D axisymmetric model of the \gls{MSRE} for this study. Despite the widely
+different numerical schemes employed by Moltres and QuasiMolto, both codes were highly consistent
+with each other in $k$-eigenvalue neutronics simulations under static and steady salt flow
+conditions prior to pump transient simulations. The $k_\text{eff}$ estimates from both codes fell
+within 22 and 21 pcm of each other under static and steady flow conditions. Consequently, reactivity
+loss estimates due to \gls{DNP} decay outside the core agreed within 1 pcm. Spatial flux and
+\gls{DNP} distributions showed nearly perfect overlap with relative differences under 0.8 \%. Both
+codes remained consistent with each other in the pump start-up and coast-down transient simulations
+when comparing the reactivity loss over time induced by changes in \gls{DNP} flow. The numerical
+results deviated from \gls{MSRE} experimental data due to the absence of upper and lower plena in
+the numerical models and the omission of turbulent mixing. These affected the peak reactivity loss
+measurements and the flattening of reactivity oscillations in the pump start-up experiment.
+Nevertheless, the distinct reactivity oscillations serve as valuable reference points for
+verifying \gls{DNP} advection modeling accuracy between Moltres and QuasiMolto, and for other
+researchers looking to verify their \gls{MSR} simulation tools.
+
+Chapter \ref{chap:verification} concluded with the implementation and verification of the
+Spalart-Allmaras turbulence model in Moltres for enabling wall-bounded turbulent molten salt flow
+modeling. The implementation includes a rotation correction scheme
+\cite{aupoix_extensions_2003, dacles-mariani_numericalexperimental_1995} for improved accuracy
+when modeling turbulent flow with curved streamlines. The model performed well under the turbulent
+channel flow verification test \cite{moser_direct_1999}, the turbulent pipe flow validation test
+\cite{laufer_structure_1954}, and the backward-facing step flow validation test
+\cite{driver_features_1985}.
+
+Chapter \ref{chap:hybrid} introduced the hybrid $S_N$-diffusion method for \gls{MSR} control rod
+modeling in time-dependent reactor analyses. The hybrid $S_N$-diffusion method improves on the
+standard neutron diffusion method by iteratively applying transport corrections generated from
+solving the $S_N$ neutron transport method in subdomains containing highly neutron-absorbing
+control rods.
+The chapter starts with the derivation for the newly-implemented $S_N$ neutron transport method in
+Moltres. It uses the \gls{SAAF} formulation of the $S_N$ equations, which are highly efficient and
+scalable with HYPRE multigrid preconditioners \cite{hypre_hypre_2022} from PETSc. I formulated
+two possible transport correction schemes for the hybrid method: a diffusion correction and a
+drift correction scheme. These schemes fit into modified forms of the neutron diffusion equations
+to correct flux errors in near control rods where diffusion theory is not valid. I also developed
+an adaptive boundary coupling algorithm to couple the $S_N$ and neutron diffusion solvers. The
+algorithm automatically truncates transport correction parameters near the boundaries of the
+$S_N$ problem subdomain to discard inaccurate correction parameters and preserve smooth neutron
+flux gradients across the interface. The chapter concludes with the numerical implemetation details
+of the $S_N$ method with level-symmetric quadrature sets and modifications to the existing neutron
+diffusion solver for the hybrid method. The $S_N$ and diffusion solvers are coupled through fixed
+point iterations using the \gls{MOOSE} \texttt{MultiApp} and \texttt{Transfers} systems.
+
+Chapter \ref{chap:msre} demonstrated the hybrid $S_N$-diffusion method in $k$-eigenvalue simulations
+of 1-D, 2-D, and 3-D \gls{MSRE} models. The 1-D simulations involve six test cases with increasing
+geometric complexity modeled after the air-filled control rod thimbles, salt-graphite lattice
+structure, and vessel regions in the \gls{MSRE}. Simulations with the OpenMC Monte Carlo neutron
+transport code and the $S_8$ method in Moltres provided reference solutions for the hybrid and
+neutron diffusion methods to be assessed against. Some discrepancies arose from the eight neutron
+energy group structure as evidenced by differences in $k_\text{eff}$ and flux distributions between
+OpenMC simulations on continuous energy (OpenMC-CE) and multigroup (OpenMC-MG) modes. Otherwise, the
+multigroup $S_8$ method showed good agreement with OpenMC-MG. While $k_\text{eff}$ estimates from
+the hybrid methods with the diffusion and drift correction schemes deviated from the $S_8$ method
+and OpenMC-MG by 100-400 pcm, the hybrid methods
+accurately reproduced control rod worth estimates within 0.5 \% of them (2-3 \% relative to
+OpenMC-CE). The neutron diffusion method fared significantly worse at 5.5 \% relative to $S_8$ and
+OpenMC-MG, and 8 \% relative to OpenMC-CE. An analysis of the drift and diffusion correction
+schemes showed the drift correction scheme to be superior due to singularities and discontinuities
+in the diffusion correction parameter. Therefore, the drift correction scheme was chosen for
+the remainder of this work. Another analysis showed little impact on control rod worth estimates
+from varying the $S_N$-resolved subdomain size as long as the size is kept constant between
+$k$-eigenvalue simulations used to calculate the rod worth. The hybrid $S_N$-diffusion method
+exhibited a superlinear convergence rate with the number of fixed point iterations, leading to the
+$k_\text{eff}$ error estimate falling below $10^{-7}$ after two iterations.
+
+Chapter \ref{chap:msre} continued with 2-D quarter-core and full-core \gls{MSRE} simulations. The
+\gls{MSRE} models were nearly identical to the horizontal cross section of the actual \gls{MSRE}
+reactor. The hybrid method maintained its accurate control rod modeling capability in the 2-D
+simulations involving the incrementally insertion of three control rods in the \gls{MSRE} model.
+The hybrid method reported rod worth error magnitudes of less than 40 pcm relative to OpenMC-CE,
+which were significant improvements over the neutron diffusion method error estimates ranging from
+569 pcm to 1484 pcm. The hybrid method also showed significant improvements in the absolute mean
+and maximum errors in fuel channel power distributions over the neutron diffusion method.
+
+The 3-D simulations in Chapter \ref{chap:msre} doubled as validation for the 3-D \gls{MSRE} model
+against reference \gls{MSRE} experimental data and the \gls{MSRE} numerical benchmark study
+\cite{fratoni_molten_2020} in
+the International Reactor Physics Experiment Evaluation Project (IRPhEP) handbook. OpenMC and
+hybrid method estimates of $k_\text{eff}$ of the \gls{MSRE} when the experiment first achieved criticality
+$k_\text{eff}$ estimates of the \gls{MSRE} at its initial critcality configuration from OpenMC, the
+hybrid method, and the neutron diffusion method in this work showed good agreement with the Serpent
+model from the \gls{MSRE} numerical benchmark. All numerical estimates exceeded the experimental
+value by 1-2 \% due to possible biases and uncertainties in the nuclear data library for graphite
+\cite{fratoni_molten_2020}. Temperature reactivity coefficient values from this work also showed
+good agreement with \gls{MSRE} data, within experimental uncertainty, with percentage discrepancies
+of about 3 \%. In the subsequent control rod worth study, OpenMC and the hybrid method showed nearly
+perfect overlap in the integral rod worth curve throughout the entire length of rod travel. Due to
+geometric approximations of the control rods in the numerical models, they overestimated the total
+rod worth relative to \gls{MSRE} data by approximately 4-5 \%. The hybrid method significantly
+outperforms the neutron diffusion method which overestimated the total worth by 21.1 \%.
+When comparing solution times, the hybrid method took approximately four times as long as the
+neutron diffusion method.
+The 3-D hybrid method simulations exhibited nearly linear scaling in strong scaling tests, which
+is promising for future projects involving larger reactor models. Some performance optimizations
+may be possible to reduce data transfer times between the $S_N$ and diffusion solvers which took
+up about 30 \% of the total solution time due to inter-processor communications.
+
+Lastly, Chapter \ref{chap:transient} demonstrated the hybrid method in time-dependent simulations
+based on a \gls{MSRE} zero-power rod drop experiment \cite{prince_zero-power_1968} and a \gls{MSRE}
+reactivity insertion experiment during power operation \cite{steffy_experimental_1970}. These
+simulations required coupling the hybrid method solver to \gls{DNP} and temperature solvers in
+Moltres through nested iteration coupling structures. I set up the rod drop simulation through a
+$k$-eigenvalue simulation with the control rod at its initial height before using the simulation
+output as the initial condition for the time-dependent rod drop simulation. Moltres reproduced the
+expected shape of the integral neutron count curve from \gls{MSRE} experimental data with a maximum
+discrepancy of x \% at $t=16$ after the rod drop. Snapshots of the neutron flux spatial
+distribution at various timesteps show expected localized flux depressions around the control rod
+as it moves through the core.
+The reactivity insertion simulation started with the \gls{MSRE} initially at 1 MW power output and
+steady salt flow. Following a 24.8 pcm step reactivity insertion, Moltres reproduced the general
+shape of the first power peak and the subsequent power oscillations. The power peak magnitude
+is y \% higher than the peak in the experimental data. Temperatures in the \gls{MSRE} model rise
+and settle at higher values to compensate for the reactivity insertion.
+
+\section{Limitations and Future Work}
+
+The second \gls{VV} study verified the looped \gls{DNP} flow modeling capability in Moltres under
+steady-state and transient scenarios. In the original pump experiments, the control rod was driven
+by a ``flux servo controller'' that adjusts the rod position in response to flux changes to maintain
+criticality. Our study in this work approximated this action through $k$-eigenvalue solvers
+coupled to time-dependent \gls{DNP} flow solvers. Potential future work would be to implement a
+control system such as a PID (Proportional-Integral-Derivative) controller in combination with
+the newly-implemented hybrid method to create a more representative model of the pump experiments.
+This would enhance model validation and open up additional research directions which require a
+control system.
+
+This work implemented and verified the Spalart-Allmaras turbulence model in Moltres. The turbulence
+model \gls{VV} tests indicated significant mesh refinement requirements near the wall. Mesh
+refinement scales with the flow Reynolds number. With \gls{MSR} designs such as the \gls{MSFR}
+reaching Reynolds numbers on the order of $10^6$, future work in this area should focus on
+implementing wall functions. Wall functions eliminate the need for fine mesh near the wall by
+approximating the log-law velocity profile near the wall. Verification and demonstration of the
+turbulence model, beyond general \gls{VV} tests, in \gls{MSR} turbulent salt flow problems is also
+crucial for the continued development of Moltres as a \gls{MSR} simulation tool.
+
+Chapters \ref{chap:msre} and \ref{chap:transient} demonstrated the hybrid $S_N$-diffusion method's
+accuracy in control rod worth calculations. However, some discrepancies still persist in the
+$k_\text{eff}$ estimates of individual reactor states. These discrepancies affect the average
+temperature of the reactor in multiphysics simulations to compensate for the mismatch in
+reactivity. These discrepancies could be reduced through
+neutron leakage correction at the vacuum boundaries. Remedies for this issue exist in a number of
+forms such as group-wise or matrix albedo boundary conditions.
+
+The large 3-D simulations in this work uncovered significant memory usage by the $S_N$ solver, even
+with the distributed mesh feature to spread mesh and variable storage across the compute nodes.
+Each full-core simulation required at least 40 nodes with 512 GB memory each to run.
+This issue may be a stumbling block for using the hybrid method on smaller computing clusters that
+have less memory per processor. A custom preconditioner and solver routine in Moltres could help to
+reduce memory usage by referencing the same stored Jacobian C++ variable for neutron angular flux
+variables in the same neutron energy group and on the same \gls{FEM} quadrature point. Their
+Jacobian formulations are identical aside from the level-symmetric ordinate and weight. Another
+area for optimization in the hybrid method is the data transfer times between the $S_N$ and
+diffusion solvers. Due to mesh distribution, each 3-D simulation spent 30 \% of its solution time
+on data transfers between processors. This could be minimized through optimizations in the mesh
+distribution and the data transfer caching systems.
+
+Finally, future work could demonstrate the hybrid method to its fullest potential through the
+simulation of asymmetric reactivity-initiated transients. Asymmetry refers to significant changes
+in the neutron flux shape during a transient scenario. The core benefit of the hybrid method is
+the spatial resolution it provides to time-dependent simulations involving control rod movement.
+This objective could be met through modeling most other \gls{MSR} designs whose control and shim
+rods are not centrally located.

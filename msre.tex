@@ -1,7 +1,7 @@
 In Chapter \ref{chap:hybrid}, I laid out the mathematical background and numerical implementation
 of the hybrid $S_N$-diffusion method for improving neutronic accuracy in reactor systems containing
 highly neutron-absorbing regions. I developed and implemented the diffusion and drift correction
-schemes for the hybrid method on Python and Moltres, respectively. This chapter demonstrates
+schemes for the hybrid method in Python and using Moltres, respectively. This chapter demonstrates
 the hybrid method through 1-D, 2-D, and 3-D $k$-eigenvalue simulations of the \gls{MSRE}.
 I employed the OpenMC Monte Carlo neutral particle transport software \cite{romano_openmc:_2015} to
 generate group constants for the hybrid method and reference solutions for method verification.
@@ -25,19 +25,19 @@ neutronics verification and validation. Sections \ref{sec:1d-results}, \ref{sec:
 Group constants relevant to the neutron diffusion, $S_N$ neutron transport, or both
 methods are:
 %
-\begin{itemize}
-  \item $\Sigma_{t,g}$: Macroscopic total cross section in group $g$,
-  \item $\Sigma_{r,g}$: Macroscopic removal cross section in group $g$,
-  \item $\Sigma_s^{g'\rightarrow g}$: Macroscopic group-to-group scattering cross section matrix,
-  \item $\Sigma_{s,l}^{g'\rightarrow g}$: $l$-th Legendre moment of the macroscopic
-    group-to-group scattering cross section matrix,
-  \item $\Sigma_{sp,l}^{g'\rightarrow g}$: $l$-th Legendre moment of the macroscopic
-    group-to-group scattering production cross section matrix,
-  \item $D_g$: $P_1$-based diffusion coefficient in group $g$,
-  \item $\nu\Sigma_{f,g}$: Product of the average number of neutrons produced per fission and the
-    macroscopic fission cross section in group $g$,
-  \item $\chi_g$: Neutron fission spectrum in group $g$.
-\end{itemize}
+\begin{align*}
+  \Sigma_{t,g}:& \mbox{ Macroscopic total cross section in group $g$,}
+  \Sigma_{r,g}:& \mbox{ Macroscopic removal cross section in group $g$,}
+  \Sigma_s^{g'\rightarrow g}:& \mbox{ Macroscopic group-to-group scattering cross section matrix,}
+  \Sigma_{s,l}^{g'\rightarrow g}:& \mbox{ $l$-th Legendre moment of the macroscopic
+  group-to-group scattering cross section matrix,}
+  \Sigma_{sp,l}^{g'\rightarrow g}:& \mbox{ $l$-th Legendre moment of the macroscopic
+  group-to-group scattering production cross section matrix,}
+    D_g:& \mbox{ $P_1$-based diffusion coefficient in group $g$,}
+  \nu\Sigma_{f,g}:& \mbox{ Product of the average number of neutrons produced per fission and the
+  macroscopic fission cross section in group $g$,}
+    \chi_g:& \mbox{ Neutron fission spectrum in group $g$.}
+\end{align*}
 %
 I generated the group constants using OpenMC's multigroup cross section generation capability
 \cite{boyd_multigroup_2019}. A group constant postprocessing script for Moltres
@@ -150,11 +150,11 @@ For the 1-D models, I performed neutronics calculations with the $S_N$, neutron 
 hybrid method implementations on Moltres and Python. Table \ref{table:nts-methods} highlights the
 differences between the two implementations. The $S_N$ neutron transport method implementation on
 Moltres follows the methodology for solving the \gls{SAAF} formulation of the $S_N$ equations as
-described in Section \ref{sec:saaf} while the implementation on Python follows the methodology
+described in Section \ref{sec:saaf} while the implementation in Python follows the methodology
 for solving the original first-order formulation as described in Section \ref{sec:python-sn}.
 
 The implementations on Moltres discretize the problem domain in space using the finite element
-method while the implementations on Python use finite difference or diamond difference schemes. The
+method while the implementations in Python use finite difference or diamond difference schemes. The
 most crucial difference lies in the transport correction formulations for the hybrid method. The
 Moltres implementation uses the drift correction scheme described in Section
 \ref{sec:drift-correction} while the Python implementation uses the diffusion correction
@@ -210,6 +210,8 @@ intervals along the specified lines (e.g., horizontal, diagonal, etc.) regardles
 mesh resolution.
 
 \section{1-D Neutronics Models \& Results} \label{sec:1d-results}
+
+This section presents the models, results, and discussion for the 1-D test cases.
 
 \subsection{1-D Neutronics Model Setup \& Geometries}
 
@@ -644,6 +646,8 @@ would increase from 2 to 3 if the tolerance value is further tightened.
 
 \section{2-D Neutronics Models \& Results} \label{sec:2d-results}
 
+This section presents the models, results, and discussion of the 2-D cases.
+
 \subsection{2-D Neutronics Model Setup} \label{sec:2d-model-setup}
 
 Figures \ref{fig:1/4-geom} and \ref{fig:full-geom} show the 2-D quarter-core and full-core
@@ -652,9 +656,9 @@ Figures \ref{fig:1/4-geom} and \ref{fig:full-geom} show the 2-D quarter-core and
 following differences in the 2-D \gls{MSRE} model for this work:
 
 \begin{itemize}
-  \item Ignored thermal expansion of all reactor components.
+  \item Neglected thermal expansion of all reactor components.
   \item Modeled the control rods as perfectly annular cylinders instead of beaded control elements
-    strung on flexible steel cables. Ignored the inconel shells encasing the control elements and
+    strung on flexible steel cables. Neglected the inconel shells encasing the control elements and
     the steel helical cables linking the control elements together.
   \item Set channel pitch, width, and length to 2, 0.2, and 1.2 inches, respectively.
   \item Homogenized the INOR-8, graphite, and molten salt regions in the sample basket.
@@ -738,6 +742,8 @@ drift correction parameters for the coupled diffusion solver.
 \FloatBarrier
 
 \subsection{2-D Neutronics Numerical Results \& Discussion} \label{sec:2d-nts-results}
+
+This subsection presents the results and discussion of the 2-D quarter-core and full-core models.
 
 \subsubsection{2-D Quarter-Core}
 
@@ -951,6 +957,8 @@ geometries.
 
 \section{3-D Neutronics Models \& Results} \label{sec:3d-results}
 
+This section presents the models, results, and discussion of the 3-D \gls{MSRE} simulations.
+
 \subsection{3-D Neutronics Model Setup} \label{sec:3d-model-setup}
 
 Figure \ref{fig:msre-picture} shows the vertical cross section of the actual \gls{MSRE} vessel.
@@ -1003,11 +1011,16 @@ reactivity coefficient calculations which had a higher $^{235}$U loading of 67.0
 \begin{table}[htb]
   \centering
   \caption{List of reactor dimensions.}
-  \begin{tabular}{l l}
+  \begin{tabular}{l S}
     \toprule
-    Height [cm] & 215 \\
+    Reactor Specifications & {Value} \\
     \midrule
-    TODO: Populate table & \\
+    Height [m] & 2.15 \\
+    Radius [m] & 0.762 \\
+    Vessel thickness [m] & 0.0254 \\
+    Fuel channel length [m] & 0.03048 \\
+    Fuel channel width [m] & 0.01016 \\
+    Graphite lattice pitch [m] & 0.05080 \\
     \bottomrule
   \end{tabular}
   \label{table:reactor-dimensions}
@@ -1077,7 +1090,7 @@ ENDF/B-VII.1 nuclear data library as the \gls{MSRE} numerical benchmark report.
   \begin{tabular}{l S[table-format=1.5(2)]}
     \toprule
      & {$k_\text{eff}$} \\
-     \cmidrule(l){2-2}
+     \midrule
     \gls{MSRE} experimental data & 1.00000(420) \\
     Serpent 2 (Numerical benchmark) & 1.02132(3) \\
     OpenMC (This work) & 1.01308(20) \\
@@ -1250,14 +1263,19 @@ or angular group flux variable value defined at a mesh node. Each simulation ran
 mesh feature, which partitions and distributes the mesh across however many \gls{MPI} ranks used
 in the simulation. All variable and mesh-linked data are also distributed with the mesh. This
 greatly reduces memory requirements compared to storing the full mesh for each \gls{MPI} rank.
-
 Each 3-D \gls{MSRE} simulation required at least forty nodes for sufficient memory to run. This
-sets a strict minimum requirement for the 3-D hybrid simulations. On forty nodes, the simulations
+sets a strict minimum requirement for the 3-D hybrid simulations. A significant fraction of
+memory use in Moltres comes from storing the residual and Jacobian quantities at each \gls{FEM}
+quadrature point. Given that terms in the $S_N$ equations share the same Jacobian formulation
+across all ordinate directions, memory use (and compute time) could be optimized by reducing
+duplicate Jacobian evaluations.
+
+On forty nodes, the simulations
 required approximately 2.2 h to complete for a total of 88 node-hours or 2816 core-hours. The
 distributed mesh capability comes with the cost of increased data transfer times between the $S_N$
 and diffusion solvers due to increased inter-core data transfers. Transfers accounted for
 approximately 0.675 h or 30 \% of the total simulation time. Future research into optimizing mesh
-distribution and transfer-related data caching may help to minimize data transfers and speed-up
+distribution and transfer-related data caching may help to minimize data transfers and speed up
 hybrid method simulations. The solution time for the initial neutron diffusion calculation with zero
 drift correction also takes up approximately 30 \% of the total simulation time. After subtracting
 the minor computational cost of evaluating the drift term even if it is zero, the hybrid method
@@ -1341,8 +1359,8 @@ handbook. The
 $k_\text{eff}$ estimates of the \gls{MSRE} at initial criticality from OpenMC, the hybrid method,
 and the neutron diffusion method in this work showed good agreement with the \gls{MSRE} numerical
 benchmark. All numerical $k_\text{eff}$ estimates, including that from the benchmark report
-\cite{fratoni_molten_2020}, exceeded the \gls{MSRE} experimental value by 1-2 \% due to possible
-biases and uncertainties in the neutronic properties of graphite. Temperature reactivity
+\cite{fratoni_molten_2020}, exceeded the \gls{MSRE} experimental value by 1-2 \% possibly due to
+biases and uncertainties in the nuclear data library for graphite. Temperature reactivity
 coefficient values from OpenMC, the hybrid method, and the neutron diffusion method also show good
 agreement with the \gls{MSRE} data within experimental uncertainty with percentage discrepancies of
 about 3 \%, but differ from the numerical benchmark which has a percentage discrepancy of -6.7 \%.
