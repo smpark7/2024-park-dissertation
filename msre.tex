@@ -783,7 +783,7 @@ The OpenMC-CE and OpenMC-MG rod worth estimates agree within two standard deviat
   \label{table:quarter-core}
 \end{table}
 
-\begin{figure}[htb!]
+\begin{figure}[p]
   \centering
   \includegraphics[width=\columnwidth]{msre-quarter-no-rod-power}
   \caption{Normalized channel fission rate distribution of the 2-D \gls{MSRE} quarter-core model.
@@ -791,7 +791,7 @@ The OpenMC-CE and OpenMC-MG rod worth estimates agree within two standard deviat
   \label{fig:1/4-no-rod}
 \end{figure}
 
-\begin{figure}[htb!]
+\begin{figure}[p]
   \centering
   \includegraphics[width=\columnwidth]{msre-quarter-rod-power}
   \caption{Normalized channel fission rate distribution of the 2-D \gls{MSRE} quarter-core model.
@@ -952,6 +952,73 @@ geometries.
   \end{tabular}
   \label{table:full-core-power}
 \end{table}
+
+\FloatBarrier
+
+\subsubsection{$S_N$ Discretization \& Ray Effects}
+
+Angular resolution in 2-D (and later 3-D) flux simulations is important for accurately capturing
+the angular dependence in the neutron angular flux. This subsection compares the $k_\text{eff}$ and
+neutron scalar flux distribution solutions from the hybrid method with the $S_6$, $S_8$, $S_{10}$,
+and $S_{12}$ methods for the 2-D full-core with no rods inserted. Table
+\ref{table:2d-sn-convergence} shows the $k_\text{eff}$ estimates from those simulation results.
+The $k_\text{eff}$ varies by less than 1 pcm, thereby indicating that the angular discretization
+order used by the hybrid method has little impact on the integral reactor parameters.
+
+Figures \ref{fig:ray-effect-12} and \ref{fig:ray-effect-34} show the first four neutron group flux
+distributions from the hybrid method in the central reactor region consisting of three
+air-filled thimbles and a homogenized sample basket (bottom right). The geometry corresponds
+directly to Figure \ref{fig:full-geom-closeup} without the three control rods. Group 1 fluxes
+in the thimble form a distinctive ray effect artifacts arising from the regular geometrical shapes and
+insufficient angular resolution. The artifacts become less distinct with increasing angular
+discretization levels. They also diminish with increasing neutron energy groups due to shorter
+neutron mean free paths leading to more diffusive behavior.
+
+By Group 3 and 4, the artifacts are indiscernible to the eye across all angular discretization
+orders. Given that $k_\text{eff}$ is heavily weighted towards the later (slower) energy groups due
+to larger fission cross sections, it is clear why Table \ref{table:2d-sn-convergence} shows little
+differences in $k_\text{eff}$ across the angular discretization orders. Therefore, $S_8$ is
+adequate for control rod worth calculations in the \gls{MSRE}. 
+Further investigations into the angular discretization level may be warranted when applying the
+hybrid method to reactors with more air-filled regions such as high-temperature gas-cooled
+reactors.
+
+\begin{table}[t]
+  \centering
+  \caption{Hybrid method $k_\text{eff}$ estimates for the 2-D full-core model with zero rods
+  inserted and $S_N$ schemes from $S_6$ to $S_{12}$.}
+  \begin{tabular}{l S}
+    \toprule
+    Angular discretization & {$k_\text{eff}$} \\
+    \midrule
+    $S_6$ & 1.108414 \\
+    $S_8$ & 1.108423 \\
+    $S_{10}$ & 1.108422 \\
+    $S_{12}$ & 1.108420 \\
+    \bottomrule
+  \end{tabular}
+  \label{table:2d-sn-convergence}
+\end{table}
+
+\begin{figure}[p]
+  \small
+  \centering
+  \includegraphics[width=0.7\columnwidth]{ray-effect-12}
+  \caption{Group 1 and 2 neutron flux distributions in the hybrid $S_N$-diffusion method correction
+  region with $S_6$, $S_8$, $S_{10}$, \& $S_{12}$. Ray effects diminish with increasing
+  angular fidelity, but still persist with $S_{12}$ in group 1 and 2.}
+  \label{fig:ray-effect-12}
+\end{figure}
+
+\begin{figure}[p]
+  \small
+  \centering
+  \includegraphics[width=0.7\columnwidth]{ray-effect-34}
+  \caption{Group 3 and 4 neutron flux distributions in the hybrid $S_N$-diffusion method correction
+  region with $S_6$, $S_8$, $S_{10}$, \& $S_{12}$. Ray effects are barely visible in group
+  3 and 4 due to shorter neutron mean free paths.}
+  \label{fig:ray-effect-34}
+\end{figure}
 
 \FloatBarrier
 
