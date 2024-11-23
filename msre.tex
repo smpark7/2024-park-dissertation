@@ -786,7 +786,8 @@ The OpenMC-CE and OpenMC-MG rod worth estimates agree within two standard deviat
 \begin{figure}[p]
   \centering
   \includegraphics[width=\columnwidth]{msre-quarter-no-rod-power}
-  \caption{Normalized channel fission rate distribution of the 2-D \gls{MSRE} quarter-core model.
+  \caption{Normalized channel fission rate distribution of the 2-D \gls{MSRE} quarter-core model
+    with the rod withdrawn.
   This figure depicts the 1/8th-core distribution due to symmetry about the diagonal.}
   \label{fig:1/4-no-rod}
 \end{figure}
@@ -794,7 +795,8 @@ The OpenMC-CE and OpenMC-MG rod worth estimates agree within two standard deviat
 \begin{figure}[p]
   \centering
   \includegraphics[width=\columnwidth]{msre-quarter-rod-power}
-  \caption{Normalized channel fission rate distribution of the 2-D \gls{MSRE} quarter-core model.
+  \caption{Normalized channel fission rate distribution of the 2-D \gls{MSRE} quarter-core model
+    with the rod inserted.
   This figure depicts the 1/8th-core distribution due to symmetry about the diagonal.}
   \label{fig:1/4-rod}
 \end{figure}
@@ -815,6 +817,8 @@ each channel averages to 1 as follows
 \end{align}
 %
 The total fission rate includes fission rate contributions from peripheral fuel salt regions.
+Division by total fission rate normalizes the fission rates across the different neutronics
+methods.
 Figures \ref{fig:1/4-no-rod} and \ref{fig:1/4-rod} show the normalized fission rate distributions
 of the quarter-core model for the ``No Rod'' and ``Rod'' cases, respectively. I presented 1/8th
 slices of the core in the figures because the distributions are symmetrical about the $y=x$ line
@@ -1044,7 +1048,7 @@ addition to modifications in the 2-D model listed in Section \ref{sec:2d-model-s
   \item Flattened the conical tops of the graphite lattice blocks.
   \item Regularized the complicated graphite lattice structure at the bottom.
   \item Set a fixed outer vessel thickness of 2.54 cm.
-  \item Homogenized the lower plenum by 90.8\% salt- 9.2\% INOR-8 (vessel) by volume.
+  \item Homogenized the lower plenum by 90.8\% salt-9.2\% INOR-8 (vessel) by volume.
   \item Removed the reactor access nozzle and the various components within it.
   \item Added a graphite block at the bottom of the control rod thimbles.
 \end{itemize}
@@ -1117,7 +1121,7 @@ reactivity coefficient calculations which had a higher $^{235}$U loading of 67.0
 
 All neutronics simulations ran on OpenMC under continuous energy mode and on Moltres with the
 hybrid $S_N$-diffusion method. The hybrid simulations ran with a maximum stabilization factor of
-$c=250$, a void constant $\varsigma=0.5$, and a uncorrected diffusion coefficient cap of $D_g=2.5$.
+$c=250$, a void constant of $\varsigma=0.5$, and a uncorrected diffusion coefficient cap of $D_g=2.5$.
 Refer to Sections \ref{sec:void-treatment} and \ref{sec:diffcoef-cap} for the relevant discussion
 on void treatment for near-void regions and the impact of large diffusion coefficient values on
 solver performance. As for the standard neutron diffusion method, it either converges very slowly
@@ -1320,12 +1324,13 @@ interest as a candidate for time-dependent 3-D reactor simulations. All simulati
 Polaris supercomputer system at \gls{ANL}. Each compute node consists of a 2.8-GHz AMD EPYC Milan
 7543P 32-core CPU, four NVIDIA A100 GPUs, and 512 GB of RAM. The GPUs were not utilized in this
 work. Moltres uses the \gls{MPI} communication protocol for parallelizing simulations. For this
-work, simulations ran with 1-to-1 ratio of \gls{MPI} ranks and processor cores (i.e., 32 \gls{MPI}
-ranks for each compute node).
+work, simulations ran with 1-to-1 ratio of \gls{MPI} ranks to processor cores (i.e., 32 \gls{MPI}
+ranks per compute node).
 
 Every 3-D hybrid method $k$-eigenvalue
-simulation of the \gls{MSRE} consisted of 747,688,760 \glspl{DOF} and 1,690,777,728 \glspl{DOF} for
-the neutron diffusion and $S_N$ components, respectively. Each \gls{DOF} corresponds to a scalar
+simulation of the \gls{MSRE} consisted of 750M \glspl{DOF} and 1.69B \glspl{DOF} for
+% 747,688,760 \glspl{DOF} and 1,690,777,728 \glspl{DOF} for
+the neutron diffusion and $S_N$ subsolvers, respectively. Each \gls{DOF} corresponds to a scalar
 or angular group flux variable value defined at a mesh node. Each simulation ran with the distributed
 mesh feature, which partitions and distributes the mesh across however many \gls{MPI} ranks used
 in the simulation. All variable and mesh-linked data are also distributed with the mesh. This
@@ -1337,25 +1342,62 @@ quadrature point. Given that terms in the $S_N$ equations share the same Jacobia
 across all ordinate directions, memory use (and compute time) could be optimized by reducing
 duplicate Jacobian evaluations.
 
-On forty nodes, the simulations
+On forty nodes, each full-core rod worth simulation
 required approximately 2.2 h to complete for a total of 88 node-hours or 2816 core-hours. The
 distributed mesh capability comes with the cost of increased data transfer times between the $S_N$
-and diffusion solvers due to increased inter-core data transfers. Transfers accounted for
+and diffusion solvers due to increased inter-processor data transfers. Transfers accounted for
 approximately 0.675 h or 30 \% of the total simulation time. Future research into optimizing mesh
 distribution and transfer-related data caching may help to minimize data transfers and speed up
 hybrid method simulations. The solution time for the initial neutron diffusion calculation with zero
-drift correction also takes up approximately 30 \% of the total simulation time. After subtracting
-the minor computational cost of evaluating the drift term even if it is zero, the hybrid method
+drift correction also takes up approximately 30 \% of the total simulation time. After taking into
+consideration the computational cost of evaluating the drift term, the hybrid method
 requires about four times the solution time of the standard neutron diffusion method.
 
 For the hybrid method to be viable for large time-dependent simulations, it must scale reasonably
 well on computing clusters. For this work, I investigated strong scaling, which measures how the
 solution time decreases when more cores are used while keeping the problem size fixed. This strong
-scaling study used 3-D quarter-core models run on 10, 20, 30, and 40 compute nodes.
-Figure * shows the results of this scaling study.
-The hybrid method implementation scales well as shown by the nearly linear scaling between the
-solution time and the number of processors. Therefore, the hybrid method appears promising for the
-modeling of larger reactor analyses with little scaling performance penalty.
+scaling study used 3-D quarter-core models run on 10, 20, 40, and 80 compute nodes.
+Figure \ref{fig:scaling} shows the results of this scaling study. The total wall time scales at a
+sublinear rate of approximately $q=0.7$. The total wall time is broken down into two components:
+the solver wall time (i.e., initialization, numerical solver, etc.) and the transfer time (i.e,
+data transfer between the $S_N$ and diffusion solvers). The solver wall time scales at a sublinear
+rate of approximately $q=0.8$, while the transfer wall time scales at approximately $q=0.6$ from
+ten to forty nodes before registering a wall time increase when going from forty nodes to eighty nodes.
+It is likely that the increase in inter-processor data transfers due to increased data distribution
+outweighed the increase in computational power when running the problem with more compute nodes.
+Further investigation is necessary to confirm this hypothesis.
+
+Nevertheless, the total wall time exhibits decent strong scaling performance. For Moltres
+simulations in the next chapter, I optimized the data transfer setup which reduced the
+proportion of transfer wall time in the total wall time to approximately 18 \%. Therefore, the total
+wall times would scale closer to the $q=0.8$ rate observed with solver wall times.
+This is a promising indication that the hybrid method would scale well for the modeling of larger
+reactor analyses.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.49\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{scaling-total}
+    \caption{Total wall time}
+  \end{subfigure} \\
+  \begin{subfigure}[b]{0.49\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{scaling-solver}
+    \caption{Solver wall time}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.49\columnwidth}
+    \centering
+    \includegraphics[width=\columnwidth]{scaling-transfer}
+    \caption{Transfer wall time}
+  \end{subfigure}
+  \caption{The total, solver, and transfer wall time of hybrid method simulations of the 3-D
+  quarter-core model on 10, 20, 40, and 80 compute nodes (32 processors per node) of the Polaris
+  supercomputer. The solver
+  time scales almost linearly ($q=0.8$) with the number of processors, while the transfer time
+  scales poorly with an increase in wall time at 80 nodes. All axes are in log scale.}
+  \label{fig:scaling}
+\end{figure}
 
 % Strong scaling tests & discussion
 % Difficulties with 3-D modeling
@@ -1444,9 +1486,9 @@ The 3-D simulations performed well under the strong scaling test which studies h
 time scales with the number of processors used to run the simulation. The 3-D simulations showed
 close to linear scaling within the scope of the strong scaling test. Therefore, the hybrid method
 exhibits good computational scaling performance which is essential for large 3-D reactor analyses.
-Excessively large memory requirements were mitigated through the distributed mesh capability in
-Moltres. Some performance optimizations may be possible to reduce data transfer times
-between the $S_N$ and diffusion solvers which currently take up about 30 \% of the total solution
+The simulation setups mitigated excessively large memory requirements through the distributed mesh
+capability in Moltres. Some performance optimizations may be possible to reduce data transfer times
+between the $S_N$ and diffusion solvers which currently take up about 18 \% of the total solution
 time as a result of the inter-processor communications.
 
 Overall, the hybrid $S_N$-diffusion method provides a significant improvement over the neutron

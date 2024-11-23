@@ -132,6 +132,84 @@ the prior $k$-eigenvalue simulation. The total fission neutron production rate a
 is normalized to match the 30,000 counts per second at $t=0$ s from the \gls{MSRE} rod drop
 experimental measurements.
 
+\subsection{Rod Cusping Effect Correction}
+
+In deterministic codes with spatial discretization, the material interfaces of a partially-inserted
+control rod may not always align with mesh elements. This results in a heterogenous
+mesh element that is composed of a control rod material at the top and a non-rod material at the
+bottom (for control rods that are inserted from above). The rod cusping effect occurs when
+homogenizing mixed mesh elements using the volume weighting method to combine dissimilar material
+neutron group constants. Rod cusping error typically decreases with increasing axial mesh
+resolution because the size of the mixed mesh elements become smaller relative to the entire
+problem domain.
+
+Several rod cusping correction methods exist in literature that are variations of the flux-volume
+weighting approach to generate more accurate homogenized group constants in the mixed mesh
+elements \cite{yamamoto_cell_2004, graham_subplane_2018, schunert_control_2019}. However, due to
+a failed flux-volume weighting implementation and time constraints, this work uses an empirical
+approach for rod cusping effect correction. The approach involves precomputing the $k_\text{eff}$
+with the control rod at various levels of insertion within a mesh element. These simulations use
+the simple volume weighting approach to compute a homogenized group constant value as follows:
+%
+\begin{gather}
+  \Sigma_\text{vw} = \frac{V_\text{r} \Sigma_\text{r} + V_\text{nr} \Sigma_\text{nr}}{V_\text{r} + V_\text{nr}} \label{eq:vw}
+  \shortintertext{where}
+  \begin{align*}
+    \Sigma_\text{vw} &= \mbox{ homogenized group constant in mixed mesh element,} \\
+    V_\text{r} &= \mbox{ rod volume fraction in mixed mesh element,} \\
+    \Sigma_\text{r} &= \mbox{ rod group constant value,} \\
+    V_\text{nr} &= \mbox{ non-rod volume fraction in mixed mesh element,} \\
+    \Sigma_\text{nr} &= \mbox{ non-rod group constant value.}
+  \end{align*}
+\end{gather}
+%
+Note that vertical material and mesh interfaces in the 3-D \gls{MSRE} model always align perfectly
+because the control rod moves vertically. Therefore, the mixed mesh elements occur only around the
+bottom tip of the control rod. Additionally, the volume fraction is equivalent to the height
+fraction, and all mixed mesh elements at the same height share the same volume fraction. Figure
+\ref{fig:rod-cusping-1} shows how the fraction of reactivity change changes with the control rod
+volume fraction when the control rod is at around mid-reactor and full insertion heights. The
+figure depicts the nonlinear relation between the reactivity change and volume fraction that the
+``cusping effect'' is named after. Within this small range of rod motion, the relation should be
+approximately linear.
+
+\begin{figure}[t]
+    \centering
+    \begin{subfigure}[t]{.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{rod-cusping-1}
+        \caption{Uncorrected volume weighting}
+        \label{fig:rod-cusping-1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{rod-cusping-2}
+        \caption{Corrected volume weighting}
+        \label{fig:rod-cusping-2}
+    \end{subfigure}
+    \caption{Fraction of reactivity change against control rod volume fraction in mixed mesh
+    elements with the rod inserted at mid-reactor height (27.4 to 29.4 inches) and full insertion
+    height (0.0 to 1.9 inches).}
+    \label{fig:rod-cusping}
+\end{figure}
+
+Recognizing that the rod cusping effect approximately follows a $y=x^p$ curve profile, I applied
+curve-fitting to obtain the reactivity changes using corrected volume fractions shown in Figure
+\ref{fig:rod-cusping-2}. The corrected volume fraction $V_r'$ is calculated as follows
+%
+\begin{align}
+  V_r' &= cV_r^p
+  \shortintertext{where}
+  p &= 2.5148, \nonumber \\
+  c &= 0.43807. \nonumber
+  \end{align}
+%
+The corrected volume fraction produces the desired approximately linear relation between reactivity
+change and control rod volume fraction. While this empirical approach worked reasonably well for
+this study, a more robust technique will be necessary for future control rod simulations beyond
+this work.
+
 \subsection{Rod Drop Numerical Results \& Discussion}
 
 Figure \ref{fig:integral-count} compares the integral neutron count during the rod drop experiment
