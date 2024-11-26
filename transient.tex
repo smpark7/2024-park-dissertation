@@ -117,9 +117,20 @@ coupled through inner iterations and the $S_N$ solver is coupled them through ou
 Figure \ref{fig:rod-drop-coupling} illustrates this iterative coupling structure and the data
 transfers between the solvers.
 
-\begin{figure}[htb!]
+\begin{figure}[t]
+  \tikzstyle{every node}=[font=\small]
   \centering
-%  \includegraphics[width=0.8\columnwidth]{rod-height}
+  \begin{tikzpicture}
+    \node (1) [solver] {\textbf{$\bm{S_N}$ transport subsolver}};
+    \node (2) [solver, right of=1, xshift=4cm] {\textbf{Neutron\\ diffusion\\ subsolver}};
+    \node (3) [solver, right of=2, xshift=4cm] {\textbf{DNP \& temperature subsolver}};
+    \draw [arrow] (1.10) -- node[anchor=south, text width=4cm, align=center] {$\vec{D}_g, \gamma_g$} (2.170);
+    \draw [arrow] (2.190) -- node[anchor=north, text width=4cm, align=center] {$\phi_g, C_i, T$} (1.350);
+    \draw [arrow] (2.10) -- node[anchor=south, text width=4cm, align=center] {$Q_f, Q$} (3.170);
+    \draw [arrow] (3.190) -- node[anchor=north, text width=4cm, align=center] {$C_i, T$} (2.350);
+    \node (5) [bound, fit=(2) (3), inner sep=8pt, label={[align=left]above:\textbf{Inner iteration}}] {};
+    \node (6) [bound, fit=(1) (5), inner sep=15pt, label={[align=left]above:\textbf{Outer iteration}}] {};
+  \end{tikzpicture}
   \caption{The nested iteration structure coupling the $S_N$, neutron diffusion, and \gls{DNP}
   solvers for the rod drop simulation using the hybrid $S_N$-diffusion method.}
   \label{fig:rod-drop-coupling}
@@ -305,7 +316,8 @@ salt from $^{235}$U operations, a depleted uranium feed, and a stock $^{233}$U f
 and depleted uranium feed masses, taken from Burke's work, are 1.935 kg and 0.890 kg, respectively.
 The stock feed uranium
 mass is estimated to be 35.234 kg reported on January 12 1969 \cite{thoma_chemical_1971}. The
-experiment was performed on January 16 1969 \cite{steffy_experimental_1970}. Table * shows
+experiment was performed on January 16 1969 \cite{steffy_experimental_1970}. Table 
+\ref{table:u233-composition} shows
 the breakdown and total isotopic content of uranium in the salt. The density of $^{233}$U salt is
 2.264 g cm$^{-3}$ at 911 K \cite{thoma_chemical_1971}.
 %
@@ -378,12 +390,27 @@ Moltres since they are both advective problems. The 1-D out-of-core model accoun
 loss and heat removal outside the core. Delayed neutrons produced in this region are considered
 lost and do not contribute to the neutron flux in the core.
 
-\begin{figure}[htb!]
+\begin{figure}[t]
+  \tikzstyle{every node}=[font=\small]
   \centering
-%  \includegraphics[width=0.8\columnwidth]{rod-height}
+  \begin{tikzpicture}
+    \node (1) [solver] {\textbf{$\bm{S_N}$ transport subsolver}};
+    \node (2) [solver, right of=1, xshift=4cm] {\textbf{Neutron\\ diffusion\\ subsolver}};
+    \node (3) [solver, right of=2, xshift=4cm] {\textbf{In-core DNP \& temperature subsolver}};
+    \node (4) [solver, below of=3, yshift=-3cm] {\textbf{Ex-core DNP \& temperature subsolver}};
+    \draw [arrow] (1.10) -- node[anchor=south, text width=4cm, align=center] {$\vec{D}_g, \gamma_g$} (2.170);
+    \draw [arrow] (2.190) -- node[anchor=north, text width=4cm, align=center] {$\phi_g, C_i, T$} (1.350);
+    \draw [arrow] (2.10) -- node[anchor=south, text width=4cm, align=center] {$Q_f, Q$} (3.170);
+    \draw [arrow] (3.190) -- node[anchor=north, text width=4cm, align=center] {$C_i, T$} (2.350);
+    \draw [arrow] (3.280) -- node[anchor=west, text width=1cm, align=center] {$C^\text{out}_i$\\ $T^\text{out}$} (4.80);
+    \draw [arrow] (4.100) -- node[anchor=east, text width=1cm, align=center] {$C^\text{in}_i$\\ $T^\text{in}$} (3.260);
+    \node (5) [bound, fit=(3) (4), label={[align=center,rotate=90]left:\textbf{Salt loop}\\}] {};
+    \node (6) [bound, fit=(2) (5), label={[align=center,rotate=90]left:\textbf{Inner iteration}\\}] {};
+    \node (7) [bound, fit=(1) (6), label={[align=center,rotate=90]left:\textbf{Outer iteration}\\}] {};
+  \end{tikzpicture}
   \caption{The nested iteration structure coupling the $S_N$, neutron diffusion,
-  \gls{DNP}-temperature, and out-of-core
-  solvers for the rod drop simulation using the hybrid $S_N$-diffusion method.}
+  in-core \gls{DNP}-temperature, and ex-core
+  solvers for the reactivity insertion simulation using the hybrid $S_N$-diffusion method.}
   \label{fig:insertion-coupling}
 \end{figure}
 
@@ -458,6 +485,42 @@ time-stepping truncation error analysis is out of the scope of this work.
   hybrid method simulations on the 3-D quarter-core \gls{MSRE} model.}
   \label{fig:u233-rod-worth-curve}
 \end{figure}
+
+\subsection{Temperature Reactivity Coefficient}
+
+This work compares isothermal temperature reactivity coefficients calculated from $k_\text{eff}$
+values measured at 872 K and 972 K with the $^{233}$-fueled \gls{MSRE} at operating fuel
+concentration. This approach is identical to that
+of the \gls{MSRE} experimental measurements \cite{engel_zero-power_1972} and the temperature
+coefficient calculation procedure used for the $^{235}$U-fueled \gls{MSRE} in Section
+\ref{sec:temp-coef}.
+
+Table \ref{table:temp-coef-u233} compares the isothermal reactivity coefficients from the experimental
+and numerical sources. No uncertainty data is available from the relevant \gls{ORNL} report
+\cite{engel_zero-power_1972}. However, the authors noted significantly different readings ranging
+from 12.4 to 15.3 pcm K$^{-1}$ due to gas bubbles introduced by the salt pump. The
+presence of gas bubbles led to smaller reactivity coefficient measurements. The numerical OpenMC
+and hybrid models overestimate the temperature reactivity coefficient magnitude by 12 \% and 11 \%,
+respectively, relative to the experimental data.
+
+\begin{table}[t]
+  \small
+  \centering
+  \caption{Isothermal temperature reactivity coefficients with $^{233}$U-fueled \gls{MSRE} from
+    \gls{MSRE} experimental data, \gls{MSRE} predicted value, and the OpenMC
+  and Moltres models in this work.}
+  \begin{tabular}{l S[separate-uncertainty=true,table-format=2.2(2)] S}
+    \toprule
+     & {Temperature coefficient [pcm K$^{-1}$]} & {Percentage discrepancy [\%]}\\
+     \cmidrule(rl){2-2} \cmidrule(l){3-3}
+    \gls{MSRE} experimental data & -15.3 & {-}\\
+    \gls{MSRE} predicted value & -15.8 & -3.4 \\
+    OpenMC (This work) & -17.14 & -12 \\
+    Hybrid (This work) & -16.96 & -11 \\
+    \bottomrule
+  \end{tabular}
+  \label{table:temp-coef-u233}
+\end{table}
 
 \subsection{Reactivity Insertion Numerical Results \& Discussion}
 
