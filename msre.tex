@@ -808,20 +808,25 @@ within each fuel salt channel and normalizing the values such that the integrate
 each channel averages to 1 as follows
 %
 \begin{align}
-  \text{Normalized fission rate of channel }i &= \frac{\text{Fission rate in channel }i}{
-  \text{Total fission rate}}\cdot\frac{\text{Total number of channels}}{
-    \text{Total fission rate in channels}} \nonumber \\
-                                              &= \frac{\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}
-  \phi_g(\vec{r})}{\sum^G_{g=1}\int_V\Sigma_{f,g}\phi_g(\vec{r})}\cdot\frac{N_i}{
-  \sum^{N_i}_{i=1}\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}\phi_g(\vec{r})}.
+%  \text{Normalized fission rate of channel }i &= \frac{\text{Fission rate in channel }i}{
+%  \text{Total fission rate}}\cdot\frac{\text{Total number of channels}}{
+%    \text{Total fission rate in channels}} \nonumber \\
+%                                              &= \frac{\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}
+%  \phi_g(\vec{r})}{\sum^G_{g=1}\int_V\Sigma_{f,g}\phi_g(\vec{r})}\cdot\frac{N_i}{
+%  \sum^{N_i}_{i=1}\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}\phi_g(\vec{r})}.
+  \text{Normalized fission rate of channel }i &= \frac{(\text{Total number of channels})\times
+    (\text{Fission rate in channel }i)}{\text{Total fission rate in channels}} \nonumber \\
+                                              &= \frac{N_i\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}
+  \phi_g(\vec{r}) dV}{
+  \sum^{N_i}_{i=1}\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}\phi_g(\vec{r}) dV}.
 \end{align}
 %
 The total fission rate includes fission rate contributions from peripheral fuel salt regions.
 Division by total fission rate normalizes the fission rates across the different neutronics
 methods.
 Figures \ref{fig:1/4-no-rod} and \ref{fig:1/4-rod} show the normalized fission rate distributions
-of the quarter-core model for the ``No Rod'' and ``Rod'' cases, respectively. I presented 1/8th
-slices of the core in the figures because the distributions are symmetrical about the $y=x$ line
+of the quarter-core model for the ``No Rod'' and ``Rod'' cases, respectively. The figures present
+1/8th slices of the core because the distributions are symmetrical about the $y=x$ line
 outside of statistical variances for OpenMC-CE. I combined the midpoints between the centroids of
 neighboring fuel salt channels to form the diamond lattices shown in the figures.
 Each diamond element in the figures corresponds a horizontally or vertically oriented channel
