@@ -99,6 +99,25 @@
   %
   Gol'din later extended it to a three-level method by deriving effective gray (one-group)
   low-order QD equations \cite{anistratov_solution_1986}.
+  \begin{figure}[t]
+    \tikzstyle{every node}=[font=\small]
+    \centering
+    \begin{tikzpicture}
+      \node (1) [solver2] {Multigroup high-order transport};
+      \node (2) [solver2, right of=1, xshift=3cm] {Multigroup low-order QD};
+      \node (3) [solver2, right of=2, xshift=3cm] {Effective low-order transport};
+      \draw [arrow] (1.10) -- node[anchor=south, text width=2cm, align=center] {Group\\ Eddington
+        and boundary factors} (2.170);
+      \draw [arrow] (2.190) -- node[anchor=north, text width=2cm, align=center] {Effective flux
+        and precursors} (1.350);
+      \draw [arrow] (2.10) -- node[anchor=south, text width=2cm, align=center] {Collapsed Eddington
+        and boundary factors} (3.170);
+      \draw [arrow] (3.190) -- node[anchor=north, text width=2cm, align=center] {Effective flux
+        and precursors} (2.350);
+    \end{tikzpicture}
+    \caption{Algorithm flowchart for the three-level quasi-diffusion method.}
+    \label{fig:algorithm}
+  \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -162,8 +181,8 @@
   transport-like \cite{anistratov_computational_2012, stehle_hybrid_2014}.
   \vspace{.2cm}
 
-  It uses two-level neutronics method based on the Second-Moment method. The low-order
-  second-moment equations at the $(s+1)$th iteration are:
+  It uses two-level neutronics method based on the Second-Moment method \cite{lewis_comparison_1976}.
+  The low-order second-moment equations on the $(s+1)$th iteration are:
   \begin{gather}
     \nabla\cdot J^{(s+1)}+\Sigma_a\phi^{(s+1)} = q, \label{eq:2nd-moment-1} \\
     \frac{1}{3}\nabla\cdot\phi^{(s+1)}+\Sigma_t J^{(s+1)} = \nabla\cdot F^{(s+1/2)}

@@ -1,27 +1,27 @@
 \begin{frame}
   \begin{block}{\textbf{Future Work}}
-    \begin{itemize}
-      \item Extend the Spalart-Allmaras turbulence model implementation
+    \textbf{Extend the Spalart-Allmaras turbulence model implementation}
       \begin{itemize}
         \item Investigate more effective preconditioning schemes beyond the
           current additive Schwarz method
         \item Implement wall functions to reduce fine mesh requirements near the wall for high
           Reynolds flows (Re$\approx 10^6$)
       \end{itemize}
-      \item Improve the computational performance of the hybrid $S_N$-diffusion method
+    \textbf{Improve the computational performance of the hybrid $S_N$-diffusion method}
       \begin{itemize}
         \item General code optimizations
         \item Reduce compute and memory use through shared FEM Jacobian evaluations for all angular
           fluxes at the same position
         \item Custom mesh distribution and data transfer caching routines to minimize data transfer time
+        \item Preconditioning method or other optimizations to improve convergence of modified neutron diffusion
+          method
       \end{itemize}
-      \item Further 3-D full-core reactor analyses with the hybrid method
+    \textbf{Further 3-D full-core reactor analyses with the hybrid method}
       \begin{itemize}
         \item Other MSRs designs with control rods include the Chinese TMSR-LF1,
           Terrapower's MCRE, and the Seaborg Technology's CMSR
         \item These reactor designs allow for asymmetric reactivity-initiated transients due to
           non-centrally located control rods.
       \end{itemize}
-    \end{itemize}
   \end{block}
 \end{frame}

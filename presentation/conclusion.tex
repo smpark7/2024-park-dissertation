@@ -90,8 +90,8 @@
     \begin{itemize}
       \item The hybrid method is an iterative method that applies a $S_N$ subsolver around control
         rod regions for improved rod worth estimates
-      \item The hybrid method applies an adaptive domain decomposition technique to
-        couple the $S_N$ subsolver and the neutron diffusion solver
+      \item The hybrid method applies an adaptive boundary coupling between
+        the $S_N$ subsolver and the neutron diffusion solver to smooth flux gradients
       \item The hybrid method accurately reproduces control rod worths at only four times the
         computational cost of the neutron diffusion method
       \item The hybrid method exhibits decent scalability on high-performance computing clusters

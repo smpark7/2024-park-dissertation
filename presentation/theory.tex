@@ -1,17 +1,24 @@
 \begin{frame}
   \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
   \textbf{Hybrid $\bm{S_N}$-Diffusion Method}
-  \begin{block}{\textbf{Aim}}
-    To enable accurate control rod modeling in time-dependent molten salt reactor simulations
-  \end{block}
+%  \begin{block}{\textbf{Aim}}
+%    To enable accurate control rod modeling in time-dependent molten salt reactor simulations
+%  \end{block}
   \begin{block}{\textbf{Method Overview}}
     \begin{itemize}
       \item Applies the discrete ordinates ($S_N$) method to a small subregion around a
         control rod to generate corrections for the neutron diffusion equation
       \item Limits computationally expensive $S_N$ calculations to small subdomains
       \item Retains the computational efficiency of the neutron diffusion method
+      \item Applies an adaptive algorithm to smooth flux gradients near the $S_N$-diffusion interface
     \end{itemize}
   \end{block}
+  \begin{figure}
+    \centering
+    \includegraphics[width=.7\textwidth]{hybrid-illustration}
+    \caption{Illustration of the problem domains of the $S_N$ and neutron diffusion methods in an
+    example 1-D problem.}
+  \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -62,9 +69,9 @@
 
   \begin{block}{\textbf{Implementation Details}}
     \begin{itemize}
-      \item Expressed in weak form for the continuous finite element method (CFEM)
+      \item Implemented with finite element method (FEM)
       \item Compatible with the efficient and scalable Hypre-BoomerAMG preconditioning
-      \item Modified formulation to handle $1/\Sigma_{t,g}$ factor in void regions (similar to
+      \item Uses a modified formulation to handle $1/\Sigma_{t,g}$ factor in void regions (similar to
         Streamline-Upwind/Petrov Galerkin (SUPG) stabilization scheme) \cite{wang_diffusion_2014}
       \item Level-symmetric quadrature set for angular discretization (up to $S_{18}$)
       \item Nonlinear diffusion acceleration scheme \cite{wang_diffusion_2014}
@@ -136,7 +143,11 @@
       \varsigma &= \mbox{void constant.} &
     \end{align*}
   \end{gather}
-  $c=1$ and $\varsigma=0.5$ by default
+  $c=1$ and $\varsigma=0.5$ by default.
+  \vspace{.2cm}
+
+  The SAAF-$S_N$ equations require this stabilization scheme
+  in near-void regions where $\Sigma_{t,g}$ is very small.
 \end{frame}
 
 \begin{frame}
@@ -167,7 +178,7 @@
   \vspace{.2cm}
 
   In this work, I investigated two transport correction schemes. The first scheme is the diffusion
-  correction scheme inspired by Fick's first law of diffusion:
+  correction scheme similar to Fick's first law of diffusion:
   \begin{gather}
     D^s_g(x) = -J^{tr}_g(x)\bigg/\frac{d\phi^{tr}_g(x)}{dx} \label{eq:svdc}
   \end{gather}
@@ -176,14 +187,18 @@
   transport-derived neutron current and scalar flux solutions from the $S_N$ method.
   \vspace{.2cm}
 
-  $D^s_g$ provides pointwise corrections to closely match the diffusion flux solution to the $S_N$
-  flux solution.
+%  $D^s_g$ provides pointwise corrections to closely match the diffusion flux solution to the $S_N$
+%  flux solution.
   By replacing $D_g$ with $D^s_g$, we are effectively adding the following transport correction term
   %
   \begin{gather}
-    -\frac{\partial}{\partial x}(D^s_g-D_g)\frac{\partial\phi_g}{\partial x}
+    -\nabla\cdot (D^s_g-D_g)\nabla\phi_g
   \end{gather}
   to the neutron diffusion equations.
+  \vspace{.2cm}
+
+  $\Rightarrow$ Abandoned after 1-D investigations due to division-by-zero issues near flux maximas
+  and minimas.
 \end{frame}
 
 \begin{frame}
@@ -191,8 +206,8 @@
   \textbf{Drift Correction Scheme (Implemented on Moltres)}
   \vspace{.2cm}
 
-  The second scheme is the drift correction scheme arising from adding a drift term to the neutron
-  diffusion equations:
+  The second scheme is the drift correction scheme arising from adding a drift term
+  ($\vec{D}_g\cdot\nabla \phi_g$) to the neutron diffusion equations:
   \begin{gather}
   \scalebox{0.95}{$
     \vec{D}_g = \frac{\sum^{N_d}_{d=1}w_d\left(\tau_g\hat{\Omega}_d\hat{\Omega}_d\cdot\nabla\Psi_{g,d}
@@ -207,7 +222,31 @@
   \vspace{.2cm}
 
   The drift term also provides pointwise corrections to the neutron diffusion equations. This
-  formulation is derived from the SAAF-$S_N$ equations by integrating over the angular domain.
+  formulation is derived from the SAAF-$S_N$ equations by integrating over the angular domain and
+  eliminating terms shared by the neutron diffusion equations.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \textbf{$S_N$ Subsolver Boundary Conditions}
+  \vspace{.2cm}
+
+  For the hybrid $S_N$-diffusion method to converge, it requires appropriate boundary conditions for
+  the $S_N$ subproblem.
+  We may obtain
+  the best estimate by applying the $P_1$ approximation for evaluating the neutron angular flux along
+  the discrete ordinates $\hat{\Omega}_d$ of the $S_N$ angular quadrature set as follows:
+  \begin{align}
+    \Psi_{g,d} &\approx \frac{1}{4\pi}\left(\phi^\text{diff}_g+3\hat{\Omega}_d\cdot
+    \vec{J}^\text{diff}_g\right) \nonumber \\
+    &=\frac{1}{4\pi}\left(\phi^\text{diff}_g-3\hat{\Omega}_d\cdot D_g\nabla\phi^\text{diff}_g\right)
+  \end{align}
+  Therefore, the boundary source term for the $S_N$ subsolver is:
+  \begin{gather}
+    \Psi^\text{inc}_{g,d} = \frac{1}{w}
+    \left(\phi^\text{diff}_g-3\hat{\Omega}_d\cdot D_g\nabla\phi^\text{diff}_g\right)
+  \end{gather}
+  where $w$ is the sum of weights of the level-symmetric quadrature set.
 \end{frame}
 
 \begin{frame}
@@ -232,34 +271,12 @@
   \column{.65\textwidth}
   \begin{figure}
     \centering
-    \includegraphics[width=.45\textwidth]{images/algorithm}
+    \includegraphics[width=.46\textwidth]{images/algorithm}
     \begin{minipage}[b]{.49\textwidth}
       \caption{Algorithm flowchart for the hybrid $S_N$-diffusion method.}
     \end{minipage}
   \end{figure}
 \end{columns}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{$S_N$ Subsolver Boundary Conditions}
-  \vspace{.2cm}
-
-  For the hybrid $S_N$-diffusion method to converge, it requires appropriate boundary conditions for
-  the $S_N$ subproblem.
-  We may obtain
-  the best estimate by applying the $P_1$ approximation for evaluating the neutron angular flux along
-  the discrete ordinates $\hat{\Omega}_d$ of the $S_N$ angular quadrature set as follows:
-  \begin{align}
-    \Psi_{g,d} &\approx \frac{1}{4\pi}\left(\phi^\text{diff}_g+3\hat{\Omega}_d\cdot
-    \vec{J}^\text{diff}_g\right) \nonumber \\
-    &=\frac{1}{4\pi}\left(\phi^\text{diff}_g-3\hat{\Omega}_d\cdot D_g\nabla\phi^\text{diff}_g\right)
-  \end{align}
-  Therefore, the boundary source term for the $S_N$ subsolver is:
-  \begin{gather}
-    \Psi^\text{inc}_{g,d} = \frac{1}{w}
-    \left(\phi^\text{diff}_g-3\hat{\Omega}_d\cdot D_g\nabla\phi^\text{diff}_g\right)
-  \end{gather}
 \end{frame}
 
 \begin{frame}

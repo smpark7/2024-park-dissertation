@@ -5,14 +5,14 @@
   \textbf{3-D Full-Core MSRE Model}
   \begin{figure}[p]
     \centering
-    \includegraphics[width=0.85\columnwidth]{msre-picture}
+    \includegraphics[width=0.8\columnwidth]{msre-picture}
     \caption{Vertical cross section of the actual \gls{MSRE} vessel.}
     \label{fig:msre-picture}
   \end{figure}
     \column{6cm}
   \begin{figure}[p]
     \centering
-    \includegraphics[width=.95\columnwidth]{msre-geom-vert}
+    \includegraphics[width=.87\columnwidth]{msre-geom-vert}
     \caption{Vertical cross section of the 3-D numerical \gls{MSRE} model offset by 5.08 cm to show
     the control rod thimble and homogenized sample basket.}
     \label{fig:msre-geom-vert}
@@ -74,7 +74,7 @@
   \textbf{MSRE Rod Worth Measurements}
   \begin{figure}[t]
     \centering
-    \includegraphics[width=0.8\columnwidth]{rod-worth-curve}
+    \includegraphics[width=0.75\columnwidth]{rod-worth-curve}
     \caption{Reactivity inserted by Rod 1 at various rod positions relative to the full insertion.}
     \label{fig:rod-worth}
   \end{figure}
@@ -86,6 +86,7 @@
   \begin{table}[t]
     \centering
     \caption{Total rod worth of Rod 1 when fully inserted.}
+    \small
     \begin{tabular}{l S[table-format=4(2)] S}
       \toprule
        & {$\rho_\text{worth}$ [pcm]} & {Percentage discrepancy [\%]}\\
@@ -141,6 +142,8 @@
   Performed a strong scaling test on the 3-D quarter-core MSRE model on 10, 20, 40, and 80 compute
   nodes. The $S_N$ and diffusion subsolvers scale well throughout the test.
   The $S_N$-diffusion data transfer processes scale poorly beyond 40 nodes.
+  \begin{columns}
+  \column{11cm}
   \begin{figure}[t]
     \centering
     \begin{subfigure}[b]{0.32\columnwidth}
@@ -163,4 +166,5 @@
     supercomputer. All axes are in log scale.}
     \label{fig:scaling}
   \end{figure}
+\end{columns}
 \end{frame}
