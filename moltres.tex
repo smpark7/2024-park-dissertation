@@ -311,19 +311,19 @@ cross sections and the average fission energy released per fission.
 The \texttt{Navier-Stokes} module provides the following types of boundary
 conditions for the velocity and temperature variables:
 
-\begin{align}
+\begin{gather}
   \shortintertext{Dirichlet:}
-  u \ \left(\text{or } T\right) =& c \\
+  u \ \left(\text{or } T\right) = c \\
     \shortintertext{Homogeneous Neumann:}\frac{\partial u}{\partial x_i} \
-    \left(\text{or } \frac{\partial T}{\partial x_i}\right) =& 0 \\
+    \left(\text{or } \frac{\partial T}{\partial x_i}\right) = 0 \\
     \shortintertext{``No boundary condition'' outflow:}
     \left[ \nabla \vec{u} + \left(\nabla \vec{u} \right)^T \right] \cdot
-    \hat{n} =& 0 \ \text{ (velocity)} \\
-    k \nabla T \cdot\hat{n} =& 0 \ \text{ (temperature)}
+    \hat{n} = 0 \ \text{ (velocity)} \\
+    k \nabla T \cdot\hat{n} = 0 \ \text{ (temperature)}
     \shortintertext{where}
-    c =& \text{ user-defined constant value,} \nonumber \\
-    \hat{n} =& \text{ unit normal vector to the boundary.} \nonumber
-\end{align}
+    c = \text{ user-defined constant value,} \nonumber \\
+    \hat{n} = \text{ unit normal vector to the boundary.} \nonumber
+\end{gather}
 
 The Dirichlet boundary condition can be used to set the inlet velocities and
 temperatures and no-slip conditions along solid boundaries. The

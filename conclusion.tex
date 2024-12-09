@@ -162,24 +162,31 @@ neutron diffusion method.
 The 3-D hybrid method simulations exhibited nearly linear scaling in strong scaling tests, which
 is promising for future projects involving larger reactor models. Some performance optimizations
 may be possible to reduce data transfer times between the $S_N$ and diffusion solvers which took
-up about 30 \% of the total solution time due to inter-processor communications.
+up about 18 \% of the total solution time due to inter-processor communications.
 
-Lastly, Chapter \ref{chap:transient} demonstrated the hybrid method in time-dependent simulations
-based on a \gls{MSRE} zero-power rod drop experiment \cite{prince_zero-power_1968} and a \gls{MSRE}
-reactivity insertion experiment during power operation \cite{steffy_experimental_1970}. These
-simulations required coupling the hybrid method solver to \gls{DNP} and temperature solvers in
-Moltres through nested iteration coupling structures. I set up the rod drop simulation through a
+Lastly, Chapter \ref{chap:transient} demonstrated the hybrid method in a time-dependent simulation
+based on a \gls{MSRE} zero-power rod drop experiment \cite{prince_zero-power_1968}.
+The simulation required coupling the hybrid method solver to the pre-existing \gls{DNP} solver
+in Moltres through a nested iteration coupling setup.
+%and a \gls{MSRE}
+%reactivity insertion experiment during power operation \cite{steffy_experimental_1970}. These
+%simulation required coupling the hybrid method solver to \gls{DNP} and temperature solvers in
+%Moltres through nested iteration coupling structures.
+I set up the rod drop simulation through a
 $k$-eigenvalue simulation with the control rod at its initial height before using the simulation
 output as the initial condition for the time-dependent rod drop simulation. Moltres reproduced the
-expected shape of the integral neutron count curve from \gls{MSRE} experimental data with a maximum
-discrepancy of x \% at $t=16$ after the rod drop. Snapshots of the neutron flux spatial
-distribution at various timesteps show expected localized flux depressions around the control rod
-as it moves through the core.
-The reactivity insertion simulation started with the \gls{MSRE} initially at 1 MW power output and
-steady salt flow. Following a 24.8 pcm step reactivity insertion, Moltres reproduced the general
-shape of the first power peak and the subsequent power oscillations. The power peak magnitude
-is y \% higher than the peak in the experimental data. Temperatures in the \gls{MSRE} model rise
-and settle at higher values to compensate for the reactivity insertion.
+expected prompt and delayed response in the integral neutron count data observed in \gls{MSRE}
+experimental data. Convergence issues midway through the simulation had a minor impact on the
+solution precision. Overall, this work successfully demonstrated a time-dependent
+reactivity-initiated simulation using the hybrid method.
+%Snapshots of the neutron flux spatial
+%distribution at various timesteps show expected localized flux depressions around the control rod
+%as it moves through the core.
+%The reactivity insertion simulation started with the \gls{MSRE} initially at 1 MW power output and
+%steady salt flow. Following a 24.8 pcm step reactivity insertion, Moltres reproduced the general
+%shape of the first power peak and the subsequent power oscillations. The power peak magnitude
+%is y \% higher than the peak in the experimental data. Temperatures in the \gls{MSRE} model rise
+%and settle at higher values to compensate for the reactivity insertion.
 
 \section{Limitations and Future Work}
 
@@ -210,7 +217,7 @@ reactivity. These discrepancies could be reduced through
 neutron leakage correction at the vacuum boundaries. Remedies for this issue exist in a number of
 forms such as group-wise or matrix albedo boundary conditions.
 
-The large 3-D simulations in this work uncovered significant memory usage by the $S_N$ solver, even
+The 3-D simulations in this work uncovered significant memory usage by the $S_N$ solver, even
 with the distributed mesh feature to spread mesh and variable storage across the compute nodes.
 Each full-core simulation required at least 40 nodes with 512 GB memory each to run.
 This issue may be a stumbling block for using the hybrid method on smaller computing clusters that
@@ -218,8 +225,8 @@ have less memory per processor. A custom preconditioner and solver routine in Mo
 reduce memory usage by referencing the same stored Jacobian C++ variable for neutron angular flux
 variables in the same neutron energy group and on the same \gls{FEM} quadrature point. Their
 Jacobian formulations are identical aside from the level-symmetric ordinate and weight. Another
-area for optimization in the hybrid method is the data transfer times between the $S_N$ and
-diffusion solvers. Due to mesh distribution, each 3-D simulation spent 30 \% of its solution time
+area for optimization in the hybrid method is reducing data transfer times between the $S_N$ and
+diffusion solvers. Due to mesh distribution, each 3-D simulation spent 18 \% of its solution time
 on data transfers between processors. This could be minimized through optimizations in the mesh
 distribution and the data transfer caching systems.
 

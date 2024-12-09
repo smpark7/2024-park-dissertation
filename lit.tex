@@ -23,7 +23,7 @@ stability, accuracy, or robustness \cite{keyes_multiphysics_2013}. Nevertheless,
 single-physics software for multiphysics simulations is a viable and popular option with proper
 implementation. With strong coupling between different physics, extra care must be
 taken to capture various multiphysics interactions accurately. For instance, the strong coupling
-between neutron flux and temperature in \glspl{MSR} in \glspl{MSR} necessitates robust coupling
+between neutron flux and temperature in \glspl{MSR} necessitates robust coupling
 techniques. Na\"ive multiphysics coupling algorithms may result in longer computation times
 at best and a lack of convergence in simulations at worst.
 
@@ -747,11 +747,11 @@ absorber rod. Various forms for $\lambda$ exist for specific absorber geometries
 \cite{maynard_blackness_1959} and cylinders \cite{spinks_extrapolation_1965,
 pellaud_extrapolation_1968} which were dependent
 on the size of the absorber region and coefficients quantifying the escape probability of neutrons
-entering the absorber region. The $\lambda$ and the associated coefficients were derived
+entering the absorber region. $\lambda$ is derived
 analytically from the \gls{BTE} with some simplifying assumptions, such as having uniform or
 cosine-shaped incident neutron currents, isotropic scattering within the absorber, and mathematical
-approximations in ignoring higher-order terms in intermediate steps. Blackness theory emerged in
-the mid-20th century when computational resources were limited. Later, as computational
+approximations in ignoring higher-order terms in intermediate steps. Absorber blackness methods
+emerged in the mid-20th century when computational resources were limited. Later, as computational
 resources became more readily available and powerful enough for more complicated transport
 calculations, appropriate boundary conditions could be calculated numerically
 \cite{bretscher_computing_1997}. Alternatively, effective group constants can be calculated for
@@ -1385,10 +1385,10 @@ models like \gls{DES} to capture turbulent effects without time averaging adequa
 
 Lastly, there is a lack of research focus into robust techniques for accurate control rod modeling
 for time-dependent \gls{MSR} analyses. Control rods induce highly anisotropic fluxes within
-themselves and their vicinities.
-Unfortunately, higher-fidelity neutron transport methods are typically too computationally
-expensive for multiphysics \gls{MSR} simulations, while faster methods like neutron
-diffusion perform poorly in regions with highly anisotropic fluxes. However, transport-correction
+themselves and their vicinities that the neutron diffusion approximation cannot model accurately.
+Inaccurate rod worth estimates subsequently affect transient reactor power and temperature
+distribution calculations. Higher-fidelity neutron transport methods remain too computationally
+expensive for time-dependent multiphysics \gls{MSR} simulations. However, transport-correction
 techniques can be applied to augment neutron diffusion calculations in these regions. While few
 have been applied to \gls{MSR} multiphysics simulations other than albedo boundary conditions,
 various techniques have been proposed and implemented for other reactor types. Helpful information
