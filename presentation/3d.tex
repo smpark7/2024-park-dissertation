@@ -1,8 +1,7 @@
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: 3-D Neutronics Eigenvalue Simulations}
+  \frametitle{3-D MSRE Full-Core Model}
   \begin{columns}
     \column{5.5cm}
-  \textbf{3-D Full-Core MSRE Model}
   \begin{figure}[p]
     \centering
     \includegraphics[width=0.8\columnwidth]{msre-picture}
@@ -21,28 +20,33 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: 3-D Neutronics Eigenvalue Simulations}
-  \textbf{3-D Full-Core MSRE Model Details}
-  \begin{itemize}
-    \item Hybrid $S_6$-diffusion method
-    \item $^{235}$U concentration at initial criticality
-    \item Uniform temperature at 911 K
-    \item Stabilization factor of $c=250$
-    \item Void constant of $\varsigma=0.5$
-    \item Uncorrected diffusion coefficient values capped at $D_g = 2.5$
-  \end{itemize}
-  \vspace{.2cm}
+  \frametitle{3-D MSRE Neutronics Modeling Approach}
+  \begin{columns}
+    \column{5.5cm}
+    \textbf{3-D Full-Core MSRE Model Details}
+    \begin{itemize}
+      \item Hybrid $S_6$-diffusion method
+      \item Eight neutron energy groups
+      \item $^{235}$U concentration at initial criticality
+      \item Uniform temperature at 911 K
+    \end{itemize}
+    \vspace{.2cm}
 
-  These parameters are required for numerical stability in the air-filled control rod
-  thimble region.
-  \vspace{.2cm}
-
-  All hybrid method results are compared with MSRE experimental data, the MSRE numerical benchmark
-  report data (Serpent 2 model) \cite{fratoni_molten_2020}, and the OpenMC model in this work.
+    All hybrid method results are compared with MSRE experimental data, the MSRE numerical benchmark
+    report data (Serpent 2 model) \cite{fratoni_molten_2020}, and the OpenMC model in this work.
+    \column{5.5cm}
+    \begin{figure}[p]
+      \centering
+      \includegraphics[width=.9\columnwidth]{wedge-view-high-res.png}
+      \caption{3-D section view of the 3-D numerical \gls{MSRE} model showing
+      the three control rod thimbles and the fuel-graphite lattice.}
+      \label{fig:msre-geom-vert}
+    \end{figure}
+  \end{columns}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: 3-D Neutronics Eigenvalue Simulations}
+  \frametitle{3-D MSRE Neutronics Simulation Results}
   \textbf{MSRE at Initial Criticality}
   \begin{table}[htb]
     \centering
@@ -50,27 +54,25 @@
     benchmark \cite{fratoni_molten_2020}, and the OpenMC and Moltres models in this work.}
     \begin{tabular}{l S[table-format=1.5(2)]}
       \toprule
-       & {$k_\text{eff}$} \\
+      Source & {$k_\text{eff}$} \\
        \midrule
       \gls{MSRE} experimental data & 1.00000(420) \\
       Serpent 2 (Numerical benchmark) & 1.02132(3) \\
       OpenMC (This work) & 1.01308(20) \\
-      Hybrid (This work) & 1.01955 \\
+      Hybrid (This work) & 1.01957 \\
       Diffusion (This work) & 1.01885 \\
       \bottomrule
     \end{tabular}
     \label{table:initial-crit}
   \end{table}
+  \vspace{.2cm}
 
-  \begin{itemize}
-    \item The Serpent 2 benchmark model reports a $k_\text{eff}$ of 1.01093(3) after considering some
-      of the geometrical modifications used in the OpenMC model.
-    \item The hybrid and neutron diffusion models agree with the OpenMC model within 700 pcm.
-  \end{itemize}
+  $\Rightarrow$ The hybrid and neutron diffusion models agree with the Serpent 2 and OpenMC models within
+  700 pcm.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: 3-D Neutronics Eigenvalue Simulations}
+  \frametitle{3-D MSRE Neutronics Simulation Results}
   \textbf{MSRE Rod Worth Measurements}
   \begin{figure}[t]
     \centering
@@ -81,7 +83,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: 3-D Neutronics Eigenvalue Simulations}
+  \frametitle{3-D MSRE Neutronics Simulation Results}
   \textbf{MSRE Rod Worth Measurements}
   \begin{table}[t]
     \centering
@@ -119,7 +121,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: 3-D Neutronics Eigenvalue Simulations}
+  \frametitle{3-D MSRE Neutronics Simulation Results}
   \textbf{Computational Performance}
   \begin{itemize}
     \item All simulations ran on the Polaris supercomputer system at Argonne National Laboratory.
@@ -135,7 +137,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: 3-D Neutronics Eigenvalue Simulations}
+  \frametitle{3-D MSRE Neutronics Simulation Results}
   \textbf{Strong Scaling Test}
   \vspace{.2cm}
 

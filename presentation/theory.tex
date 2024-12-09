@@ -1,9 +1,5 @@
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{Hybrid $\bm{S_N}$-Diffusion Method}
-%  \begin{block}{\textbf{Aim}}
-%    To enable accurate control rod modeling in time-dependent molten salt reactor simulations
-%  \end{block}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \begin{block}{\textbf{Method Overview}}
     \begin{itemize}
       \item Applies the discrete ordinates ($S_N$) method to a small subregion around a
@@ -22,7 +18,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \textbf{Multigroup Discrete Ordinates $\bm{S_N}$ Neutron Transport Equations}
   \vspace{.2cm}
 
@@ -60,7 +56,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \textbf{Self-Adjoint Angular Flux (SAAF) Formulation of the Multigroup $\bm{S_N}$ Equations}
   \vspace{.2cm}
 
@@ -71,7 +67,7 @@
     \begin{itemize}
       \item Implemented with finite element method (FEM)
       \item Compatible with the efficient and scalable Hypre-BoomerAMG preconditioning
-      \item Uses a modified formulation to handle $1/\Sigma_{t,g}$ factor in void regions (similar to
+      \item Uses a modified formulation to handle $1/\Sigma_{t,g}$ factor in near-void regions (similar to
         Streamline-Upwind/Petrov Galerkin (SUPG) stabilization scheme) \cite{wang_diffusion_2014}
       \item Level-symmetric quadrature set for angular discretization (up to $S_{18}$)
       \item Nonlinear diffusion acceleration scheme \cite{wang_diffusion_2014}
@@ -80,78 +76,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{Weak Formulation of the Multigroup SAAF $S_N$ Equations}
-  \begin{gather}
-    \shortintertext{Streaming term:}
-    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},\tau_g\hat{\Omega}
-    \cdot\nabla\Psi_{g,d}-(1-\tau_g\Sigma_{t,g})\Psi_{g,d}\right)_\mathcal{D} \\
-    \shortintertext{Collision term: }
-    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},\Sigma_{t,g}\Psi_{g,d}\right)_\mathcal{D} \\
-    \shortintertext{Scattering term:}
-    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},
-    \sum^G_{g'=1}\sum^L_{l=0}\Sigma^{g'\rightarrow g}_{s,l}\sum^l_{m=-l}
-    \frac{2l+1}{w}Y_{l,m}(\hat{\Omega}_d)\phi_{g',l,m}\right)_\mathcal{D} \\
-    \shortintertext{Fission source term: }
-    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},
-    \frac{1}{w}\frac{\chi_{p,g}(1-\beta)}{k}\sum^G_{g'=1}\nu\Sigma_{f,g'}\phi_{g'}\right)_\mathcal{D}
-  \end{gather}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{Weak Formulation of the Multigroup SAAF $S_N$ Equations}
-  \begin{gather}
-    \shortintertext{Delayed neutron source term:}
-    \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},
-    \frac{1}{w}\sum ^I_{i=1}\chi_{d,g}\lambda_i C_i\right)_\mathcal{D}
-    \shortintertext{Boundary source term:}
-    \begin{cases}
-      \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
-      \hat{\Omega}_d\cdot\hat{n}_b\Psi_{g,d}\right)_{\partial\mathcal{D}},
-      & \hat{\Omega}\cdot\hat{n}_b>0,\vec{r}\in\partial\mathcal{D} \\
-      \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
-      \hat{\Omega}_d\cdot\hat{n}_b\Psi^\text{inc}_{g,d}\right)_{\partial\mathcal{D}},
-      & \hat{\Omega}\cdot\hat{n}_b<0,\vec{r}\in\partial\mathcal{D}
-    \end{cases} \label{eq:boundary-source} \\
-    \shortintertext{Reflecting boundary term:}
-    \begin{cases}
-      \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
-      \hat{\Omega}_d\cdot\hat{n}_b\Psi_{g,d}\right)_{\partial\mathcal{D}},
-      & \hat{\Omega}\cdot\hat{n}_b>0,\vec{r}\in\partial\mathcal{D}_s \\
-      \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d},
-      \hat{\Omega}_d\cdot\hat{n}_b\Psi_{g,d_r}\right)_{\partial\mathcal{D}},
-      & \hat{\Omega}\cdot\hat{n}_b<0,\vec{r}\in\partial\mathcal{D}_s
-    \end{cases} \label{eq:reflecting-bc}
-  \end{gather}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{Weak Formulation of the Multigroup SAAF $S_N$ Equations}
-  \begin{gather}
-    \shortintertext{Void stabilization parameter \cite{wang_diffusion_2014}:}
-    \tau_g =
-    \begin{cases}
-      \frac{1}{c\Sigma_{t,g}} \mbox{ for } ch\Sigma_{t,g} \geq \varsigma \\
-      \frac{h}{\varsigma} \mbox{ for } ch\Sigma_{t,g} < \varsigma
-    \end{cases}, \\
-    \shortintertext{where}
-    \begin{align*}
-      h &= \mbox{mesh element size,} & \\
-      c &= \mbox{maximum stabilization factor,} & \\
-      \varsigma &= \mbox{void constant.} &
-    \end{align*}
-  \end{gather}
-  $c=1$ and $\varsigma=0.5$ by default.
-  \vspace{.2cm}
-
-  The SAAF-$S_N$ equations require this stabilization scheme
-  in near-void regions where $\Sigma_{t,g}$ is very small.
-\end{frame}
-
-\begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \textbf{Multigroup Neutron Diffusion Equations}
   \begin{gather}
     - \nabla \cdot D_g \nabla \phi_g + \Sigma^r_g \phi_g =
@@ -173,11 +98,12 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \textbf{Diffusion Correction Scheme (Implemented in Python)}
   \vspace{.2cm}
 
-  In this work, I investigated two transport correction schemes. The first scheme is the diffusion
+  In this work, I investigated two transport correction schemes.
+  The first scheme is the diffusion
   correction scheme similar to Fick's first law of diffusion:
   \begin{gather}
     D^s_g(x) = -J^{tr}_g(x)\bigg/\frac{d\phi^{tr}_g(x)}{dx} \label{eq:svdc}
@@ -189,25 +115,25 @@
 
 %  $D^s_g$ provides pointwise corrections to closely match the diffusion flux solution to the $S_N$
 %  flux solution.
-  By replacing $D_g$ with $D^s_g$, we are effectively adding the following transport correction term
-  %
-  \begin{gather}
-    -\nabla\cdot (D^s_g-D_g)\nabla\phi_g
-  \end{gather}
-  to the neutron diffusion equations.
-  \vspace{.2cm}
+%  By replacing $D_g$ with $D^s_g$, we are effectively adding the following transport correction term
+%  %
+%  \begin{gather}
+%    -\nabla\cdot (D^s_g-D_g)\nabla\phi_g
+%  \end{gather}
+%  to the neutron diffusion equations.
+%  \vspace{.2cm}
 
   $\Rightarrow$ Abandoned after 1-D investigations due to division-by-zero issues near flux maximas
   and minimas.
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \textbf{Drift Correction Scheme (Implemented on Moltres)}
   \vspace{.2cm}
 
   The second scheme is the drift correction scheme arising from adding a drift term
-  ($\vec{D}_g\cdot\nabla \phi_g$) to the neutron diffusion equations:
+  ($\vec{D}_g\cdot\nabla \phi_g$) \cite{wang_diffusion_2014} to the neutron diffusion equations:
   \begin{gather}
   \scalebox{0.95}{$
     \vec{D}_g = \frac{\sum^{N_d}_{d=1}w_d\left(\tau_g\hat{\Omega}_d\hat{\Omega}_d\cdot\nabla\Psi_{g,d}
@@ -227,15 +153,15 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \textbf{$S_N$ Subsolver Boundary Conditions}
   \vspace{.2cm}
 
   For the hybrid $S_N$-diffusion method to converge, it requires appropriate boundary conditions for
   the $S_N$ subproblem.
-  We may obtain
-  the best estimate by applying the $P_1$ approximation for evaluating the neutron angular flux along
-  the discrete ordinates $\hat{\Omega}_d$ of the $S_N$ angular quadrature set as follows:
+
+  The $P_1$ approximation for evaluating the neutron angular flux along
+  the discrete ordinates $\hat{\Omega}_d$ of the $S_N$ angular quadrature set is:
   \begin{align}
     \Psi_{g,d} &\approx \frac{1}{4\pi}\left(\phi^\text{diff}_g+3\hat{\Omega}_d\cdot
     \vec{J}^\text{diff}_g\right) \nonumber \\
@@ -250,13 +176,15 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method Algorithm}
   \begin{columns}
     \column{.35\textwidth}
-    \textbf{Hybrid $S_N$-Diffusion Method Algorithm}
     \vspace{.5cm}
 
   {\small
+    \textbf{Legend}
+    \vspace{.1cm}
+
   $V_0$: Full problem domain
   \vspace{.1cm}
 
@@ -280,44 +208,31 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{Correction Region ($\bm{V_1}$) and Buffer Zone}
-  \begin{itemize}
-    \item Recall that the full problem domain and the correction region are defined as $V_0$
-      and $V_1$, where $V_1 \subseteq V_0$
-    \item The approximate $S_N$ boundary conditions will generally yield some deviations in the
-      flux distribution since neutron fluxes in realistic reactor systems are at least slightly
-      anisotropic throughout most of the system
-    \item However, the influence of boundary conditions on the ratio of $J$ and $\frac{d\phi}{dx}$
-      does not extend far from the boundary $\partial V_1$ in optically thick media; transport
-      correction parameters are accurate everywhere except near $\partial V_1$
-    \item There exists a buffer zone near $\partial V_1$ where transport correction parameters
-      are inaccurate
-  \end{itemize}
-%  \pause
-%  $\Rightarrow$ Approach for preliminary results: Define $V_1$ such that it is large enough to
-%  provide sufficient transport
-%  corrections and accommodate inaccurate SVDCs near $\partial V_1$. Discard inaccurate SVDCs
-%  in favor of the default $P_1$-based diffusion coefficients.
-\end{frame}
+  \frametitle{Correction Region ($V_1$) and Buffer Zone}
 
-\begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{Correction Region ($\bm{V_1}$) and Buffer Zone}
-  \begin{figure}[htb!]
-    \centering
-    \includegraphics[width=.5\columnwidth]{case-3b-geometry}
-    \caption{1-D geometry for Case 3b.}
-    \label{fig:3b-geometry}
-  \end{figure}
+  \begin{columns}
+    \column{5.5cm}
+    \begin{figure}[htb!]
+      \centering
+      \includegraphics[width=\columnwidth]{hybrid-illustration}
+      \caption{1-D geometry for Case 3b.}
+      \label{fig:3b-geometry}
+    \end{figure}
+    \column{5.5cm}
+    \begin{itemize}
+      \item The approximate $S_N$ boundary conditions will yield some flux deviations near the correction
+    region boundary.
+      \item This affects transport correction parameters near the boundary.
+    \end{itemize}
+  \end{columns}
   \begin{figure}[htb!]
       \centering
-      \begin{subfigure}[t]{.49\textwidth}
+      \begin{subfigure}[t]{.46\textwidth}
           \centering
           \includegraphics[width=.9\textwidth]{case-3b-group-1-drift}
       \end{subfigure}
       \hfill
-      \begin{subfigure}[t]{.49\textwidth}
+      \begin{subfigure}[t]{.46\textwidth}
           \centering
           \includegraphics[width=.9\textwidth]{case-3b-group-8-drift}
       \end{subfigure}
@@ -329,11 +244,9 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
-  \textbf{Correction Region ($\bm{V_1}$) and Buffer Zone}
-  \vspace{.2cm}
+  \frametitle{Correction Region ($V_1$) and Buffer Zone}
 
-  A natural/intuitive criterion for the location of the buffer zone cutoff boundary
+  A natural/intuitive criterion for the location of the buffer region cutoff boundary
   would be wherever the components of the drift correction variable $\vec{D}_g$ is zero, i.e.,
   wherever the components change signs.
   \begin{enumerate}
@@ -343,12 +256,12 @@
   \end{enumerate}
   \begin{figure}[htb!]
       \centering
-      \begin{subfigure}[t]{.49\textwidth}
+      \begin{subfigure}[t]{.46\textwidth}
           \centering
           \includegraphics[width=.9\textwidth]{case-3b-group-1-drift}
       \end{subfigure}
       \hfill
-      \begin{subfigure}[t]{.49\textwidth}
+      \begin{subfigure}[t]{.46\textwidth}
           \centering
           \includegraphics[width=.9\textwidth]{case-3b-group-8-drift}
       \end{subfigure}
@@ -360,7 +273,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Theory}
+  \frametitle{Hybrid $S_N$-Diffusion Method}
   \textbf{Numerical Implementation}
   \vspace{.2cm}
 

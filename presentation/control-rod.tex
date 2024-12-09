@@ -1,9 +1,8 @@
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Motivation}
+  \frametitle{Control Rods in MSRs}
   \begin{columns}
     \hfill
     \column[t]{5cm}
-    \textbf{Control Rods in MSRs}
     \vspace{.2cm}
     \begin{figure}
       \centering
@@ -28,26 +27,28 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Motivation}
+  \frametitle{Control Rods in MSRs}
   \textbf{Control rods provide a means of controlling the fission rate in nuclear reactors.} 
   \begin{itemize}
     \item Facilitate reactor start-up, shut-down, or load-following operations
     \item Consist of highly neutron-absorbing materials such as boron or gadolinium
   \end{itemize}
-  \textbf{MSRs contain comparatively fewer control rods than most other reactor types due to:}
-  \begin{itemize}
-    \item Uniform liquid fuel burnup
-    \item Strong passive safety of the liquid fuel form
-    \item Low excess reactivity of fuel inventory
-    \item Availability of other control mechanisms
-  \end{itemize}
-  \pause
-  \textbf{Nevertheless, it is important to characterize control rod effects in all relevant
+  \textbf{Control rods are also important for licensing and safety characterization.}
+
+  $\Rightarrow$ \textbf{It is important to characterize control rod effects in all relevant
   transient scenarios.}
+%  \textbf{Many MSR designs contain comparatively fewer control rods than most other reactor types due to:}
+%  \begin{itemize}
+%    \item Uniform liquid fuel burnup
+%    \item Strong passive safety of the liquid fuel form
+%    \item Low excess reactivity of fuel inventory
+%    \item Availability of other control mechanisms
+%  \end{itemize}
+
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Motivation}
+  \frametitle{Control Rod Modeling}
   \textbf{Control rods induce highly anisotropic neutron fluxes and steep flux gradients in their
   vicinity.}
   \begin{block}{\textbf{The Control Rod Modeling Dilemma}}
@@ -61,18 +62,16 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Motivation}
-  \textbf{Control Rod Modeling in MSR Multiphysics Studies}
+  \frametitle{Control Rod Modeling in MSR Multiphysics Studies}
   \vspace{.2cm}
 
-  Common simplifications applied to control rod modeling include:
+  Common approximations applied to control rod modeling include:
   \begin{itemize}
     \item Homogenized, coarse-mesh geometries containing static control rods with albedo neutron
       flux boundary conditions \cite{kophazi_development_2009} or transport-corrected cross
       sections \cite{cui_development_2021, jaradat_development_2021, yang_development_2022}
       \begin{itemize}
-        \item Neutronics mesh differs from thermal-hydraulics mesh
-        \item 1-D thermal-hydraulics model with uniform or prescribed heat deposition
+        \item Neutronics geometry differs from thermal-hydraulics geometry
         \item Static calibration factors may not be suitable for time-dependent simulations
       \end{itemize}
     \item Scaling the neutron source term to simulate moving control rods
@@ -84,7 +83,6 @@
   \end{itemize}
 
   \begin{block}{\textbf{Technical Gap}}
-    \textbf{There are no existing MSR simulation tools or studies involving moving control rods
-    which are explicitly modeled.}
+    \textbf{There are no MSR simulation tools or studies that explicitly model moving control rods.}
   \end{block}
 \end{frame}

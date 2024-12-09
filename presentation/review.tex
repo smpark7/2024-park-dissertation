@@ -1,13 +1,10 @@
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Literature Review}
-  \textbf{Transport-Correction Techniques For Neutron Diffusion-Based Solvers}
-  \vspace{.3cm}
-
+  \frametitle{Transport-Correction Techniques For Neutron Diffusion-Based Solvers}
   Techniques for augmenting the neutron diffusion method (or equivalent low-order equations) with
   corrections derived from neutron transport:
   \begin{itemize}
     \item Ronen method \cite{ronen_accurate_2004, tomatis_ronen_2021, gross_comprehensive_2023}
-    \item Multilevel quasi-diffusion method \cite{goldin_quasi-diffusion_1964, anistratov_computational_2012, tamang_multilevel_2014}
+    \item Multilevel quasi-diffusion method \cite{goldin_quasi-diffusion_1964, tamang_multilevel_2014, reynolds_analysis_2023}
     \item Multischeme transport method \cite{wang_hybrid_2017}
     \item Hybrid transport-diffusion method \cite{anistratov_computational_2012, stehle_hybrid_2014}
   \end{itemize}
@@ -20,8 +17,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Literature Review}
-  \textbf{The Ronen Method \cite{ronen_accurate_2004, tomatis_ronen_2021, gross_comprehensive_2023}}
+  \frametitle{The Ronen Method}
   \vspace{.2cm}
 
   Starting with an initial neutron diffusion flux solution, a transport
@@ -79,10 +75,7 @@
 %\end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Literature Review}
-  \textbf{Multilevel Quasi-Diffusion Method}
-  \vspace{.2cm}
-
+  \frametitle{Multilevel Quasi-Diffusion Method}
   Gol'din originally developed the quasi-diffusion (QD) method as a transport method acceleration
   scheme \cite{goldin_quasi-diffusion_1964}.
   \begin{gather}
@@ -121,12 +114,9 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Literature Review}
-  \textbf{Multilevel Quasi-Diffusion Method}
-  \vspace{.2cm}
-
+  \frametitle{Multilevel Quasi-Diffusion Method}
   Tamang \& Anistratov applied the QD method to 1-D time-dependent multiphysics neutron transport
-  and heat transfer problems by iteratively coupling the gray low-order equations to the heat
+  and heat transfer problems by iteratively coupling the one-group low-order equations to the heat
   transfer and precursor equations \cite{tamang_multilevel_2014}.
   \vspace{.2cm}
 
@@ -140,14 +130,13 @@
     \cite{reynolds_analysis_2023}.}
     \label{fig:reynolds-flux}
   \end{figure}
+  \textbf{Limitation: Computational expensive for 3-D full-core simulations.}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Literature Review}
-  \textbf{Multischeme Transport Method}
-  \vspace{.2cm}
-
-  Implemented in the Griffin reactor physics application. This method involves making predetermined
+  \frametitle{Multischeme Transport Method}
+  Implemented in the Griffin reactor physics application \cite{wang_hybrid_2017}. This method
+  involves making predetermined
   domain decompositions to be treated with the $S_N$, $P_N$, or diffusion methods. Adjoining
   subdomains are coupled through the Lagrange multiplier interface condition:
   \begin{gather}
@@ -172,13 +161,12 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method: Literature Review}
-  \textbf{Hybrid Transport-Diffusion Method}
+  \frametitle{Hybrid Transport-Diffusion Method \cite{anistratov_computational_2012, stehle_hybrid_2014}}
   \vspace{.2cm}
 
   Anistratov \& Stehle developed an adaptive domain decomposition scheme using Eddington tensor
   estimates as a metric for deducing whether a region is diffusive or
-  transport-like \cite{anistratov_computational_2012, stehle_hybrid_2014}.
+  transport-like.
   \vspace{.2cm}
 
   It uses two-level neutronics method based on the Second-Moment method \cite{lewis_comparison_1976}.
@@ -195,6 +183,8 @@
   %
   The transport subdomains require interface conditions in the form of boundary sources from
   neighboring diffusion subdomains.
+
+  \textbf{Limitation: Complicated implementation and management of computational resources.}
 \end{frame}
 
 \begin{frame}
