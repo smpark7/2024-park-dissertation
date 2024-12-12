@@ -1,3 +1,27 @@
+%\begin{frame}
+%  \frametitle{Spalart-Allmaras Turbulence Model in Moltres}
+%  \begin{block}{\textbf{Why the Spalart-Allmaras Model \cite{spalart_one-equation_1994} for Moltres?}}
+%    A computationally efficient one-equation model that provides reasonable estimates for wall-bounded
+%    turbulent flows and is tractable for large problems on small computing clusters.
+%  \end{block}
+%  \textbf{Spalart-Allmaras Model with Rotation Correction Scheme
+%  \cite{spalart_one-equation_1994, aupoix_extensions_2003, dacles-mariani_numericalexperimental_1995}}\\
+%  \\
+%  Governing equation for the modified dynamic viscosity, $\tilde{\mu}$:
+%  \begin{multline}
+%    \rho \frac{\partial\tilde{\mu}}{\partial t} + \rho \mathbf{u}\cdot\nabla\tilde{\mu} = \rho c_{b1}
+%    \left(1-f_{t2}\right)\left[\tilde{S}+C_\text{rot}\min(0,S-\Omega)\right]\tilde{\mu} \\ + \frac{1}{\sigma}\{\nabla\cdot\left[\left(\mu+
+%    \tilde{\mu}\right)\nabla\tilde{\mu}\right] + c_{b2}|\nabla\tilde{\mu}|^2\}
+%    - \left(c_{w1}f_w - \frac{c_{b1}}{\kappa^2}f_{t2}\right)\left(\frac{\tilde{\mu}}{d}\right)^2
+%  \end{multline}
+%  \begin{align*}
+%    \shortintertext{where}
+%      \mu_t &= \tilde{\mu}f_{v1} = \text{turbulent eddy viscosity}, \\
+%      f_{v1} &= \frac{\chi^3}{\chi^3 + c_{v1}^3}, \\
+%      \chi &= \frac{\tilde{\mu}}{\mu}.
+%  \end{align*}
+%\end{frame}
+
 \begin{frame}
   \frametitle{Spalart-Allmaras Turbulence Model in Moltres}
   \begin{block}{\textbf{Why the Spalart-Allmaras Model \cite{spalart_one-equation_1994} for Moltres?}}
@@ -21,8 +45,8 @@
   Governing equation for the modified dynamic viscosity, $\tilde{\mu}$:
   \begin{multline}
     \rho \frac{\partial\tilde{\mu}}{\partial t} + \rho \mathbf{u}\cdot\nabla\tilde{\mu} = \rho c_{b1}
-    \left(1-f_{t2}\right)\tilde{S}\tilde{\mu} + \frac{1}{\sigma}\{\nabla\cdot\left[\left(\mu+
-    \tilde{\mu}\right)\nabla\tilde{\mu}\right] + c_{b2}|\nabla\tilde{\mu}|^2\} \\
+    \left(1-f_{t2}\right)\left[\tilde{S}+C_\text{rot}\min(0,S-\Omega)\right]\tilde{\mu} \\ + \frac{1}{\sigma}\{\nabla\cdot\left[\left(\mu+
+    \tilde{\mu}\right)\nabla\tilde{\mu}\right] + c_{b2}|\nabla\tilde{\mu}|^2\}
     - \left(c_{w1}f_w - \frac{c_{b1}}{\kappa^2}f_{t2}\right)\left(\frac{\tilde{\mu}}{d}\right)^2
   \end{multline}
   \begin{align*}
@@ -31,21 +55,6 @@
       f_{v1} &= \frac{\chi^3}{\chi^3 + c_{v1}^3}, \\
       \chi &= \frac{\tilde{\mu}}{\mu}.
   \end{align*}
-%      \tilde{S} &= \Omega + \frac{\tilde{\nu}}{\kappa^2 d^2} f_{v2}, \\
-%      f_{v2} &= 1 - \frac{\chi}{1+\chi f_{v1}}, \\
-%      \Omega &= \sqrt{2W_{ij}W_{ij}} = \text{vorticity magnitude}, \\
-%      W_{ij} &= \frac{1}{2}\left(\frac{\partial u_i}{\partial x_j} - \frac{\partial u_j}{\partial x_i}
-%      \right), \\
-%        f_w &= g\left(\frac{1 + c_{w3}^6}{g^6 + c_{w3}^6}\right)^{1/6}, \\
-%        g &= r + c_{w2}\left(r^6 - r\right), \\
-%        r &= \text{min}\left(\frac{\tilde{\nu}}{\tilde{S}\kappa^2d^2}, 10\right), \\
-%        f_{t2} &= c_{t3} \exp{\left(-c_{t4}\chi^2\right)},
-%    \end{align*}
-%  \shortintertext{and the constants are}
-%    \sigma = \frac{2}{3}, \ c_{b1} = 0.1355, \ c_{b2} = 0.622, \ \kappa = 0.41, \
-%    c_{w1} = \frac{c_{b1}}{\kappa^2} + \frac{1+c_{b2}}{\sigma}, \nonumber \\
-%    c_{w2} = 0.3, \ c_{w3} = 2, \
-%    c_{v1} = 7.1, \ c_{t3} = 1.2, \ c_{t4} = 0.5 \ \text{.} \nonumber
 \end{frame}
 
 \begin{frame}
@@ -142,27 +151,27 @@
   $\Rightarrow$ The Moltres Spalart-Allmaras model results are consistent with reference experimental pipe flow data.
 \end{frame}
 
-\begin{frame}
-  \frametitle{Backward-Facing Step Flow Validation Test Setup}
-  \begin{columns}
-    \column{5.5cm}
-    \begin{figure}[h]
-      \centering
-      \includegraphics[width=\columnwidth]{backstep-geom-pres}
-      \caption{Backward step geometry for the turbulent BFS flow verification test. The red box indicates
-      the region shown by the close-up view in Figure \ref{fig:bfs-mesh}.}
-      \label{fig:backstep-geom}
-    \end{figure}
-    \column{5.5cm}
-    \begin{figure}[h]
-      \centering
-      \includegraphics[width=\columnwidth]{bfs_mesh}
-      \caption{Close-up view of the mesh for the BFS flow test. The step is situated at $x=110$ m
-      with a height of $H=1$ m.}
-      \label{fig:bfs-mesh}
-    \end{figure}
-  \end{columns}
-\end{frame}
+%\begin{frame}
+%  \frametitle{Backward-Facing Step Flow Validation Test Setup}
+%  \begin{columns}
+%    \column{5.5cm}
+%    \begin{figure}[h]
+%      \centering
+%      \includegraphics[width=\columnwidth]{backstep-geom-pres}
+%      \caption{Backward step geometry for the turbulent BFS flow verification test. The red box indicates
+%      the region shown by the close-up view in Figure \ref{fig:bfs-mesh}.}
+%      \label{fig:backstep-geom}
+%    \end{figure}
+%    \column{5.5cm}
+%    \begin{figure}[h]
+%      \centering
+%      \includegraphics[width=\columnwidth]{bfs_mesh}
+%      \caption{Close-up view of the mesh for the BFS flow test. The step is situated at $x=110$ m
+%      with a height of $H=1$ m.}
+%      \label{fig:bfs-mesh}
+%    \end{figure}
+%  \end{columns}
+%\end{frame}
 
 \begin{frame}
   \frametitle{Backward-Facing Step Flow Validation Test Results}

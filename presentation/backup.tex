@@ -98,51 +98,25 @@
 \end{frame}
 
 \begin{frame}[noframenumbering]
-  \frametitle{Backward-Facing Step Flow Validation Test Results}
+  \frametitle{Backward-Facing Step Flow Validation Test Setup}
   \begin{columns}
-    \column{11.5cm}
-    \begin{figure}[htb]
+    \column{5.5cm}
+    \begin{figure}[h]
       \centering
-      \hfill
-      \begin{subfigure}[t]{0.24\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{bfs_downstream_vel}
-        \caption{Normalized velocity distributions downstream of step.}
-        \label{fig:bfs-downstream}
-      \end{subfigure} %\hfill \\
-  %    \centering
-      \hfill
-      \begin{subfigure}[t]{0.24\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{bfs_cf}
-        \caption{Skin friction coefficient along the bottom wall.}
-        \label{fig:bfs-cf}
-      \end{subfigure}
-      \hfill
-      \begin{subfigure}[t]{0.24\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{bfs_cp}
-        \caption{Skin pressure coefficient along the bottom wall.}
-        \label{fig:bfs-cp}
-      \end{subfigure}% \hfill \\
-  %    \centering
-      \begin{subfigure}[t]{0.24\columnwidth}
-        \centering
-        \includegraphics[width=\columnwidth]{bfs_stress}
-        \caption{Normalized turbulent shear stress downstream
-        of step.}
-        \label{fig:bfs-stress}
-      \end{subfigure}
-      \caption{Comparison of backward facing step flow results against reference
-      experimental data and computational data from CFL3D. $x/H$ values are normalized horizontal
-      distances relative to the step.}
-      \label{fig:bfs-plots}
+      \includegraphics[width=\columnwidth]{backstep-geom-pres}
+      \caption{Backward step geometry for the turbulent BFS flow verification test. The red box indicates
+      the region shown by the close-up view in Figure \ref{fig:bfs-mesh}.}
+      \label{fig:backstep-geom}
+    \end{figure}
+    \column{5.5cm}
+    \begin{figure}[h]
+      \centering
+      \includegraphics[width=\columnwidth]{bfs_mesh}
+      \caption{Close-up view of the mesh for the BFS flow test. The step is situated at $x=110$ m
+      with a height of $H=1$ m.}
+      \label{fig:bfs-mesh}
     \end{figure}
   \end{columns}
-  \begin{itemize}
-    \item Minor discrepancies between numerical and experimental data typical of RANS-based turbulence models.
-    \item Moltres provides better predictments along $x/H=1$ than CFL3D.
-  \end{itemize}
 \end{frame}
 
 \begin{frame}[noframenumbering]
@@ -217,6 +191,29 @@
 \end{frame}
 
 \begin{frame}[noframenumbering]
+  \frametitle{1-D Neutronics Model Mesh Convergence Tests}
+  \begin{figure}[t]
+    \centering
+    \begin{subfigure}[b]{0.48\columnwidth}
+      \centering
+      \includegraphics[width=\columnwidth]{diffusion-mesh-convergence-k}
+      \caption{Neutron diffusion method}
+      \label{fig:diff-mesh-k}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\columnwidth}
+      \centering
+      \includegraphics[width=\columnwidth]{sn-mesh-convergence-k}
+      \caption{$S_8$ neutron transport method}
+      \label{fig:sn-mesh-k}
+    \end{subfigure}
+    \caption{Convergence of multiplication factor ($k_\text{eff}$) estimates for Case 3b across four
+      levels of mesh refinement relative to the finest mesh resolution.}
+    \label{fig:mesh-k}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]
 %  \frametitle{Hybrid $S_N$-Diffusion Method: 1-D Neutronics Eigenvalue Simulations}
   \begin{columns}
     \column{5.5cm}
@@ -256,6 +253,16 @@
       \label{fig:3a-flux-diff}
     \end{figure}
   \end{columns}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+  \begin{figure}[t]
+    \centering
+    \includegraphics[width=.5\columnwidth]{case-3b-drift}
+    \caption{Multigroup drift correction ($\vec{D}_g$) $x$-component distributions from the
+    Moltres-hybrid and Moltres-$S_8$ solvers.}
+    \label{fig:3b-drift}
+  \end{figure}
 \end{frame}
 
 \begin{frame}[noframenumbering]
@@ -302,6 +309,29 @@
     \item Relaxing the $S_N$ subsolver convergence tolerance would provide computational savings to
       the hybrid method.
   \end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+  \begin{columns}
+    \column{5.5cm}
+    \begin{figure}[t]
+      \small
+      \centering
+      \includegraphics[width=.75\columnwidth]{ray-effect-12}
+      \caption{Group 1 and 2 neutron flux distributions in the hybrid $S_N$-diffusion method correction
+      region with $S_6$, $S_8$, $S_{10}$, \& $S_{12}$.}
+      \label{fig:ray-effect-12}
+    \end{figure}
+    \column{5.5cm}
+    \begin{figure}[t]
+      \small
+      \centering
+      \includegraphics[width=.75\columnwidth]{ray-effect-34}
+      \caption{Group 3 and 4 neutron flux distributions in the hybrid $S_N$-diffusion method correction
+      region with $S_6$, $S_8$, $S_{10}$, \& $S_{12}$.}
+      \label{fig:ray-effect-34}
+    \end{figure}
+  \end{columns}
 \end{frame}
 
 \begin{frame}[noframenumbering]
@@ -354,6 +384,36 @@
 \end{frame}
 
 \begin{frame}[noframenumbering]
+  \begin{figure}[t]
+    \centering
+    \includegraphics[width=.6\columnwidth]{3d-view-high-res}
+    \caption{3-D section view of the \gls{MSRE} model geometry with Rod 1 inserted by 4.4 inches at
+    initial criticality.}
+    \label{fig:3d-view}
+  \end{figure}
+\end{frame}
+  
+\begin{frame}[noframenumbering]
+  \begin{figure}[t]
+    \centering
+    \includegraphics[width=.6\columnwidth]{ic-g1}
+    \caption{Group 1 neutron flux distribution with Rod 1 inserted by 4.4 inches at initial
+    criticality.}
+    \label{fig:ic-g1}
+  \end{figure}
+\end{frame}
+  
+\begin{frame}[noframenumbering]
+  \begin{figure}[t]
+    \centering
+    \includegraphics[width=.6\columnwidth]{ic-g8}
+    \caption{Group 8 neutron flux distribution with Rod 1 inserted by 4.4 inches at initial
+    criticality.}
+    \label{fig:ic-g8}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]
   \frametitle{MSRE Rod Drop Experiment}
   \textbf{Rod Height}
   \begin{figure}[htb!]
@@ -362,6 +422,54 @@
     \caption{Evolution of rod height evaluated at each timestep within the first second of the rod
     drop simulation. The rod reaches its fully inserted height at $t=0.4046$ s.}
     \label{fig:rod-height}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+  \frametitle{MSRE Rod Drop Simulation Interpolated Results}
+  \begin{columns}
+    \column{5.5cm}
+    \centerline{\large \textbf{Neutron Count Rate}}
+    \begin{figure}[t]
+      \centering
+      \includegraphics[width=\columnwidth]{count-rate-interp}
+      \caption{Neutron count rate during the rod drop experiment with linearly
+      interpolated data between $t=1.325$ s and $t=3.825$ s.}
+      \label{fig:count-rate}
+    \end{figure}
+    \column{5.5cm}
+    \centerline{\large \textbf{Integral Neutron Count}}
+    \begin{figure}[t]
+      \centering
+      \includegraphics[width=\columnwidth]{integral-count-interp}
+      \caption{Integral neutron count during the rod drop experiment with linearly interpolated
+      count rate data between $t=1.325$ s and $t=3.825$ s.}
+      \label{fig:count-rate}
+    \end{figure}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[noframenumbering]
+  \frametitle{Rod Cusping Correction}
+  \begin{figure}[t]
+      \centering
+      \begin{subfigure}[t]{.49\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{rod-cusping-1}
+          \caption{Uncorrected volume weighting}
+          \label{fig:rod-cusping-1}
+      \end{subfigure}
+      \hfill
+      \begin{subfigure}[t]{.49\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{rod-cusping-2}
+          \caption{Corrected volume weighting}
+          \label{fig:rod-cusping-2}
+      \end{subfigure}
+      \caption{Fraction of reactivity change against control rod volume fraction in mixed mesh
+      elements with the rod inserted at mid-reactor height (27.4 to 29.4 inches) and full insertion
+      height (0.0 to 1.9 inches).}
+      \label{fig:rod-cusping}
   \end{figure}
 \end{frame}
 

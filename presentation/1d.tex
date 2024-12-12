@@ -59,7 +59,7 @@
   \begin{enumerate}
     \item OpenMC in continuous energy mode (OpenMC-CE)
     \item OpenMC in multigroup mode (OpenMC-MG)
-    \item Standard neutron diffusion method (Moltres \& Python)
+    \item Neutron diffusion method (Moltres \& Python)
     \item $S_8$ method (Moltres \& Python)
     \item Hybrid $S_8$-diffusion method (Moltres \& Python)
   \end{enumerate}
@@ -100,33 +100,61 @@
 \end{frame}
 
 \begin{frame}
-%  \frametitle{Hybrid $S_N$-Diffusion Method: 1-D Neutronics Eigenvalue Simulations}
-  \begin{columns}
-    \column{5.5cm}
-    \textbf{Case 3b Neutron Flux Distributions}
-    \begin{itemize}
-      \item The neutron diffusion and hybrid methods fare worse than the $S_8$ method at capturing
-        the oscillatory flux pattern.
-      \item The hybrid method performs better than the neutron diffusion method near $x=0$ cm where
-        the control rod is situated.
-    \end{itemize}
-    \column{5.5cm}
-    \begin{figure}[htb!]
-      \centering
-      \includegraphics[width=.975\columnwidth]{case-3b-flux-diff}
-      \caption{Absolute difference in neutron group flux distributions for Case 3b from Moltres-$S_8$,
-      Moltres-diffusion, Moltres-hybrid, and Python-hybrid relative to OpenMC-MG.}
-      \label{fig:3b-flux-diff}
-    \end{figure}
-  \end{columns}
+  \frametitle{1-D MSRE Neutronics Simulation Results}
+  \textbf{Case 3b Geometry}
+  \begin{figure}
+    \centering
+    \includegraphics[width=.7\textwidth]{hybrid-illustration}
+    \caption{Geometry of 1-D Case 3b.}
+  \end{figure}
 \end{frame}
+
+\begin{frame}
+  \frametitle{1-D MSRE Neutronics Simulation Results}
+  \textbf{Case 3b Neutron Flux Distributions}
+  \begin{figure}[htb!]
+    \centering
+    \includegraphics[width=.75\columnwidth]{images/case-3b-flux-diff-pres}
+    \caption{Absolute difference in neutron group flux distributions for Case 3b from Moltres-$S_8$,
+    Moltres-diffusion, and Moltres-hybrid relative to OpenMC-MG.}
+    \label{fig:3b-flux-diff}
+  \end{figure}
+%  \begin{itemize}
+%    \item The neutron diffusion and hybrid methods fare worse than the $S_8$ method at capturing
+%      the oscillatory flux pattern.
+    The hybrid method provides more accurate flux estimates than the neutron diffusion method near $x=0$ cm where
+      the control rod is situated.
+%  \end{itemize}
+\end{frame}
+
+%\begin{frame}
+%%  \frametitle{Hybrid $S_N$-Diffusion Method: 1-D Neutronics Eigenvalue Simulations}
+%  \begin{columns}
+%    \column{5.5cm}
+%    \textbf{Case 3b Neutron Flux Distributions}
+%    \begin{itemize}
+%      \item The neutron diffusion and hybrid methods fare worse than the $S_8$ method at capturing
+%        the oscillatory flux pattern.
+%      \item The hybrid method performs better than the neutron diffusion method near $x=0$ cm where
+%        the control rod is situated.
+%    \end{itemize}
+%    \column{5.5cm}
+%    \begin{figure}[htb!]
+%      \centering
+%      \includegraphics[width=.975\columnwidth]{case-3b-flux-diff}
+%      \caption{Absolute difference in neutron group flux distributions for Case 3b from Moltres-$S_8$,
+%      Moltres-diffusion, Moltres-hybrid, and Python-hybrid relative to OpenMC-MG.}
+%      \label{fig:3b-flux-diff}
+%    \end{figure}
+%  \end{columns}
+%\end{frame}
 
 \begin{frame}
   \frametitle{1-D MSRE Neutronics Simulation Results}
   \textbf{Impact of Correction Subregion Sizes on Rod Worth}
   \begin{itemize}
     \item Rod worth estimates vary non-monotonically with increasing correction subregion size.
-    \item Rod worth estimates remain within 0.2 \% of the $S_8$ method rod worth.
+    \item Rod worth estimates remain within 0.2\% of the $S_8$ method rod worth.
     \item The hybrid method produces accurate rod worth estimates as long as the correction region
       size is kept consistent.
   \end{itemize}
@@ -134,8 +162,7 @@
     \centering
     \includegraphics[width=0.6\columnwidth]{correction-size-rho}
     \caption{Percentage difference in rod worth from the hybrid method relative to OpenMC-CE for
-      Cases 3a and 3b with different correction subregion sizes. The horizontal lines indicate
-      equivalent rod worth differences from the OpenMC-MG and $S_8$ methods.}
+      Cases 3a and 3b with different correction subregion sizes.}
     \label{fig:v1-size-rho}
   \end{figure}
 \end{frame}
@@ -143,8 +170,8 @@
 \begin{frame}
   \frametitle{1-D MSRE Neutronics Simulation Results}
   \begin{columns}
-    \column{7cm}
-    \textbf{Relaxing the $S_N$ Convergence Tolerance}
+    \column{6.5cm}
+    \textbf{Relaxing the $S_N$ Convergence Tolerance,} $\bm{\epsilon}_\text{tol}$
     \begin{itemize}
       \item Transport correction parameters converge faster than scalar flux in the $S_N$ subsolver.
       \item Relaxing the $S_N$ subsolver convergence tolerance would provide computational savings.
@@ -159,19 +186,19 @@
       \setlength\tabcolsep{2pt}
       \begin{tabular}{l S S S S S S}
         \toprule
-        $S_8$ subsolver tolerance, $\epsilon_\text{tol}$ & {$10^{-8}$} & {$10^{-7}$} & {$10^{-6}$} & {$10^{-5}$} & {$10^{-4}$} & {$10^{-3}$} \\
+        Tolerance value, $\epsilon_\text{tol}$ & {$10^{-8}$} & {$10^{-7}$} & {$10^{-6}$} & {$10^{-5}$} & {$10^{-4}$} & {$10^{-3}$} \\
         \midrule
-        Number of outer iterations & 3 & 3 & 3 & 2 & 2 & 1 \\
+        No.\ of outer iterations & 3 & 3 & 3 & 2 & 2 & 1 \\
         \bottomrule
       \end{tabular}
       \label{table:sn-tol}
     \end{table}
-    \column{4cm}
+    \column{4.5cm}
     \begin{figure}[h]
       \centering
       \includegraphics[width=\columnwidth]{sn-tol}
-      \caption{$k_\text{eff}$ error estimates of Case 3b for a range of convergence tolerance values
-      imposed on the $S_8$ subsolver relative to the reference $k_\text{eff}$ value when
+      \caption{$k_\text{eff}$ error estimates of Case 3b for a range of $S_8$ subsolver convergence tolerance values
+      relative to the reference $k_\text{eff}$ value when
       $\epsilon_\text{tol}=10^{-8}$.}
       \label{fig:sn-tol}
     \end{figure}

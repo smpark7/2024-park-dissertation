@@ -154,7 +154,7 @@
 
 \begin{frame}
   \frametitle{Hybrid $S_N$-Diffusion Method}
-  \textbf{$S_N$ Subsolver Boundary Conditions}
+  \textbf{$\bm{S_N}$ Subsolver Boundary Conditions}
   \vspace{.2cm}
 
   For the hybrid $S_N$-diffusion method to converge, it requires appropriate boundary conditions for
@@ -176,13 +176,16 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Hybrid $S_N$-Diffusion Method Algorithm}
+%  \frametitle{Hybrid $S_N$-Diffusion Method Algorithm}
   \begin{columns}
     \column{.35\textwidth}
-    \vspace{.5cm}
+    \vspace{1cm}
 
   {\small
-    \textbf{Legend}
+    \textbf{Hybrid $\bm{S_N}$-Diffusion Method Algorithm}
+    \vspace{.2cm}
+
+    Legend:
     \vspace{.1cm}
 
   $V_0$: Full problem domain
@@ -199,7 +202,7 @@
   \column{.65\textwidth}
   \begin{figure}
     \centering
-    \includegraphics[width=.46\textwidth]{images/algorithm}
+    \includegraphics[width=.53\textwidth]{images/algorithm}
     \begin{minipage}[b]{.49\textwidth}
       \caption{Algorithm flowchart for the hybrid $S_N$-diffusion method.}
     \end{minipage}
@@ -208,7 +211,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Correction Region ($V_1$) and Buffer Zone}
+  \frametitle{Correction Region ($V_1$) and Buffer Region}
 
   \begin{columns}
     \column{5.5cm}
@@ -244,7 +247,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Correction Region ($V_1$) and Buffer Zone}
+  \frametitle{Correction Region ($V_1$) and Buffer Region}
 
   A natural/intuitive criterion for the location of the buffer region cutoff boundary
   would be wherever the components of the drift correction variable $\vec{D}_g$ is zero, i.e.,

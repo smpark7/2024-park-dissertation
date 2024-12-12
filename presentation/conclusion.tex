@@ -1,34 +1,9 @@
-%\begin{frame}
-%  \frametitle{Conclusion}
-%  \begin{block}{\textbf{Objectives}}
-%    \begin{enumerate}
-%      \item \textbf{Improve Multiphysics Capabilities in Moltres}
-%      \begin{itemize}
-%        \item \textbf{Verify and Validate Existing Multiphysics Coupling Capabilities in Moltres}
-%        \item \textbf{Implement a RANS-based Turbulence Model in Moltres}
-%      \end{itemize}
-%      \item \textbf{Develop a Hybrid Neutronics Method for Control Rod Modeling in Moltres}
-%    \end{enumerate}
-%  \end{block}
-%  \begin{block}{\textbf{Research Impact}}
-%    \begin{itemize}
-%      \item \textbf{Improve Moltres as a simulation tool for MSR multiphysics modeling}
-%      \item \textbf{Allow for a wider range of MSR simulation scenarios on Moltres involving
-%        turbulent flow and control rod movement}
-%      \item \textbf{Analysis of neutron transport effects in MSRs that are neglected by neutron
-%        diffusion methods}
-%%      \item \textbf{Publication of numerical data for MSRE control rod insertion/withdrawal
-%%        simulations}
-%    \end{itemize}
-%  \end{block}
-%\end{frame}
-
 \begin{frame}
   \frametitle{Conclusion}
   \begin{block}{\textbf{Moltres Multiphysics V\&V Studies}}
     \textbf{Relevance}
     \begin{itemize}
-      \item Existing multiphysics coupling capabilities in Moltres must be verified and validated
+      \item Existing multiphysics coupling capabilities in Moltres must be verified and validated.
     \end{itemize}
     \textbf{Results Presented}
     \begin{itemize}
@@ -54,7 +29,7 @@
     \textbf{Relevance}
     \begin{itemize}
       \item Moltres requires turbulence modeling capability to model turbulent salt
-        flow in MSRs
+        flow in MSRs.
     \end{itemize}
     \textbf{Results Presented}
     \begin{itemize}
@@ -64,7 +39,7 @@
     \textbf{Major Takeaways}
     \begin{itemize}
       \item The Spalart-Allmaras turbulence model in Moltres is accurate for turbulent channel and
-        pipe flows
+        pipe flows.
       \item It is also consistent with other implementations when simulating the
         backward-facing step flow problem.
     \end{itemize}
@@ -88,12 +63,12 @@
     \textbf{Major Takeaways}
     \begin{itemize}
       \item The hybrid method is an iterative method that applies a $S_N$ subsolver around control
-        rod regions for improved rod worth estimates
+        rod regions for improved rod worth estimates.
       \item The hybrid method applies an adaptive boundary coupling between
-        the $S_N$ subsolver and the neutron diffusion solver to smooth flux gradients
+        the $S_N$ subsolver and the neutron diffusion solver to smooth flux gradients.
       \item The hybrid method accurately reproduces control rod worths at only four times the
-        computational cost of the neutron diffusion method
-      \item The hybrid method exhibits good scalability on high-performance computing clusters
+        computational cost of the neutron diffusion method.
+      \item The hybrid method exhibits good scalability on high-performance computing clusters.
     \end{itemize}
   \end{block}
 \end{frame}
