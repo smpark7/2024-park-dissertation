@@ -272,13 +272,6 @@ neutron diffusion theory near control rods arises because neutron diffusion theo
 neutron transport theory by integrating over the angular variables. As a result, diffusion-based
 methods perform poorly in reactor systems with control rods.
 
-% To tackle the issue of modeling control rods in \glspl{MSR} with the multigroup neutron diffusion
-% solver in Moltres, I will develop and implement a novel hybrid method for incorporating neutron
-% transport-derived corrections to the neutron diffusion method while largely preserving the
-% computational efficiency of the neutron diffusion method over neutron transport methods. This will
-% allow for computationally feasible transient analysis of \glspl{MSR} that incorporate thermal and
-% neutronic feedback on variable timescales.
-
 \section{Research Objectives and Outline}
 
 The overarching goal of this work is to improve on Moltres as a reliable, intermediate-fidelity
@@ -288,10 +281,6 @@ be accurate within accepted bounds, rigorously verified, computationally efficie
 scalable. These conditions form the underlying development principles of this work.
 
 The scope of this dissertation can be divided into two main objectives.
-%
-%\begin{enumerate}[itemindent=20pt, listparindent=1.5em, label=\textbf{\arabic*}]
-%  \item \textbf{Verification and validation of multiphysics capabilities in
-%    Moltres}
 
     The first objective is to verify and validate multiphysics capabilities in Moltres for
     modeling and simulating
@@ -301,17 +290,11 @@ The scope of this dissertation can be divided into two main objectives.
     \gls{MSRE} zero-power pump start-up and coast-down experiments. I will perform the second study
     in collaboration with the developer of QuasiMolto \cite{reynolds_analysis_2023} as a \gls{VV}
     study.
-%    with the additional aim of creating a reproducible numerical benchmark of the listed
-%    \gls{MSRE} experiments.
-%
-%  \item \textbf{Implementation and verification of a \gls{RANS}-based turbulence model in Moltres}
     This objective includes implementing and verifying a Spalart-Allmaras turbulence model in
     Moltres to support future turbulent flow
     simulations for \gls{MSR} analyses. This will address the absence of turbulence modeling
     capability in Moltres and the consequent restriction on Moltres for modeling \gls{MSR} systems
     with complex turbulent flow.
-
-%  \item \textbf{Development of a novel hybrid $S_N$-diffusion method for improved control rod modeling in Moltres}
 
     The second objective is to develop, implement, and demonstrate a novel hybrid $S_N$-diffusion
     method for accurate control rod modeling in
@@ -320,7 +303,6 @@ The scope of this dissertation can be divided into two main objectives.
     drift correction terms in modified neutron diffusion equations. The $S_N$ method is applied on
     a reduced problem domain to ensure the hybrid method remains tractable on small to moderate
     computing clusters.
-%\end{enumerate}
 
 Chapter 2 presents a literature review of existing multiphysics \gls{MSR} simulation software,
 \gls{VV} studies on \gls{MSR} modeling and simulation, turbulence modeling in \gls{MSR} systems,
@@ -339,9 +321,6 @@ $k_\text{eff}$ and rod worth calculations through
 $k$-eigenvalue simulations of 1-D, 2-D, and 3-D \gls{MSRE} models. The hybrid method is verified
 against reference results from OpenMC Monte Carlo neutron transport code and \gls{MSRE}
 experimental data.
-%Chapter 6 presents the demonstration of the hybrid $S_N$-diffusion method in time-dependent
-%reactivity-initiated simulations modeling the \gls{MSRE} rod drop and reactivity insertion
-%experiments.
 Chapter 6 presents a demonstration of the hybrid $S_N$-diffusion method in a time-dependent
 reactivity-initiated simulation modeling a \gls{MSRE} rod drop experiment.
 Chapter 7 concludes this dissertation by summarizing the results presented, identifying limitations

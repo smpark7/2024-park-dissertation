@@ -36,14 +36,6 @@ hybrid method. In Section \ref{sec:buffer-region}, I discuss how transport corre
 in the hybrid method. Lastly, Section \ref{sec:hybrid-summary} summarizes the hybrid method and its
 implementation.
 
-% Section \ref{sec:theory} discusses the theoretical background for the hybrid $S_N$-diffusion
-% method. Section \ref{sec:implementation} provides numerical implementation details of
-% the hybrid method and its components. Sections \ref{sec:test-case} and \ref{sec:sim-param} describe
-% the 1-D test cases and several simulation parameters in that context. Section
-% \ref{sec:prelim-results} discusses the results of the hybrid method applied to the 1-D test cases
-% with comparisons to higher-fidelity Monte Carlo and $S_N$ neutron transport methods. Lastly,
-% Section \ref{sec:hybrid-summary} summarizes the key findings in this chapter.
-
 \section{Self-Adjoint Angular Flux (SAAF) $S_N$ Method} \label{sec:saaf}
 
 The second-order linear \gls{SAAF} formulation of the $S_N$ neutron transport equations is
@@ -136,17 +128,6 @@ the following vector forms:
     \vdots \\
     Q^\text{ext}_G
   \end{bmatrix}, \nonumber
-%  \bm{Q}_f = \frac{1}{4\pi}\bm{Q}_{f,0} =
-%  \begin{bmatrix}
-%    \frac{1}{4\pi}\chi_{p,1}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
-%    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,1} \lambda_i C_i \\
-%    \frac{1}{4\pi}\chi_{p,2}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
-%    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,2} \lambda_i C_i \\
-%    \vdots \\
-%    \frac{1}{4\pi}\chi_{p,G}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'} +
-%    \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,G} \lambda_i C_i
-%  \end{bmatrix},
-%  \bm{Q} = \bm{Q}_f + \bm{Q}^\text{ext}. \nonumber
 \end{gather}
 %
 We also define the following operators:
@@ -262,16 +243,6 @@ We apply integration by parts on the streaming term to obtain
 \end{gather}
 %
 where $\mathbb{L}^*$ is the adjoint of $\mathbb{L}$.
-%\begin{multline}
-%  \left(\bm{\Psi}^*,\left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right)
-%  \frac{\partial}{\partial t}\left(\frac{\bm{\Psi}}{\bm{v}}\right)\right) -
-%  \left(\mathbb{L}^*_1\bm{\Psi}^*,\mathbb{L}^{-1}_2\mathbb{L}_1\bm{\Psi}\right) +
-%  \langle\bm{\Psi}^*,
-%  \left(\bm{\Psi}^*,\mathbb{L}_2\bm{\Psi}\right) = \\
-%  \left(\bm{\Psi}^*,\left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right)\mathbb{S}\bm{\Psi}
-%  \right) +
-%  \left(\bm{\Psi}^*,\left(\mathbb{I} - \mathbb{L}^{-1}_2\mathbb{L}_1\right) \bm{Q}\right).
-%\end{multline}
 
 \subsection{Self-Adjoint Angular Flux (SAAF) Formulation}
 
@@ -652,10 +623,6 @@ neutron diffusion equations.
   + \chi^p_g \sum^G_{g'=1} \left( 1-\beta \right) \nu \Sigma^f_{g'}
   \phi_{g'} + \chi^d_g \sum^I_i \lambda_i C_i \label{eq:neutron-diffusion-correction} %\\
 \end{multline}
-%\begin{gather}
-%  -\frac{\partial}{\partial x}(D^s_g-D_g)\frac{\partial\phi_g}{\partial x}
-%\end{gather}
-%to the neutron diffusion equations.
 Alternatively, we may define
 $\partial D\equiv\left(D^s_g-D_g\right)$. This alternative form shows that diffusion
 correction applies a multiplicative closure that scales with the flux gradient.
@@ -1161,15 +1128,6 @@ solver. Naturally, the fixed point tolerance value must be equal to or greater t
 value of the main individual solver for the possibility of overall convergence. The hybrid method
 implementation in Moltres sets the neutron diffusion solver as the main app and the $S_N$ subsolver
 as the sub app.
-
-%A typical hybrid
-%method simulation on Moltres starts with the neutron diffusion solver for the first estimate of the
-%neutron flux distribution. Moltres transfers the neutron flux distribution to the $S_N$ solver to
-%compute the boundary source distribution. The $S_N$ solver then generates its own flux estimate and
-%computes drift and boundary correction variables for the neutron diffusion solver. Moltres
-%transfers the correction variables to the neutron diffusion solver to compute its next flux
-%estimate. This process iterates until the neutron flux distribution converges to within tolerance
-%values provided in the input file.
 
 \section{Summary} \label{sec:hybrid-summary}
 

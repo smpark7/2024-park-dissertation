@@ -168,10 +168,6 @@ Lastly, Chapter \ref{chap:transient} demonstrated the hybrid method in a time-de
 based on a \gls{MSRE} zero-power rod drop experiment \cite{prince_zero-power_1968}.
 The simulation required coupling the hybrid method solver to the pre-existing \gls{DNP} solver
 in Moltres through a nested iteration coupling setup.
-%and a \gls{MSRE}
-%reactivity insertion experiment during power operation \cite{steffy_experimental_1970}. These
-%simulation required coupling the hybrid method solver to \gls{DNP} and temperature solvers in
-%Moltres through nested iteration coupling structures.
 I set up the rod drop simulation through a
 $k$-eigenvalue simulation with the control rod at its initial height before using the simulation
 output as the initial condition for the time-dependent rod drop simulation. Moltres reproduced the
@@ -179,14 +175,6 @@ expected prompt and delayed response in the integral neutron count data observed
 experimental data. Convergence issues midway through the simulation had a minor impact on the
 solution precision. Overall, this work successfully demonstrated a time-dependent
 reactivity-initiated simulation using the hybrid method.
-%Snapshots of the neutron flux spatial
-%distribution at various timesteps show expected localized flux depressions around the control rod
-%as it moves through the core.
-%The reactivity insertion simulation started with the \gls{MSRE} initially at 1 MW power output and
-%steady salt flow. Following a 24.8 pcm step reactivity insertion, Moltres reproduced the general
-%shape of the first power peak and the subsequent power oscillations. The power peak magnitude
-%is y \% higher than the peak in the experimental data. Temperatures in the \gls{MSRE} model rise
-%and settle at higher values to compensate for the reactivity insertion.
 
 \section{Limitations and Future Work}
 

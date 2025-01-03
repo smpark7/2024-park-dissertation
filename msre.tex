@@ -565,14 +565,6 @@ monotonically converge towards the $k_\text{eff}$ estimate from the $S_8$ method
 implies that neutron leakage error remains a significant source of discrepancy as long as the
 correction region does not encompass the outer boundary.
 
-% In general,
-% discrepancies arise between the neutron diffusion method and $S_8$ from the neutron diffusion 
-% method's failure to accurately model the neutron flux in the fuel-graphite lattice region. The
-% figures imply that those discrepancies result in a positive change in $k_\text{eff}$ since the
-% $k_\text{eff}$ decreases as larger fractions of the problem domain benefit from flux corrections.
-% The remaining discrepancy in $k_\text{eff}$ between the hybrid method with a correction subregion
-% size of 40 cm and the $S_8$ method arises from 
-
 \begin{figure}[htb!]
   \centering
   \begin{subfigure}[b]{0.49\columnwidth}
@@ -841,12 +833,6 @@ within each fuel salt channel and normalizing the values such that the integrate
 each channel averages to 1 as follows
 %
 \begin{align}
-%  \text{Normalized fission rate of channel }i &= \frac{\text{Fission rate in channel }i}{
-%  \text{Total fission rate}}\cdot\frac{\text{Total number of channels}}{
-%    \text{Total fission rate in channels}} \nonumber \\
-%                                              &= \frac{\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}
-%  \phi_g(\vec{r})}{\sum^G_{g=1}\int_V\Sigma_{f,g}\phi_g(\vec{r})}\cdot\frac{N_i}{
-%  \sum^{N_i}_{i=1}\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}\phi_g(\vec{r})}.
   \text{Normalized fission rate of channel }i &= \frac{(\text{Total number of channels})\times
     (\text{Fission rate in channel }i)}{\text{Total fission rate in channels}} \nonumber \\
                                               &= \frac{N_i\sum^G_{g=1}\int_{V_i}\Sigma_{f,g}
@@ -1519,10 +1505,6 @@ This is a promising indication that the hybrid method would scale well for the m
 reactor analyses.
 
 \FloatBarrier
-
-% Strong scaling tests & discussion
-% Difficulties with 3-D modeling
-% SN void treatment constants, Transfer times
 
 \section{Summary}
 

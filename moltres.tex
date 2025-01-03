@@ -564,8 +564,6 @@ absence of axial heat conduction and the use of 32 neutron groups in the
 \gls{ORNL} calculations, and the exclusion of control rod thimbles in the
 Moltres calculations.
 
-%\paragraph{Critical Assessment} \label{sec:msre-critique}
-
 Lindsay et al.'s work illustrated early development efforts for neutronics and thermal-hydraulics
 models in Moltres. It demonstrated, along with advanced capabilities from the \gls{MOOSE}
 framework, fully-coupled simulations of the \gls{MSRE} with implicit timestepping. The
@@ -685,16 +683,6 @@ out through the outlet at the top-right corner.
 \begin{figure}[htb!]
     \centering
     \includegraphics[width=\textwidth]{flow-temp-masters}
-%    \begin{subfigure}[t]{.33\textwidth}
-%        \centering
-%        \includegraphics[width=\textwidth]{flow-temp-plasma}
-%        \vspace{.9cm}
-%    \end{subfigure}
-%    \hfill
-%    \begin{subfigure}[t]{.625\textwidth}
-%        \centering
-%        \includegraphics[width=\textwidth]{flow-temp-fiorina}
-%    \end{subfigure}
     \caption{Temperature and velocity fields in the core from Moltres
     (left), PoliMi (center), and TU Delft (right) models. The colors represent
     temperature according to the respective color bars and the arrows
@@ -722,16 +710,6 @@ despite the fixed turbulent viscosity assumption.
 \begin{figure}[b!]
     \centering
     \includegraphics[width=\textwidth]{pre-masters}
-%    \begin{subfigure}[t]{.27\textwidth}
-%        \centering
-%        \vspace{.9cm}
-%        \includegraphics[width=\textwidth]{pre}
-%    \end{subfigure}
-%    \begin{subfigure}[t]{.72\textwidth}
-%        \centering
-%        \vspace{0pt}
-%        \includegraphics[width=\textwidth]{fiorina-pre}
-%    \end{subfigure}
     \caption{Total delayed neutron source distribution in the core from the
     Moltres (left), PoliMi (center), and TU Delft (right) models.}
     \label{fig:pre}
@@ -875,8 +853,6 @@ scenario, buoyancy effects become significant as the model loses forced flow.
     TU Delft models \cite{fiorina_modelling_2014}.}
     \label{fig:lof}
 \end{figure}
-
-%\paragraph{Critical Assessment} \label{sec:msfr-critique}
 
 Given the inherent and unique characteristics of \glspl{MSR}, the new
 capabilities introduced in this work---coupling to incompressible Navier-Stokes
