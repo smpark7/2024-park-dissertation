@@ -46,10 +46,13 @@ implementation.
 
 \section{Self-Adjoint Angular Flux (SAAF) $S_N$ Method} \label{sec:saaf}
 
-This chapter starts with the $S_N$ method implementation required for the hybrid $S_N$-diffusion
-method. I implemented both $S_N$ and hybrid methods using \gls{FEM} numerical solver capabilities
-available through Moltres \cite{lindsay_moltres_2017} and the \gls{MOOSE} framework. In this
-section, the derivation for the \gls{SAAF} formulation of the $S_N$ method and its
+The second-order linear \gls{SAAF} formulation of the $S_N$ neutron transport equations is
+compatible with the highly efficient and scalable HYPRE-BoomerAMG preconditioner
+\cite{hypre_hypre_2022} available through
+the \gls{MOOSE} framework. Implementing the $S_N$ method in Moltres allows it to natively interface
+with the existing neutron diffusion solver for nonlinear diffusion acceleration and for the
+subsequent hybrid method implementation.
+The derivation of the \gls{SAAF} formulation of the $S_N$ method and its
 implementation in Moltres follows the derivation developed by Wang et al.\
 \cite{wang_diffusion_2014, wang_rattlesnake_2018}.
 
@@ -60,12 +63,12 @@ the time-dependent, multigroup neutron transport equation defined on the 3-D spa
 $\mathcal{D}$ and 2-D unit sphere angular domain $\mathcal{S}$ is:
 %
 \begin{multline}
-  \frac{\partial}{\partial t}\left[\frac{\Psi_g(\vec{r},\hat{\Omega},t)}{v_g}\right] +
-  \hat{\Omega}\cdot\nabla\Psi_g(\vec{r},\hat{\Omega},t) + \Sigma_{t,g}
-  \Psi_g(\vec{r},\hat{\Omega},t) =
-  \sum^G_{g'=1}\int_\mathcal{S} \Sigma_s^{g'\rightarrow g}(\hat{\Omega}'\rightarrow\hat{\Omega})
+  \frac{\partial}{\partial t}\left[\frac{\Psi_g(\vec{r},\hat{\Omega},t)}{v_g(\vec{r},t)}\right] +
+  \hat{\Omega}\cdot\nabla\Psi_g(\vec{r},\hat{\Omega},t) + \Sigma_{t,g}(\vec{r},t)
+  \Psi_g(\vec{r},\hat{\Omega},t) \\
+  = \sum^G_{g'=1}\int_\mathcal{S} \Sigma_s^{g'\rightarrow g}(\vec{r}, \hat{\Omega}'\rightarrow\hat{\Omega}, t)
   \Psi_{g'}(\vec{r},\hat{\Omega}',t)d\hat{\Omega}' \\
-  + \frac{1}{4\pi}\chi_{p,g}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'} \phi_{g'}(\vec{r},t)
+  + \frac{1}{4\pi}\chi_{p,g}(1-\beta)\sum^G_{g'=1} \nu\Sigma_{f,g'}(\vec{r},t) \phi_{g'}(\vec{r},t)
   + \frac{1}{4\pi}\sum^I_{i=1}\chi_{d,g}
   \lambda_i C_i(\vec{r},t) + Q^{\text{ext}}_g(\vec{r},\hat{\Omega})
   \label{eq:mg-nte}
@@ -79,18 +82,21 @@ with the boundary conditions
   \mbox{ on } \vec{r} \in \partial\mathcal{D} \mbox{ and } \hat{\Omega}\cdot\hat{n}_b < 0,
   \shortintertext{where}
   \begin{align*}
-    \chi_{p,g} &= \mbox{prompt fission neutron spectrum in group $g$,} \\
-    \beta &= \sum^I_{i=1} \beta_i = \mbox{total delayed neutron fraction,} \\
-    \chi_{d,g} &= \mbox{delayed fission neutron spectrum in group $g$,} \\
-    \lambda_i &= \mbox{decay constant of precursor group $i$,} \\
-    C_i &= \mbox{delayed neutron precursor concentration for group $i$,} \\
-    \Psi^\text{inc}_g &= \mbox{incident surface source in group $g$,} \\
+    \chi_{p,g}(\vec{r},t) &= \mbox{prompt fission neutron spectrum in group $g$,} \\
+    \beta(\vec{r},t) &= \sum^I_{i=1} \beta_i(\vec{r},t) = \mbox{total delayed neutron fraction,} \\
+    \chi_{d,g}(\vec{r},t) &= \mbox{delayed fission neutron spectrum in group $g$,} \\
+    \lambda_i(\vec{r},t) &= \mbox{decay constant of precursor group $i$,} \\
+    C_i(\vec{r},t) &= \mbox{delayed neutron precursor concentration for group $i$,} \\
+    \Psi^\text{inc}_g(\vec{r},t) &= \mbox{incident surface source in group $g$,} \\
     \alpha^s_g &= \mbox{specular reflectivity on }\partial \mathcal{D} \mbox{ for group }g, \\
     \hat{\Omega}_r &= \hat{\Omega}-2(\hat{\Omega}\cdot \hat{n}_b)\hat{n}_b, \\
     \hat{n}_b &= \mbox{outward unit normal vector on the boundary.}
   \end{align*}
 \end{gather}
 %
+The definitions of the remaining variables may be found in Eq.\ \ref{eq:bte}.
+We drop the phase space dependence notation from this point on for brevity.
+
 In order to introduce operators and facilitate subsequent mathematical derivations, we will define
 the following vector forms:
 %
@@ -348,7 +354,7 @@ Thus, we can define the inner products
   \sum_{e\in\mathbb{T}_h}\int_{\mathcal{D}_e}d\vec{r}\sum_{i\in E_e}a_{g,i}(\hat{\Omega})
   b_i(\vec{r})\sum_{j\in E_e}b_{g,j}(\hat{\Omega})b_j(\vec{r}), \\
   \langle\bm{a},\bm{b}\rangle^{\pm} \equiv \sum^G_{g=1}\sum_{s\in\partial\mathcal{D}}\int_s
-  d\vec{r} \int_{mathcal{S}^\pm_{\hat{n}_b}}d\hat{\Omega} |\hat{\Omega}\cdot\hat{n}_b|
+  d\vec{r} \int_{\mathcal{S}^\pm_{\hat{n}_b}}d\hat{\Omega} |\hat{\Omega}\cdot\hat{n}_b|
   \sum_{i\in E_s}a_{g,i}(\hat{\Omega})b_i(\vec{r})\sum_{j\in E_s}b_{g,j}(\hat{\Omega})b_j(\vec{r}),
   \shortintertext{where}
   \begin{align*}
@@ -465,14 +471,18 @@ $S_N$ neutron transport equations. With the angular discretization scheme laid o
 inner products
 %
 \begin{gather}
-  \left(\bm{a},\bm{b}\right)_\mathcal{D} \equiv \sum^G_{g=1} \int_\mathcal{D}d\vec{r}
+  \left(\bm{a},\bm{b}\right)_\mathcal{D} \equiv \int_\mathcal{D}d\vec{r}
   \sum_{i\in E_e}a_{g,i}b_i(\vec{r})\sum_{j\in E_e}b_{g,j}b_j(\vec{r}), \\
-  \left(\bm{a},\bm{b}\right)_{\partial\mathcal{D}} \equiv \sum^G_{g=1}
+  \left(\bm{a},\bm{b}\right)_{\partial\mathcal{D}} \equiv
   \sum_{s\in\partial\mathcal{D}}\int_s d\vec{r}\sum_{i\in E_s}a_{g,i}b_i(\vec{r})\sum_{j\in E_s}
   b_{g,j}b_j(\vec{r}),
 \end{gather}
 %
 involving integrals over the spatial domain to explicitly show the $S_N$ angular discretization.
+
+Eqs.\ \ref{eq:time-derivative} to \ref{eq:reflecting-bc} present the terms from the \gls{SAAF}
+$S_N$ equations in operator notation (Eq.\ \ref{eq:saaf-vt}) and their expanded forms
+with explicit summations by neutron energy group and direction of neutron travel.
 
 \noindent Time derivative term:
 %
@@ -501,12 +511,12 @@ Collision term:
 %
 Scattering term:
 %
-\begin{gather}
-  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\mathbb{S}\bm{\Psi}\right) =
+\begin{multline}
+  \left(\left(\mathbb{I}+\bm{\tau}\mathbb{L}_1\right)\bm{\Psi}^*,\mathbb{S}\bm{\Psi}\right) = \\
   \sum^G_{g=1}\sum^{N_d}_{d=1}w_d\left(\Psi^*_{g,d}+\tau_g\hat{\Omega}_d\cdot\nabla\Psi^*_{g,d},
   \sum^G_{g'=1}\sum^L_{l=0}\Sigma^{g'\rightarrow g}_{s,l}\sum^l_{m=-l}
   \frac{2l+1}{w}Y_{l,m}(\hat{\Omega}_d)\phi_{g',l,m}\right)_\mathcal{D}
-\end{gather}
+\end{multline}
 %
 Prompt fission source term:
 %
@@ -686,8 +696,8 @@ However, a significant challenge for diffusion corrections
 involves their resolution near neutron flux peaks. As observed in Eq.\ \ref{eq:svdc}, the neutron
 current and flux gradient values do not necessarily reach zero at the same points in space,
 resulting in diffusion coefficient values tending to positive or negative infinity when the
-flux gradient is close to zero. Larger mesh sizes may help avoid this issue at the cost of
-worsening flux accuracy in regions with
+flux gradient is close to zero (see Figure \ref{fig:3b-svdc}. Larger mesh sizes may help avoid this
+issue at the cost of worsening flux accuracy in regions with
 steep, non-linear fluxes, such as near control rods. For the Ronen method, Gross et al.\
 \cite{gross_comprehensive_2023} applied a numerical fix by avoiding correction
 calculations wherever the flux gradient values fall below a certain threshold. 
@@ -713,8 +723,10 @@ corrections which scale with the flux gradient. Therefore, drift terms do not su
 the division-by-zero errors encountered with diffusion corrections.
 
 Derivations for the drift terms depend on the discretization schemes of the high- and low-order
-equations. For this work, we will adopt drift term derivations developed by Wang et al.\
-\cite{wang_diffusion_2014, wang_rattlesnake_2018}. We start by integrating Eq.\ \ref{eq:saaf-vt}
+equations. For this work, we adopt drift term derivations developed by Wang et al.\
+\cite{wang_diffusion_2014, wang_rattlesnake_2018} specifically for the \gls{SAAF} $S_N$ equations
+with void treatment. Their work uses drift terms for \gls{NDA}, while this work employs drift terms
+for the hybrid method. We start by integrating Eq.\ \ref{eq:saaf-vt}
 over the 2-D unit sphere angular domain $\mathcal{S}$ and replacing $\bm{\Psi}^*$ with isotropic
 test functions $\bm{\Phi}^*$ to obtain the neutron balance equation:
 %
@@ -992,7 +1004,7 @@ axes corresponding to the components because value of $\vec{D}_g$ represents how
 standard neutron diffusion model requires. Secondly, this choice preserves the smoothness of the
 neutron flux and flux gradient.
 %
-\begin{figure}[htb!]
+\begin{figure}[b]
 	\centering
 	\includegraphics[width=.75\columnwidth]{case-3b-geometry}
 	\caption{1-D geometry for Case 3b.}
@@ -1021,7 +1033,7 @@ the right boundary.
     \end{subfigure}
     \caption{The reference and hybrid drift ($\vec{D}_g$) distributions for group 1 and 8 calculated
       from $S_8$ and $S_8$-diffusion simulations. The correction subregion $V_1$ spans $x=0$ cm to
-      $x=10$ cm.}
+      $x=10$ cm. The buffer region, $V_1'$, is highlighted in yellow.}
     \label{fig:3b-drift-1}
 \end{figure}
 
@@ -1057,7 +1069,7 @@ functions from \gls{MOOSE} that are useful for setting up physics models.
 
 All source code for the hybrid $S_N$-diffusion model is hosted on my Moltres GitHub fork
 repository\footnote{\url{https://github.com/smpark7/moltres/tree/sn-method}} as of the time of
-writing. This branch may be merged into the original upstream Moltres GitHub repository in the near
+writing. This branch will be merged into the original upstream Moltres GitHub repository in the near
 future.
 
 Moltres presently comes with a Python script for parsing and extracting neutron group constant data
@@ -1120,7 +1132,7 @@ linear algebra operations defined in ArrayKernels and ArrayBCs for array variabl
 $S_N$ kernels and BCs contain functions for computing the residual and Jacobian contributions of
 each term. The \gls{FEM} numerical solver deems to have reached a converged solution if the sum of
 residual contributions falls below a defined tolerance value. All $S_N$ simulations in this work
-employ the \gls{PJFNK} method \cite{knoll_jacobian-free_2004} with HYPRE-BoomerAMG
+employ the \gls{PJFNK} solver \cite{knoll_jacobian-free_2004} with HYPRE-BoomerAMG
 \cite{hypre_hypre_2022} for preconditioning. BoomerAMG is a parallel implementation of the
 algebraic multigrid method from the HYPRE linear solver library.
 
@@ -1183,7 +1195,11 @@ accurate transport correction values in most of the subdomain. However, the tran
 values near the $S_N$ subsolver boundary are inaccurate due to the approximate boundary conditions
 provided by the diffusion subsolver. Thus, I developed an adaptive boundary algorithm that
 establishes a buffer region in which transport correction parameters are discarded to improve
-$S_N$-diffusion coupling and preserve smoothness of the neutron flux gradients.
+$S_N$-diffusion coupling and preserve smoothness of the neutron flux gradients. The algorithm
+operates independently in each neutron energy group since the buffer region cutoffs
+do not necessarily coincide for all energy groups. The
+correction region is pre-determined at the start of the simulation, thus requiring preliminary
+analysis by the user to confirm that the region size is appropriate for the problem.
 
 By implementing the hybrid method in Moltres, I leveraged existing neutronics modelling
 capabilities and parallel numerical solver libraries available through Moltres and \gls{MOOSE} to

@@ -18,11 +18,11 @@ moderators (e.g., graphite, heavy water, or molten sodium hydroxide).
 The \gls{MSR} is one of six advanced reactor concepts selected for improved safety, sustainability,
 efficiency, and cost over the current generation of predominantly \glspl{LWR} at the \gls{GIF}
 \cite{u.s._doe_nuclear_energy_research_advisory_committee_technology_2002}.
-Due to the high thermal expansion coefficient, \glspl{MSR} possess an inherently robust
+Due to the large fuel expansion coefficient, \glspl{MSR} possess an inherently robust
 safety feature in the strong negative fuel temperature coefficient of
 reactivity \cite{elsheikh_safety_2013}. This reactivity coefficient limits the
-maximum temperature that the reactor core would experience in an accident
-scenario such as an unprotected reactivity insertion because the subsequent
+maximum temperature that the reactor core would experience in particular accident
+scenarios, such as an unprotected reactivity insertion, because the subsequent
 rise in core temperatures induces a significant drop in reactivity,
 quickly neutralizing the initial reactivity insertion. \glspl{MSR} also
 operate at a large thermal margin to boiling and can rely on natural
@@ -75,18 +75,18 @@ graphite channels and a LiF-BeF$_2$-ZrF$_4$-UF$_4$ fuel salt mixture
 \cite{haubenreich_experience_1970}. In addition to other operational achievements, the
 \gls{MSRE} became the first reactor to run on $^{233}$U fuel bred from $^{232}$Th. Building on
 their experience with the \gls{MSRE}, \gls{ORNL} proposed a new program for constructing and
-operating a demonstration reactor based on the \gls{MSBR} concept, which they had also developed
+operating a demonstration reactor based on the \gls{MSBR} concept
 \cite{macpherson_molten_1985}. The \gls{MSBR} is a thermal-spectrum \gls{MSR} with fertile
 $^{232}$Th isotopes mixed directly into the \gls{FLiBe} molten salt for $^{233}$U breeding. The
 \gls{MSBR} was to rely on continuous online reprocessing to add fertile
 material and remove fission product neutron poisons.
 However, the \gls{MSBR} project was canceled prior to the demonstration stage in
-favor of the \gls{LMFBR}, which had benefited from a head start in development and more substantial
+favor of the \gls{LMFBR}, which had benefited from a longer development time and more substantial
 political backing \cite{macpherson_molten_1985}.
 
 Following a relative lull lasting until the late 1990s, renewed research efforts and interest from
 the \gls{GIF}
-provided new impetus for \gls{MSR} research and development. As of the end of 2022, numerous
+provided new impetus for \gls{MSR} research and development. As of the end of 2024, numerous
 \gls{MSR} designs exist at various stages of development. Leading \gls{MSR} designs, in terms of
 development, licensing, or demonstration, include the \gls{MSFR} \cite{merle_optimized_2007},
 \gls{MCFR} \cite{terrapower_terrapower_2021}, TMSR-LF1 \cite{zhang_review_2018}, and \gls{IMSR}
@@ -103,11 +103,11 @@ Southern Company embarked on a joint project to design, construct, and operate a
 designs \cite{zou_research_2019}. They finished construction of TMSR-LF1, a 2-MW$_{\text{th}}$
 liquid-fueled prototype, in August 2021 and received approval for reactor commissioning in August
 2022. Lastly, Canada-based Terrestrial Energy is also developing its \gls{IMSR}, a small modular
-\gls{MSR} based on the \gls{MSRE}. It passed a joint technical review by the
+\gls{MSR} based on the \gls{MSRE}. It passed a joint technical review by
 Canadian and US nuclear regulators in July 2022.
 
 Developing \gls{MSR} simulation software plays a vital role in supporting \gls{MSR}
-development. Accurate reactor modeling capabilities are vital because they
+development. Accurate reactor modeling capabilities
 accelerate reactor design and optimization by enabling quicker iteration through numerous design
 changes. \gls{MSR} simulation software are also essential tools in reactor safety analysis and
 licensing efforts since reactor developers must demonstrate and verify that the \gls{MSR} systems
@@ -127,7 +127,7 @@ While modeling \glspl{MSR} is not necessarily more difficult than modeling
 solid-fueled reactors, we must adapt our software tools to accurately model the
 unique phenomena found in these circulating-fuel reactors. The differences in
 the challenges of simulating \glspl{MSR} compared to solid-fueled reactors stem
-mainly from the liquid fuel form of the fuel salt \cite{diamond_phenomena_2018,
+primarily from the liquid fuel form of the fuel salt \cite{diamond_phenomena_2018,
 huff_identifying_2019}.
 
 Liquids generally exhibit greater thermal expansion per unit increase in temperature than solids.
@@ -237,8 +237,8 @@ retain them. Control rods consist of strong
 neutron absorbers like boron, cadmium, or gadolinium to absorb and thus reduce the number of
 neutrons available to contribute to further fission chain reactions. All reactors start operation
 with excess reactivity to ensure enough fissile material is available to maintain power operation
-and last through to the next scheduled refueling. Control rods and burnable poisons cancel out the
-excess reactivity. Control rods are also helpful
+and last through to the next scheduled refueling. Control rods and burnable poisons balance the
+initial excess reactivity. Control rods are also helpful
 for ramping the power up or down during start-up, shut-down, or load-following operations. Most
 importantly, control rods provide a safety mechanism for quickly shutting down a reactor under
 dangerous conditions. Rapid control rod insertion is the primary mechanism of a reactor scram to
@@ -247,7 +247,7 @@ insertion or other events that may threaten the reactor's safe operation.
 
 Amongst other tasks in reactor modeling, reactor physics analysts aim to accurately reproduce
 control rod worth, which is measured as the relative reduction
-in the neutron multiplication factor $k_{eff}$ due to the insertion of the control rod in the
+in the neutron multiplication factor $k_\text{eff}$ due to the insertion of the control rod in the
 reactor. They are also interested in the accompanying change in flux shape near the
 control rod. Neutrons entering the control rods are more likely to be absorbed than
 adjacent regions in the reactor core. Therefore, control rods induce highly anisotropic neutron
@@ -279,11 +279,11 @@ methods perform poorly in reactor systems with control rods.
 % allow for computationally feasible transient analysis of \glspl{MSR} that incorporate thermal and
 % neutronic feedback on variable timescales.
 
-\section{Research Objectives}
+\section{Research Objectives and Outline}
 
 The overarching goal of this work is to improve on Moltres as a reliable, intermediate-fidelity
 simulation tool for multiphysics \gls{MSR} analysis that can be run on workstations as well as on
-larger computing clusters. Thus, new and existing capabilities in Moltres must
+large leadership-class computing clusters. Thus, new and existing capabilities in Moltres must
 be accurate within accepted bounds, rigorously verified, computationally efficient, and highly
 scalable. These conditions form the underlying development principles of this work.
 
@@ -321,8 +321,6 @@ The scope of this dissertation can be divided into two main objectives.
     a reduced problem domain to ensure the hybrid method remains tractable on small to moderate
     computing clusters.
 %\end{enumerate}
-
-\section{Outline}
 
 Chapter 2 presents a literature review of existing multiphysics \gls{MSR} simulation software,
 \gls{VV} studies on \gls{MSR} modeling and simulation, turbulence modeling in \gls{MSR} systems,

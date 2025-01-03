@@ -208,7 +208,7 @@ also as a single axisymmetric fuel channel with parabola-shaped laminar flow
 \cite{cammi_dimensional_2012}. They later expanded on their approach by
 modeling the \gls{MSRE} upper plenum, downcomer and lower plenum, primary heat
 exchanger, and secondary heat exchanger as 0D systems (lumped-parameter model)
-and substituting the 2-D fuel channel with a 3-D fuel channel which more closely
+and substituting the 2-D fuel channel with a 3-D fuel channel that more closely
 resembled the actual fuel channels in the \gls{MSRE}
 \cite{zanetti_geometric_2015}. Other than the \gls{MSRE}, they also modeled the
 \gls{MSFR} in a later publication \cite{fiorina_modelling_2014}, which also featured \gls{TUD}'s
@@ -383,7 +383,7 @@ and can be written in Einstein notation and Cartesian coordinates as:
 
 Eddy viscosity models, which comprise the most widely used turbulence models
 in use today \cite{rodi_turbulence_2017}, operate on the eddy viscosity
-hypothesis which states that the Reynolds stresses in the \gls{RANS} equations
+hypothesis that states that the Reynolds stresses in the \gls{RANS} equations
 are given by:
 %
 \begin{align}
@@ -455,7 +455,7 @@ more realistic predictions for flows with significant rotational motion and
 sudden changes in the mean strain rate, albeit at greater computational
 expense, compared to the one- and two-equation models
 \cite{wilcox_turbulence_2006}. More minor improvements are observed in modeling
-free shear and backward-facing step flows \cite{wilcox_turbulence_2006}.
+free shear and backward-facing step flows.
 
 Due to the much higher computational cost for \gls{DES}, \gls{LES}, and
 \gls{DNS}, these models have limited applicability in routine, high-Reynolds
@@ -525,8 +525,8 @@ form. Nevertheless, it is important to characterize and accurately model control
 ensure safe operation of the reactor. Introducing control rod modeling capability to multiphysics
 tools allows us to model control rod effects in time-dependent simulations.
 
-There is a lack of research interest in methods for improving control rod modeling in
-\glspl{MSR}.
+Research interest in methods for improving control rod modeling in \glspl{MSR} is subdued compared
+to the focus on modeling other physical interactions in \glspl{MSR}.
 The self-regulating nature and low excess reactivity of \glspl{MSR} reduce or even eliminate the
 need for control rods \cite{dolan_1_2017}. This characteristic arises from the strongly negative
 temperature reactivity feedback and the strong coupling to flow and heat removal rates. \gls{MSR}
@@ -535,7 +535,7 @@ load-following operation by adjusting pump speeds and the temperature of the int
 loop. Laureau et al.\ \cite{laureau_transient_2017} demonstrated simple power ramp-up and ramp-down
 with the \gls{MSFR} by varying the temperature of the secondary coolant. \gls{MSR}
 designs with no control rods include the fast-spectrum \gls{MSFR} and TerraPower's \gls{MCFR}
-\cite{terrapower_terrapower_2021}. However, \gls{MSR} power control schemes which rely heavily on
+\cite{terrapower_terrapower_2021}. However, \gls{MSR} power control schemes that rely heavily on
 these mechanisms may not be suitable for all accident scenarios. Control rod insertion provides
 an important additional means of reactor shut-down without draining the fuel salt, which
 complicates reactor restart procedures. We also note that thermal \gls{MSR} designs like the
@@ -545,7 +545,7 @@ compared to their fast-spectrum counterparts. Thus, the existing literature on c
 in \glspl{MSR} are based on thermal-spectrum \glspl{MSR}.
 
 Few \gls{MSR} multiphysics studies explicitly include control rods in their models. For instance,
-for the \gls{MSRE} pump start-up and coast-down experiments at \gls{ORNL} which involved control
+for the \gls{MSRE} pump start-up and coast-down experiments at \gls{ORNL}, which involved control
 rod movement, most numerical studies simulate the reactivity effects of the control rods by scaling
 the neutron source term by the neutron multiplication factor to keep their reactor model at
 criticality \cite{delpech_benchmark_2003, krepel_dyn3d-msr_2007}. Some studies include control rod
@@ -610,7 +610,7 @@ dependence. The \gls{BTE} for neutron transport is given as:
   \chi(E) =& \mbox{ fission neutron spectrum,} \nonumber \\
   \nu =& \mbox{ number of neutrons produced per fission reaction,} \nonumber \\
   \Sigma_f(\vec{r},E',t) =& \mbox{ macroscopic fission cross section,} \nonumber \\
-  S(\vec{r},E,\hat{\Omega}',t) =& \mbox{ external neutron source.} \nonumber
+  S(\vec{r},E,\hat{\Omega},t) =& \mbox{ external neutron source.} \nonumber
 \end{align}
 
 The $S_N$ method discretizes the continuous angular directional phase space into a few discrete
@@ -768,6 +768,17 @@ strongly anisotropic.
 
 \subsubsection{Method of Equivalent Cross Sections}
 
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=.4\columnwidth]{mecs-geometry}
+    \caption{Geometries of the absorber region and its vicinity in the supercell
+      (top) and the diffusion solver mesh (bottom).
+        The shaded and unshaded regions represent the homogenized absorber
+        region and the adjacent non-absorber region, respectively.
+        Retrieved from Fen et al.\ \cite{fen_modelling_1992}.}
+    \label{fig:mecs-geometry}
+\end{figure}
+
 Scherer \& Neef developed the \gls{MECS} \cite{scherer_determination_1976} to improve control rod
 modeling in \gls{HTGR} with mesh-centered nodal diffusion methods. The \gls{MECS} involves running
 a 1-D neutron transport calculation on a representative \textit{supercell} of the heterogeneous
@@ -778,7 +789,9 @@ high-order angular discretization and scattering moments (e.g., $S_8$ method wit
 matrix) \cite{fen_modelling_1992}. The calculated net neutron leakage rates from the transport
 solver are matched with the calculated leakage rates from the diffusion solver according to an
 analytic calculation to obtain equivalent diffusion coefficients or cross sections for the absorber
-region. The diffusion coefficient formula for this analytic calculation depends on the solution
+region.
+
+The diffusion coefficient formula for this analytic calculation depends on the solution
 method of the diffusion solver. In the most widely used implementation of \gls{MECS} used in
 conjunction with the mesh-centered diffusion code CITATION \cite{teuchert_vsop94_1994}, the
 diffusion coefficient formula assumes there is only one inner mesh point in the absorber region as
@@ -788,17 +801,6 @@ calculated using conventional group constant generation techniques from the tran
 using the supercell average flux and reaction rates. To facilitate further discussion of the
 \gls{MECS}, here is an example of applying the \gls{MECS} on a control rod in x-y geometry (Figure
 \ref{fig:mecs-geometry}) in the CITATION code as provided by Fen et al.\ \cite{fen_modelling_1992}.
-%
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=.4\columnwidth]{mecs-geometry}
-    \caption{Geometries of the absorber region and its vicinity in the supercell
-      (top) and the diffusion solver mesh (bottom).
-        The shaded and unshaded regions represent the homogenized absorber
-        region and the adjacent non-absorber region, respectively.
-        Retrieved from Fen et al.\ \cite{fen_modelling_1992}.}
-    \label{fig:mecs-geometry}
-\end{figure}
 
 Figure \ref{fig:mecs-geometry} shows the 1-D cylindrical super cell for the
 transport solver on the top and the corresponding 2-D Cartesian geometry for the
@@ -871,7 +873,7 @@ the supercell configuration to ensure that the leakage rates of the transport so
 equivalent to the leakage rates of the subsequent diffusion solution. This procedure also places
 some constraints on the location and size of the absorber node that can be inconsistent with the
 nodalization of the rest of the reactor geometry \cite{ougouag_transport_2010}. \gls{MECS} is
-incompatible with reactor geometries which contain control rods that are too close to each other
+incompatible with reactor geometries that contain control rods that are too close to each other
 such that there is not enough distance in between to define neighboring nodes where
 flux-equivalence is assumed. Lastly, \gls{MECS} is only applicable to coarse-mesh solvers and
 homogenizes the control rod along with the adjacent material in its vicinity. Nevertheless,
@@ -968,6 +970,7 @@ currents as follows:
   \shortintertext{where}
     x_i =& \mbox{ $i$-th spatial interval,} \nonumber \\
     \delta J(x,E) =& J_{tr}(x,E) - J_D(x,E), \nonumber \\
+    J_D =& \mbox{ diffusion-derived neutron current,} \nonumber \\
     \Delta x_i =& \mbox{ size of $i$-th spatial interval.} \nonumber
 \end{align}
 
@@ -1111,7 +1114,7 @@ development of practical, self-closing transport-correction techniques.
 
 As mentioned in Section \ref{sec:summary-nts-mtds}, coarse-mesh and nodal methods homogenize
 heterogeneities in reactor geometries to reduce the computational costs of running full-core
-simulations. Equivalence techniques which reduce spatial homogenization error are also effective
+simulations. Equivalence techniques that reduce spatial homogenization error are also effective
 for accurately modeling the integral worths of control rods within fuel assemblies. The \gls{GET}
 \cite{koebke_new_1980, smith_nodal_1983} and \gls{SPH} \cite{kavenoky_sph_1978,
 hebert_consistent_1991} methods represent the most widely used equivalence methods for improving
@@ -1180,7 +1183,7 @@ to the net current at each surface with \gls{GET}. Similarly, the isotropic natu
 factors leads to worse pin-power estimates near control rods and reflectors compared to \gls{GET}.
 However, the \gls{SPH} method is simpler to implement in the diffusion solver as the \gls{SPH}
 factors can be precombined with the cross sections to generate \gls{SPH}-corrected cross sections.
-\gls{GET} requires diffusion solvers, which allow for flux discontinuities at the interfaces.
+\gls{GET} requires diffusion solvers that allow for flux discontinuities at the interfaces.
 Furthermore, \gls{GET} requires more memory to store up to six discontinuity factors, one for each
 mesh surface, in 3-D calculations.
 
@@ -1383,7 +1386,7 @@ This observation suggests one-equation models may be adequate for \gls{MSR} desi
 with weaker turbulent effects, although other analyses may require even more accurate turbulence
 models like \gls{DES} to capture turbulent effects without time averaging adequately.
 
-Lastly, there is a lack of research focus into robust techniques for accurate control rod modeling
+Lastly, there is a lack of existing work into robust techniques for accurate control rod modeling
 for time-dependent \gls{MSR} analyses. Control rods induce highly anisotropic fluxes within
 themselves and their vicinities that the neutron diffusion approximation cannot model accurately.
 Inaccurate rod worth estimates subsequently affect transient reactor power and temperature

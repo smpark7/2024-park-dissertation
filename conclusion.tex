@@ -214,11 +214,11 @@ accuracy in control rod worth calculations. However, some discrepancies still pe
 $k_\text{eff}$ estimates of individual reactor states. These discrepancies affect the average
 temperature of the reactor in multiphysics simulations to compensate for the mismatch in
 reactivity. These discrepancies could be reduced through
-neutron leakage correction at the vacuum boundaries. Remedies for this issue exist in a number of
-forms such as group-wise or matrix albedo boundary conditions.
+neutron leakage correction at the vacuum boundaries. Remedies for the $k_\text{eff}$ mismatch
+exist in a number of forms such as group-wise or matrix albedo boundary conditions.
 
 The 3-D simulations in this work uncovered significant memory usage by the $S_N$ solver, even
-with the distributed mesh feature to spread mesh and variable storage across the compute nodes.
+with the distributed mesh feature to spread mesh and variable data storage across the compute nodes.
 Each full-core simulation required at least 40 nodes with 512 GB memory each to run.
 This issue may be a stumbling block for using the hybrid method on smaller computing clusters that
 have less memory per processor. A custom preconditioner and solver routine in Moltres could help to
@@ -229,6 +229,13 @@ area for optimization in the hybrid method is reducing data transfer times betwe
 diffusion solvers. Due to mesh distribution, each 3-D simulation spent 18 \% of its solution time
 on data transfers between processors. This could be minimized through optimizations in the mesh
 distribution and the data transfer caching systems.
+
+Time-dependent simulations in this work uncovered two issues: rod cusping effects when a moving
+control rod does not align with the mesh interfaces, and slow solution convergence rates during
+control rod motion. While this work applied an empirical technique to correct for rod cusping
+effects, Moltres would benefit from a more robust technique for the long term. Slow solution
+convergence rates could be resolved by investigating better nested solver coupling structures to
+mitigate the effects of lagged solutions and applying solution relaxation schemes.
 
 Finally, future work could demonstrate the hybrid method to its fullest potential through the
 simulation of asymmetric reactivity-initiated transients. Asymmetry refers to significant changes

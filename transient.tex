@@ -8,11 +8,10 @@ measurement experiments. The 3-D simulations also showed that the hybrid method 
 reasonable computational costs compared to the standard neutron diffusion method and exhibited
 efficient strong scaling across compute nodes.
 
-This chapter builds on the foundations of Chapter \ref{chap:msre} to verify and validate the hybrid
+This chapter builds on the foundations of Chapter \ref{chap:msre} to validate the hybrid
 method for neutronics modeling in time-dependent 3-D simulations of reactivity-initiated
-transients. This chapter presents two sets of simulation results involving the hybrid method and
-other capabilities in Moltres of the \gls{MSRE} rod drop and reactivity insertion
-experiments. Beyond time-dependent modeling with the hybrid method, the simulations will also
+transients. This chapter presents simulation results from Moltres for the \gls{MSRE} rod drop
+experiment. Beyond time-dependent modeling with the hybrid method, the simulations will also
 demonstrate compatibility between the existing neutronics/thermal-hydraulics coupling
 capabilities in Moltres and the newly-implemented hybrid method.
 
@@ -26,7 +25,7 @@ summarizes the findings from the rod drop experiment study.
 \section{Rod Drop Experiment} \label{sec:rod-drop}
 
 \gls{MSRE} researchers conducted a series of rod drop experiments at three different $^{235}$U
-loadings \cite{prince_zero-power_1968}. These experimented were conducted from an initially critical
+loadings \cite{prince_zero-power_1968}. These experiments were conducted from an initially critical
 and low power state with an initial neutron count rate of approximately 30,000 counts per second
 from neutron detectors placed near the reactor. A rapid-action camera photographed the integral
 count shown on the detectors about once every second starting from a few seconds before the rod
@@ -51,8 +50,9 @@ data, the rod worth evaluates to approximately 72 pcm relative to the fully with
 $k_\text{eff}$ of the \gls{MSRE} at initial criticality with Rod 1 fully withdrawn would be
 1.00072. According to the same \gls{MSRE} report, the
 authors back-calculated the critical $^{235}$U loading with Rod 1 fully withdrawn to be 65.25 kg.
-They also provided a $^{235}$U concentration reactivity coefficient of 0.223 $(\delta k/k)/\delta m
-/m)$. The excess $^{235}$U mass at initial criticality compensating for Rod 1 inserted to 46.6
+They also provided a $^{235}$U concentration reactivity coefficient of 0.223 $(\delta k/k)/(\delta m
+/m)$, where $k$ is the multiplication factor and $m$ is the $^{235}$U mass. The excess $^{235}$U
+mass at initial criticality compensating for Rod 1 inserted to 46.6
 inches can estimated through the following steps:
 %
 \begin{align}
@@ -77,7 +77,7 @@ The $k_\text{eff}$ of the \gls{MSRE} with 67.24 kg loading and all rods fully wi
     k_{67.24 \text{kg}} &= 1.00671
 \end{align}
 
-\begin{figure}[t]
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.6\columnwidth]{msre-rod-worth}
   \caption{Integral control rod worth of Rod 1 \cite{prince_zero-power_1968} at critical and final
@@ -96,7 +96,7 @@ reactivity withdrawal of 1500 pcm.
 
 The rod drop simulation uses the hybrid $S_N$-diffusion method in Moltres on the verified 3-D
 \gls{MSRE} model from Chapter
-\ref{chap:msre} at the critical $^{235}$ loading. Refer to Section \ref{sec:3d-model-setup} for
+\ref{chap:msre} at the critical $^{235}$U loading. Refer to Section \ref{sec:3d-model-setup} for
 details on the 3-D model. The initial rod height for the \gls{MSRE} model to induce a similar total
 reactivity withdrawal of 1500 pcm from Rod 1 drop is 29.4 inches. The acceleration of the
 rod is approximately 15 ft s$^{-2}$ from prior testing \cite{prince_zero-power_1968}. At this
@@ -118,7 +118,12 @@ coupling structure for the hybrid
 $S_N$-diffusion method with \glspl{DNP} such that the neutron diffusion and \gls{DNP} solvers are
 coupled through inner iterations and the $S_N$ solver is coupled them through outer iterations.
 Figure \ref{fig:rod-drop-coupling} illustrates this iterative coupling structure and the data
-transfers between the solvers.
+transfers between the solvers. The \gls{DNP} solver is a preexisting capability in Moltres
+described in Section \ref{sec:moltres-physics}. For the rod drop simulation, the salt velocity and
+\gls{DNP} diffusion coefficients were set to zero, i.e., static salt condition. The simulation
+grouped the \glspl{DNP} into six \gls{DNP} decay groups automatically determined by the
+ENDF/B-VII.1 nuclear data library \cite{chadwick_endf/b-vii.1_2011} and OpenMC during group
+constant generation.
 
 \begin{figure}[t]
   \tikzstyle{every node}=[font=\small]
@@ -161,31 +166,10 @@ Several rod cusping correction methods exist in literature that are variations o
 weighting approach to generate more accurate homogenized group constants in the mixed mesh
 elements \cite{yamamoto_cell_2004, graham_subplane_2018, schunert_control_2019}. However, due to
 a failed flux-volume weighting implementation and time constraints, this work uses an empirical
-approach for rod cusping effect correction. The approach involves precomputing the $k_\text{eff}$
-with the control rod at various levels of insertion within a mesh element. These simulations use
-the simple volume weighting approach to compute a homogenized group constant value as follows:
-%
-\begin{gather}
-  \Sigma_\text{vw} = \frac{V_\text{r} \Sigma_\text{r} + V_\text{nr} \Sigma_\text{nr}}{V_\text{r} + V_\text{nr}} \label{eq:vw}
-  \shortintertext{where}
-  \begin{align*}
-    \Sigma_\text{vw} &= \mbox{ homogenized group constant in mixed mesh element,} \\
-    V_\text{r} &= \mbox{ rod volume fraction in mixed mesh element,} \\
-    \Sigma_\text{r} &= \mbox{ rod group constant value,} \\
-    V_\text{nr} &= \mbox{ non-rod volume fraction in mixed mesh element,} \\
-    \Sigma_\text{nr} &= \mbox{ non-rod group constant value.}
-  \end{align*}
-\end{gather}
-%
-Note that vertical material and mesh interfaces in the 3-D \gls{MSRE} model always align perfectly
-because the control rod moves vertically. Therefore, the mixed mesh elements occur only around the
-bottom tip of the control rod. Additionally, the volume fraction is equivalent to the height
-fraction, and all mixed mesh elements at the same height share the same volume fraction. Figure
-\ref{fig:rod-cusping-1} shows how the fraction of reactivity change changes with the control rod
-volume fraction when the control rod is at around mid-reactor and full insertion heights. The
-figure depicts the nonlinear relation between the reactivity change and volume fraction that the
-``cusping effect'' is named after. Within this small range of rod motion, the relation should be
-approximately linear.
+approach for rod cusping effect correction. The empirical approach involves precomputing the
+$k_\text{eff}$ with the control rod at various levels of insertion within a mesh element. These
+simulations apply a simple volume weighting approach to compute a homogenized group constant value
+as follows:
 
 \begin{figure}[t]
     \centering
@@ -207,6 +191,28 @@ approximately linear.
     height (0.0 to 1.9 inches).}
     \label{fig:rod-cusping}
 \end{figure}
+
+\begin{gather}
+  \Sigma_\text{vw} = \frac{V_\text{r} \Sigma_\text{r} + V_\text{nr} \Sigma_\text{nr}}{V_\text{r} + V_\text{nr}} \label{eq:vw}
+  \shortintertext{where}
+  \begin{align*}
+    \Sigma_\text{vw} &= \mbox{ volume-weighted group constant in mixed mesh element,} \\
+    V_\text{r} &= \mbox{ rod volume fraction in mixed mesh element,} \\
+    \Sigma_\text{r} &= \mbox{ rod group constant value,} \\
+    V_\text{nr} &= \mbox{ non-rod volume fraction in mixed mesh element,} \\
+    \Sigma_\text{nr} &= \mbox{ non-rod group constant value.}
+  \end{align*}
+\end{gather}
+
+Note that vertical material and mesh interfaces in the 3-D \gls{MSRE} model always align perfectly
+because the control rod moves vertically. Therefore, the mixed mesh elements occur only around the
+bottom tip of the control rod. Additionally, the volume fraction is equivalent to the height
+fraction, and all mixed mesh elements at the same height share the same volume fraction. Figure
+\ref{fig:rod-cusping-1} shows how the fraction of reactivity change changes with the control rod
+volume fraction when the control rod is at around mid-reactor and full insertion heights. The data
+points depict the nonlinear relation between the reactivity change and volume fraction that the
+``cusping effect'' is named after. Within this small range of rod motion, the relation should be
+approximately linear.
 
 Recognizing that the rod cusping effect approximately follows a $y=x^p$ curve profile, I applied
 curve-fitting to obtain the reactivity changes using corrected volume fractions shown in Figure
@@ -231,9 +237,9 @@ shows the steep initial decline in neutron count rate as the rod drops further i
 decline slows at around $t=0.5$ s due to the delayed response of \glspl{DNP}. During this
 time-dependent simulation, convergence issues prevented it from converging beyond $t=0.825$ s. The
 simulation managed to continue after raising the convergence tolerance value of the neutron
-diffusion subsolver and the fixed point iterations from $\epsilon_\text{tol}=10^{-8}$ to $10^{-7}$. However,
-this action led to under-converged scalar flux and neutron count results between $t=1.325$ s and
-$3.825$ s.
+diffusion subsolver and the fixed point iterations from $\epsilon_\text{tol}=10^{-8}$ to $10^{-6}$.
+However, this action led to under-converged scalar flux and neutron count results between $t=1.325$
+s and $3.825$ s.
 
 Figure \ref{fig:integral-count} compares the integral neutron count during the rod drop experiment
 from \gls{MSRE} experimental data and the hybrid method numerical results. The hybrid method
@@ -254,16 +260,17 @@ under-converged data points between $t=1.325$ s and $3.825$ s with linearly inte
 rates from $t=0.825$ s to $4.325$ s. Figure \ref{fig:integral-count-interp} shows the corresponding
 integral neutron count curve generated using the interpolated data. In this case, the integral
 count curve shape is more consistent with the experimental data, albeit seemingly in response to a
-larger reactivity withdrawal.
+larger reactivity withdrawal. Sources of experimental uncertainties listed in the previous
+paragraph may have contributed to the discrepancy between the experimental and numerical data.
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=0.8\columnwidth]{count-rate}
+  \includegraphics[width=0.78\columnwidth]{count-rate}
   \caption{Neutron count rate during the rod drop experiment from Moltres. The convergence tolerance
   of the neutron diffusion subsolver and the fixed point iterations was raised from $\epsilon=10^{-8}$
   to $10^{-7}$ from $t=1.32$ s onwards.}
   \label{fig:count-rate}
-  \includegraphics[width=0.8\columnwidth]{integral-count}
+  \includegraphics[width=0.78\columnwidth]{integral-count}
   \caption{Integral neutron count during the rod drop experiment from \gls{MSRE} experimental data
   and Moltres.}
   \label{fig:integral-count}
@@ -271,11 +278,11 @@ larger reactivity withdrawal.
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=0.8\columnwidth]{count-rate-interp}
+  \includegraphics[width=0.78\columnwidth]{count-rate-interp}
   \caption{Neutron count rate during the rod drop experiment from Moltres with linearly interpolated
     data between $t=1.325$ s and $3.825$ s.}
   \label{fig:count-rate-interp}
-  \includegraphics[width=0.8\columnwidth]{integral-count-interp}
+  \includegraphics[width=0.78\columnwidth]{integral-count-interp}
   \caption{Integral neutron count during the rod drop experiment from \gls{MSRE} experimental data
   and Moltres with linearly interpolated count rate data between $t=1.325$ s and $3.825$ s.}
   \label{fig:integral-count-interp}
@@ -283,8 +290,8 @@ larger reactivity withdrawal.
 
 Lagging solution states during the first fixed point iteration in each time-step also slowed
 solution convergence, particularly when the control rod was in motion. This limited the simulation
-from taking larger time-steps. Further work could include more sophiscated coupling schemes to
-help the solver converge faster.
+from taking larger time-steps. Further work could include rearranging the nested coupling structure
+or implementing relaxation schemes to improve solver numerical stability and convergence.
 
 %Figures * show snapshots of the neutron group flux distributions at various times during the rod
 %drop simulation. The neutron flux magnitudes fall as the reactor enters a sub-critical state. The
@@ -644,11 +651,11 @@ help the solver converge faster.
 %reactor analyses of reactivity-initiated transients involving control rods.
 
 The hybrid $S_N$-diffusion method combines the strengths of the $S_N$ and neutron
-diffusion methods accurately model control rods while remaining tractable on modest computational
+diffusion methods to accurately model control rods while remaining tractable on modest computational
 resources. This chapter covers work demonstrating the hybrid $S_N$-diffusion method through a
-time-dependent reactivity-initiated simulations. The hybrid $S_N$-diffusion solver implemented in
+time-dependent reactivity-initiated simulation. The hybrid $S_N$-diffusion solver implemented in
 Moltres is coupled to preexisting \gls{DNP} and temperature solver capabilities to model
-transient behavior in reactors. 
+transient behavior in reactors.
 
 The time-dependent simulation is based on a zero-power \gls{MSRE} rod drop experiment. The
 rod drop is estimated to induce a 1500 pcm reactivity withdrawal in the \gls{MSRE}. Preliminary
@@ -660,7 +667,8 @@ integral neutron production, normalized to match the initial experimental neutro
 showed good agreement with the experimental integral neutron count curve following the rod drop.
 Convergence issues with the nested coupling structure of the hybrid method and the \gls{DNP}
 subsolver impacted the precision of several data points during the simulation.
-Future investigations could look into better coupling schemes to resolves these issues.
+Future investigations could look into alternative nested solver coupling structures and relaxation
+schemes to resolve these issues.
 Experimental uncertainties in the actual $^{235}$U concentration, initial \& final rod heights, rod
 acceleration, and the initial neutron count rate were also responsible for discrepancies relative
 to experimental data.
